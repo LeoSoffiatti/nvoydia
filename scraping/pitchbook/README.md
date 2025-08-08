@@ -219,12 +219,6 @@ The scraped data integrates with the dashboard through:
 3. **Visualization**: Interactive charts and graphs
 4. **Export Functionality**: Download capabilities
 
-## Team Responsibilities
-
-- **Kevin**: Lead scraping development
-- **Aakash**: Data quality assessment
-- **Emily**: Dashboard integration
-
 ## Next Steps
 
 1. **Test with Real Credentials**: Implement actual PitchBook login
