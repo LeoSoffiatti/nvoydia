@@ -1,0 +1,82 @@
+{
+  "total_deals": 56,
+  "data_completeness": {
+    "Deal ID": "100.0%",
+    "Companies": "100.0%",
+    "Deal Date": "100.0%",
+    "Deal Type": "100.0%",
+    "Deal Type 2": "30.4%",
+    "Deal Size": "100.0%",
+    "Post Valuation": "100.0%",
+    "Deal Synopsis": "100.0%",
+    "Deal Status": "100.0%",
+    "Financing Status": "100.0%",
+    "Business Status": "100.0%",
+    "Investors": "37.5%",
+    "Primary Industry Code": "100.0%",
+    "Verticals": "78.6%",
+    "Description": "100.0%",
+    "HQ Location": "100.0%",
+    "Company Website": "0.0%",
+    "View Company Online": "0.0%"
+  },
+  "deal_type_distribution": {
+    "Merger/Acquisition": 13,
+    "Debt - Acquisition": 10,
+    "Debt Refinancing": 7,
+    "IPO": 7,
+    "Secondary Transaction - Private": 6,
+    "General Corporate Purpose": 4,
+    "PIPE": 4,
+    "Early Stage VC": 3,
+    "Debt - Merger": 1,
+    "PE Growth/Expansion": 1
+  },
+  "industry_distribution": {
+    "Pharmaceuticals": 35,
+    "Drug Discovery": 11,
+    "Managed Care": 10
+  },
+  "geographic_distribution": {
+    "Dublin, Ireland": 19,
+    "Summit, NJ": 11,
+    "Hartford, CT": 10,
+    "Irvine, CA": 7,
+    "Madison, NJ": 3,
+    "Schiltigheim, France": 2,
+    "Peapack, NJ": 2,
+    "Morris Plains, NJ": 1,
+    "Munster, Germany": 1
+  },
+  "deal_size_analysis": {
+    "min": 13.0,
+    "max": 160000.0,
+    "avg": 28417.108108108107,
+    "total_deals_with_size": 37
+  },
+  "extraction_date": "2025-08-08T08:55:28.808292",
+  "data_source": "PitchBook",
+  "original_columns_preserved": [
+    "Deal ID",
+    "Companies",
+    "Deal Date",
+    "Deal Type",
+    "Deal Type 2",
+    "Deal Size",
+    "Post Valuation",
+    "Deal Synopsis",
+    "Deal Status",
+    "Financing Status",
+    "Business Status",
+    "Investors",
+    "Primary Industry Code",
+    "Verticals",
+    "Description",
+    "HQ Location",
+    "Company Website",
+    "View Company Online",
+    "data_source",
+    "extraction_date",
+    "processing_notes"
+  ]
+}
