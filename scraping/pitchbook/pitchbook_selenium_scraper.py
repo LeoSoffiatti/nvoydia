@@ -4,6 +4,7 @@ import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 import os
+import random
 
 ### ---------- CONFIG ---------- ###
 EXCEL_FILE = "scraping/pitchbook/PitchBook_Search_Result_Columns_2025_08_07_21_00_05.xlsx"  # updated path
@@ -11,11 +12,26 @@ N_COMPANIES = 50  # You can change this depending on how many top entries you wa
 OUTPUT_FILE = "enriched_pitchbook_output.csv"
 FAILED_LOG = "failed_urls.log"
 
+### ---------- FREE PROXY ROTATION ---------- ###
+FREE_PROXIES = [
+    "http://64.225.8.82:9981",
+    "http://51.158.68.68:8811",
+    "http://45.77.76.46:3128",
+    "http://134.209.29.120:3128",
+    "http://138.68.60.8:8080",
+    "http://165.227.215.62:3128",
+    # You can find fresh ones at https://free-proxy-list.net/
+]
+proxy = random.choice(FREE_PROXIES)
+print(f"🌐 Using proxy: {proxy}")
+
 ### ---------- SETUP ---------- ###
 options = uc.ChromeOptions()
-options.add_argument("--headless")
+# options.add_argument("--headless")  # Temporarily disable headless mode for debugging
 options.add_argument("--disable-gpu")
 options.add_argument("--window-size=1920,1080")
+options.add_argument(f"--proxy-server={proxy}")
+
 driver = uc.Chrome(options=options)
 
 ### ---------- HELPERS ---------- ###
@@ -48,7 +64,13 @@ for i, row in df.iterrows():
 
     base_url = f"https://dealroom.co/companies/{startup.replace(' ', '-')}"
     driver.get(base_url)
-    time.sleep(2.5)
+    time.sleep(3.5)
+
+    page_text = driver.page_source
+    if "Ray ID" in page_text and "Cloudflare" in page_text:
+        print(f"🚫 Blocked by Cloudflare: {base_url}")
+        failed_urls.append(base_url)
+        continue
 
     try:
         data = {
@@ -81,6 +103,7 @@ if failed_urls:
 
 ### ---------- CLEANUP ---------- ###
 driver.quit()
+
 
 
 # import pandas as pd
