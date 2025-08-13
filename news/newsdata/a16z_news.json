@@ -1,0 +1,560 @@
+{
+  "company_name": "a16z",
+  "collected_at": "2025-08-12T22:31:18.840358",
+  "periods": {
+    "2_weeks": {
+      "date_range": {
+        "from": "2025-07-29",
+        "to": "2025-08-05"
+      },
+      "total_results": 30,
+      "articles_collected": 20,
+      "articles": [
+        {
+          "title": "Andreessen Horowitz fled Delaware and moved to Nevada. It's more about vibes than substance.",
+          "description": "Andreessen Horowitz moved its main business entities to Nevada — but the Delaware laws that a16z critiqued didn't really apply to it.",
+          "url": "https://www.businessinsider.com/a16z-dexit-nevada-llc-corporate-law-differences-2025-8",
+          "published_at": "2025-08-05T19:41:02Z",
+          "source": {
+            "name": "Business Insider",
+            "id": "business-insider"
+          },
+          "author": "Jack Newsham",
+          "url_to_image": "https://i.insider.com/689246da3d5881a51c1ea43d?width=1200&format=jpeg",
+          "content": "Illustration by Pavlo Gonchar/SOPA Images/LightRocket via Getty Images\r\n<ul><li>Andreessen Horowitz, a top VC firm, has left Delaware and urged others to consider doing the same.</li><li>The entities… [+4152 chars]"
+        },
+        {
+          "title": "The future of AI might be hiding in a tool you already use every day",
+          "description": "New AI-native web browsers integrate with digital tools such as Gmail and perform complex tasks without user prompts.",
+          "url": "https://www.businessinsider.com/tech-memo-future-ai-web-browser-agents-comet-preplexity-2025-8",
+          "published_at": "2025-08-01T16:37:23Z",
+          "source": {
+            "name": "Business Insider",
+            "id": "business-insider"
+          },
+          "author": "Alistair Barr",
+          "url_to_image": "https://i.insider.com/688ce4d93d5881a51c1e7393?width=1200&format=jpeg",
+          "content": "In this photo illustration, A new web browser 'Comet' by perplexity is seen on a computer. Perplexity have announced on Monday, Feb 24th, 2025, their plans to release 'Comet', a new web browser that … [+2094 chars]"
+        },
+        {
+          "title": "Here's who's getting rich from Figma's blockbuster IPO",
+          "description": "Design software company Figma just went public in the hottest IPO of the year. Here's what its biggest investors' stakes are worth.",
+          "url": "https://www.businessinsider.com/who-got-rich-on-figma-ipo-2025-7",
+          "published_at": "2025-07-31T21:42:53Z",
+          "source": {
+            "name": "Business Insider",
+            "id": "business-insider"
+          },
+          "author": "Rebecca Torrence,Geoff Weiss",
+          "url_to_image": "https://i.insider.com/688be2483d5881a51c1e6790?width=1200&format=jpeg",
+          "content": "Hoopla in front of the New York Stock Exchange decorated for the initial public offering of the collaborative design application Figma, on Thursday, July 31, 2025.Richard B. Levine/Sipa USA via Reute… [+13319 chars]"
+        },
+        {
+          "title": "Source: data-labeling startup Surge AI is in talks with a16z, Warburg Pincus, and others to raise $1B in its first funding round at a valuation of at least $25B (Rachel Metz/Bloomberg)",
+          "description": "Rachel Metz / Bloomberg:\nSource: data-labeling startup Surge AI is in talks with a16z, Warburg Pincus, and others to raise $1B in its first funding round at a valuation of at least $25B  —  Surge AI, a leading data-labeling startup, is in talks to raise about…",
+          "url": "https://www.techmeme.com/250730/p45",
+          "published_at": "2025-07-30T22:05:00Z",
+          "source": {
+            "name": "Techmeme.com",
+            "id": null
+          },
+          "author": null,
+          "url_to_image": "https://assets.bwbx.io/images/users/iqjWHBFdfxIU/itkWwdsNMfbI/v0/1200x488.jpg",
+          "content": "About This Page\r\nThis is a Techmeme archive page.\r\nIt shows how the site appeared at 6:05 PM ET, July 30, 2025.\r\nThe most current version of the site as always is available at our home page.\r\nTo view… [+67 chars]"
+        },
+        {
+          "title": "AI tools won't get products out faster, but they'll solve 2 coding problems, says a16z partner",
+          "description": "AI isn't making developers faster, says a16z partner Martin Casado — but it is improving code quality and making coding fun again.",
+          "url": "https://www.businessinsider.com/ai-tools-product-development-coding-engineers-a16z-partner-2025-7",
+          "published_at": "2025-07-29T05:58:49Z",
+          "source": {
+            "name": "Business Insider",
+            "id": "business-insider"
+          },
+          "author": "cmlee@insider.com (Lee Chong Ming)",
+          "url_to_image": "https://i.insider.com/68884573f748d8c055f66bb2?width=1200&format=jpeg",
+          "content": "AI isn't making software developers dramatically more productive, but it is solving two of their problems: code quality and morale, said a general partner at Andreessen Horowitz.\r\nMartin Casado, who … [+2998 chars]"
+        },
+        {
+          "title": "‘Chokepoint 3.0’ Has Arrived? a16z Warns of Anti-Crypto Bank Tactics",
+          "description": "Big banks are making it harder and more expensive for consumers to use fintech and crypto apps, which amounts to what could be seen as \"Operation Chokepoint 3.0.\"\nThat’s according to Alex Rampell, General Partner at venture capital firm Andreessen Horowitz (a…",
+          "url": "https://biztoc.com/x/b34d27de7863f637",
+          "published_at": "2025-08-02T18:29:01Z",
+          "source": {
+            "name": "Biztoc.com",
+            "id": null
+          },
+          "author": "coindesk.com",
+          "url_to_image": "https://biztoc.com/cdn/b34d27de7863f637_s.webp",
+          "content": "Big banks are making it harder and more expensive for consumers to use fintech and crypto apps, which amounts to what could be seen as \"Operation Chokepoint 3.0.\"Thats according to Alex Rampell, Gene… [+143 chars]"
+        },
+        {
+          "title": "‘Chokepoint 3.0’ Has Arrived? a16z Warns of Anti-Crypto Bank Tactics",
+          "description": "This tactic could strangle competition by making it more costly for users to transfer funds to alternative platforms, a16z's general partner argued.",
+          "url": "https://www.coindesk.com/business/2025/08/02/chokepoint-3-0-has-arrived-a16z-warns-of-anti-crypto-bank-tactics",
+          "published_at": "2025-08-02T18:00:47Z",
+          "source": {
+            "name": "CoinDesk",
+            "id": null
+          },
+          "author": "Francisco Rodrigues",
+          "url_to_image": "https://cdn.sanity.io/images/s3y3vcno/production/d4b7379ee7714cc178bedbe0048ebff4bd3e7da0-720x406.jpg",
+          "content": "Big banks are making it harder and more expensive for consumers to use fintech and crypto apps, which amounts to what could be seen as \"Operation Chokepoint 3.0.\"\r\nThats according to Alex Rampell, Ge… [+3045 chars]"
+        },
+        {
+          "title": "Crypto startups raise $92 million as investors bet big on AI and Web3",
+          "description": "Crypto startups raised a combined $92 million this week, according to data from DefiLlama. This brings the total crypto startup funding in 2025 to $11.1 billion, already 60% of Pitchbook’s forecast for the year. Venture capitalists are spreading their bets ac…",
+          "url": "https://techpinions.com/crypto-startups-raise-92-million-as-investors-bet-big-on-ai-and-web3/",
+          "published_at": "2025-08-04T20:39:00Z",
+          "source": {
+            "name": "Techpinions.com",
+            "id": null
+          },
+          "author": "Michael Ebeling",
+          "url_to_image": null,
+          "content": "Crypto startups raised a combined $92 million this week, according to data from DefiLlama. This brings the total crypto startup funding in 2025 to $11.1 billion, already 60% of Pitchbook’s forecast f… [+2128 chars]"
+        },
+        {
+          "title": "Andreessen Horowitz warns of loopholes in draft crypto rules",
+          "description": "Venture capital firm Andreessen Horowitz urged US lawmakers to drop the “ancillary asset” framework from proposed crypto rules, warning it risks opening new loopholes.",
+          "url": "https://cointelegraph.com/news/a16z-to-senate-drop-the-ancillary-asset-loophole-pass-clarity-instead",
+          "published_at": "2025-08-01T11:16:20Z",
+          "source": {
+            "name": "Cointelegraph",
+            "id": null
+          },
+          "author": "Cointelegraph by Adrian Zmudzinski",
+          "url_to_image": "https://images.cointelegraph.com/cdn-cgi/image/format=auto,onerror=redirect,quality=90,width=1200/https://s3.cointelegraph.com/uploads/2024-12/0193b63a-0663-7440-bc6f-a0b673603f8a",
+          "content": "Venture capital firm Andreessen Horowitz (a16z) is calling on US lawmakers to revise a draft crypto regulation bill, warning that the proposed framework could open dangerous loopholes and undermine i… [+4428 chars]"
+        },
+        {
+          "title": "DeFi Education Fund urges Senate to strengthen crypto dev protections in draft bill",
+          "description": "DeFi Education Fund called on the Senate Banking Committee to frame a key crypto market bill in a more tech-neutral way and strengthen crypto developer protections in a recent letter.",
+          "url": "https://cointelegraph.com/news/defi-education-fund-gives-feedback-to-senators-on-crypto-bill",
+          "published_at": "2025-08-02T01:39:14Z",
+          "source": {
+            "name": "Cointelegraph",
+            "id": null
+          },
+          "author": "Cointelegraph by Brayden Lindrea",
+          "url_to_image": "https://images.cointelegraph.com/cdn-cgi/image/format=auto,onerror=redirect,quality=90,width=1200/https://s3.cointelegraph.com/uploads/2025-07/01982909-dcbb-76b9-886d-8a3c30171011",
+          "content": "Crypto lobby group DeFi Education Fund has called on the US Senate Banking Committee to rethink how it plans to regulate the decentralized finance industry after reviewing its recently published disc… [+2700 chars]"
+        },
+        {
+          "title": "SEC’s crypto task force to hit the road with 10 roundtables across the US",
+          "description": "On Friday, the United States Securities and Exchange Commission announced that its crypto task force will hold roundtable discussions in 10 cities across the country.",
+          "url": "https://cointelegraph.com/news/sec-crypto-task-force-10-roundtables-across-us",
+          "published_at": "2025-08-01T21:32:12Z",
+          "source": {
+            "name": "Cointelegraph",
+            "id": null
+          },
+          "author": "Cointelegraph by Christopher Tepedino",
+          "url_to_image": "https://images.cointelegraph.com/cdn-cgi/image/format=auto,onerror=redirect,quality=90,width=1200/https://s3.cointelegraph.com/uploads/2025-03/0195d01e-9cb1-7d96-96cd-76891983181f",
+          "content": "US SEC Commissioner Hester Peirce will hit the road this fall, leading a 10-city tour as part of the Securities and Exchange Commissions new crypto outreach initiative. The regulator announced a roun… [+2494 chars]"
+        },
+        {
+          "title": "Travel guru The Points Guy wants to revamp the luxury travel points system with Journey",
+          "description": "Inside the startup’s $7.7 million seed round led by Lerer Hippeau and Slow Ventures.",
+          "url": "https://fortune.com/2025/08/04/the-points-guy-lerer-hippeau-slow-ventures-journey-travel-ai/",
+          "published_at": "2025-08-04T11:52:13Z",
+          "source": {
+            "name": "Fortune",
+            "id": "fortune"
+          },
+          "author": "Leo Schwartz",
+          "url_to_image": "https://fortune.com/img-assets/wp-content/uploads/2025/08/Journey-Launch-Event-at-The-Fifth-Avenue-HotelPhotobywww.jonflemingphotography.com-155-e1754271422435.jpg?resize=1200,600",
+          "content": "Points fatigue is real. What started as a nice-to-have bonus for traveling has ballooned into a sprawl of rewards programs and arcane conversions that requires an advanced degree in statistics to man… [+6122 chars]"
+        },
+        {
+          "title": "Andreessen Horowitz is looking to pay $400K+ for a leader to build out a podcast network",
+          "description": "Andreessen Horowitz is hunting for a podcast leader, the latest step in its longtime strategy to sidestep the mainstream press and publish content.",
+          "url": "https://www.businessinsider.com/andreessen-horowitz-looking-to-hire-build-podcast-network-2025-7",
+          "published_at": "2025-07-29T15:59:03Z",
+          "source": {
+            "name": "Business Insider",
+            "id": "business-insider"
+          },
+          "author": "lmoses@insider.com (Lucia Moses)",
+          "url_to_image": "https://i.insider.com/6887da2385e81483682ecdb9?width=1200&format=jpeg",
+          "content": "Andreessen Horowitz is on the hunt for a podcast leader, the latest step in the famous VC firm's longtime strategy to sidestep the mainstream press and create its own content.\r\nIn a LinkedIn post, th… [+4319 chars]"
+        },
+        {
+          "title": "a16z Exec Warns of ‘Chokepoint 3.0’ As JPMorgan Chase Begins Charging Venmo, PayPal, Coinbase and Others for Customer Data",
+          "description": "Venture capital titan Andreessen Horowitz (a16z) is warning that the banks may be initiating a new crackdown on the crypto industry. In the firm’s latest Fintech Newsletter, a16z general partner Alex Rampell says that crypto may be looking at “Chokepoint 3.0”…",
+          "url": "https://dailyhodl.com/2025/08/04/a16z-exec-warns-of-chokepoint-3-0-as-jpmorgan-chase-begins-charging-venmo-paypal-coinbase-and-others-for-customer-data/",
+          "published_at": "2025-08-04T07:50:43Z",
+          "source": {
+            "name": "The Daily Hodl",
+            "id": null
+          },
+          "author": "Alex Richardson",
+          "url_to_image": "https://dailyhodl.com/wp-content/uploads/2024/08/jpmorgan-bank-pay.jpg",
+          "content": "Venture capital titan Andreessen Horowitz (a16z) is warning that the banks may be initiating a new crackdown on the crypto industry.\r\nIn the firm’s latest Fintech Newsletter, a16z general partner Ale… [+1646 chars]"
+        },
+        {
+          "title": "Uniswap, a16z, and allies urge Senate to carve out DeFi in market-structure bill",
+          "description": "Top crypto firms such as a16z crypto, the Solana Policy Institute, Uniswap Labs, and more signed on to the comments.",
+          "url": "https://biztoc.com/x/9ea94620f88d0355",
+          "published_at": "2025-08-01T22:17:31Z",
+          "source": {
+            "name": "Biztoc.com",
+            "id": null
+          },
+          "author": "theblock.co",
+          "url_to_image": "https://biztoc.com/cdn/9ea94620f88d0355_s.webp",
+          "content": "Top crypto firms such as a16z crypto, the Solana Policy Institute, Uniswap Labs, and more signed on to the comments.\r\nThis story appeared on theblock.co, 2025-08-01 22:09:05."
+        },
+        {
+          "title": "Tyler Winklevoss has ‘serious concerns’ over Trump’s pick to lead the CFTC, Brian Quintenz",
+          "description": "Tyler Winklevoss and others say a16z Head of Policy Brian Quintenz, tapped by President Trump to lead the CFTC, is a flawed candidate.",
+          "url": "https://biztoc.com/x/1d61539f877161de",
+          "published_at": "2025-07-31T23:38:55Z",
+          "source": {
+            "name": "Biztoc.com",
+            "id": null
+          },
+          "author": "theblock.co",
+          "url_to_image": "https://biztoc.com/cdn/1d61539f877161de_s.webp",
+          "content": "Tyler Winklevoss and others say a16z Head of Policy Brian Quintenz, tapped by President Trump to lead the CFTC, is a flawed candidate.\r\nThis story appeared on theblock.co, 2025-07-31 23:36:20."
+        },
+        {
+          "title": "‘Chokepoint 3.0’ Has Arrived? a16z Warns of Anti-Crypto Bank Tactics",
+          "description": "Big banks are making it harder and more expensive for consumers to use fintech and crypto apps, which amounts to what could be seen as \"Operation Chokepoint 3.0.\"\nThat’s according to Alex Rampell, General Partner at venture capital firm Andreessen Horowitz (a…",
+          "url": "https://biztoc.com/x/b34d27de7863f637",
+          "published_at": "2025-08-02T18:29:01Z",
+          "source": {
+            "name": "Biztoc.com",
+            "id": null
+          },
+          "author": "coindesk.com",
+          "url_to_image": "https://biztoc.com/cdn/b34d27de7863f637_s.webp",
+          "content": "Big banks are making it harder and more expensive for consumers to use fintech and crypto apps, which amounts to what could be seen as \"Operation Chokepoint 3.0.\"Thats according to Alex Rampell, Gene… [+143 chars]"
+        },
+        {
+          "title": "AI tools won't get products out faster, but they'll solve 2 coding problems, says a16z partner",
+          "description": "Martin Casado, Andreessen Horowitz\nAndreessen Horowitz\nAI coding tools like Cursor aren't supercharging development speed, said a general partner at a16z.\nBut AI can help create \"more robust, maintainable code bases with less bugs,\" Martin Casado said.\nAI too…",
+          "url": "https://biztoc.com/x/3bb2d1638db2b83d",
+          "published_at": "2025-07-29T06:10:24Z",
+          "source": {
+            "name": "Biztoc.com",
+            "id": null
+          },
+          "author": "businessinsider.com",
+          "url_to_image": "https://biztoc.com/cdn/950/og.png",
+          "content": "Martin Casado, Andreessen HorowitzAndreessen HorowitzAI coding tools like Cursor aren't supercharging development speed, said a general partner at a16z.But AI can help create \"more robust, maintainab… [+150 chars]"
+        },
+        {
+          "title": "Margit Wennmachers, who has shaped a16z's marketing approach since joining in 2010, is stepping down and “graduating” from operating partner to partner emeritus",
+          "description": "",
+          "url": "https://biztoc.com/x/a72ec99c719203f0",
+          "published_at": "2025-07-31T04:54:48Z",
+          "source": {
+            "name": "Biztoc.com",
+            "id": null
+          },
+          "author": "pitchbook.com",
+          "url_to_image": "https://biztoc.com/cdn/950/og.png",
+          "content": "{ window.open(this.href, '_blank'); }, 200); return false;\"&gt;Why did Meta increase AI infrastructure spending? { window.open(this.href, '_blank'); }, 200); return false;\"&gt;How will Trump's tariff… [+746 chars]"
+        },
+        {
+          "title": "Salient, which uses AI to automate the post-loan origination process for lenders, raised a $60M Series A led by a16z, a source says at a $350M valuation",
+          "description": "",
+          "url": "https://biztoc.com/x/48cc2311a4c3acf8",
+          "published_at": "2025-07-29T01:10:15Z",
+          "source": {
+            "name": "Biztoc.com",
+            "id": null
+          },
+          "author": "axios.com",
+          "url_to_image": "https://biztoc.com/cdn/950/og.png",
+          "content": "{ window.open(this.href, '_blank'); }, 200); return false;\"&gt;What impact will the US-EU trade deal have on tariffs? { window.open(this.href, '_blank'); }, 200); return false;\"&gt;Why did Tesla sign… [+777 chars]"
+        }
+      ]
+    },
+    "1_month": {
+      "date_range": {
+        "from": "2025-07-13",
+        "to": "2025-07-20"
+      },
+      "total_results": 26,
+      "articles_collected": 20,
+      "articles": [
+        {
+          "title": "Why a VC is betting AI is 'the opposite of social media' and will forge more human connections",
+          "description": "Unlike social media, AI could help bring people together IRL, especially in the still-untapped realm of multiplayer experiences, Menlo Ventures says.",
+          "url": "https://www.businessinsider.com/top-vc-says-specialized-ai-apps-next-wave-consumer-tech-2025-7",
+          "published_at": "2025-07-17T18:11:58Z",
+          "source": {
+            "name": "Business Insider",
+            "id": "business-insider"
+          },
+          "author": "Sydney Bradley,Geoff Weiss",
+          "url_to_image": "https://i.insider.com/6877f15e3d5881a51c1d736c?width=1200&format=jpeg",
+          "content": "Menlo Ventures partners Amy Wu Martin and Shawn Carolan.Menlo Ventures\r\n<ul><li>AI adoption is ramping up, opening opportunities for new consumer startups.</li><li>Menlo Ventures' recent \"State of Co… [+3839 chars]"
+        },
+        {
+          "title": "Trump Lets Polymarket Off the Hook, Ends Probe Into Crypto Betting Platform",
+          "description": "Who could have predicted it?",
+          "url": "https://gizmodo.com/trump-lets-polymarket-off-the-hook-ends-probe-into-crypto-betting-platform-2000629467",
+          "published_at": "2025-07-15T17:35:08Z",
+          "source": {
+            "name": "Gizmodo.com",
+            "id": null
+          },
+          "author": "AJ Dellinger",
+          "url_to_image": "https://gizmodo.com/app/uploads/2025/07/GettyImages-2221682966-1200x675.jpg",
+          "content": "If you bet “Donald Trump ends an investigation into a Peter Thiel-backed cryptocurrency platform,” you can claim your winnings. According to Bloomberg, two investigations into the prediction market P… [+2371 chars]"
+        },
+        {
+          "title": "Thinking Machines Lab, Mira Murati's AI startup that launched only in February, raised $2B led by a16z; Nvidia, Accel, ServiceNow, Cisco, and AMD also invested (Aditya Soni/Reuters)",
+          "description": "Aditya Soni / Reuters:\nThinking Machines Lab, Mira Murati's AI startup that launched only in February, raised $2B led by a16z; Nvidia, Accel, ServiceNow, Cisco, and AMD also invested  —  Thinking Machines Lab, the artificial intelligence startup founded by fo…",
+          "url": "https://www.techmeme.com/250715/p18",
+          "published_at": "2025-07-15T17:20:01Z",
+          "source": {
+            "name": "Techmeme.com",
+            "id": null
+          },
+          "author": null,
+          "url_to_image": "http://www.techmeme.com/img/techmeme_sq328.png",
+          "content": "About This Page\r\nThis is a Techmeme archive page.\r\nIt shows how the site appeared at 1:20 PM ET, July 15, 2025.\r\nThe most current version of the site as always is available at our home page.\r\nTo view… [+171 chars]"
+        },
+        {
+          "title": "How Video Game The Sims Inspired An $11 Million-Backed Startup",
+          "description": "AI startup Anam wants to make the most hyperrealistic avatars you've interacted with. Plus, Bilt Rewards' new (startling) valuation and Sydney Sweeney's Bezos-backed lingerie brand.",
+          "url": "https://www.forbes.com/sites/alexandrameier/2025/07/18/how-video-game-the-sims-inspired-an-11-million-backed-startup/",
+          "published_at": "2025-07-18T12:00:00Z",
+          "source": {
+            "name": "Forbes",
+            "id": null
+          },
+          "author": "Alexandra Meier, Contributor, \n Alexandra Meier, Contributor\n https://www.forbes.com/sites/alexandrameier/",
+          "url_to_image": "https://imageio.forbes.com/specials-images/imageserve/68797bf3f5c6da7b50aeac55/0x0.jpg?format=jpg&height=900&width=1600&fit=bounds",
+          "content": "Think this is nice? Its a version of the weekly Under 30 newsletter and would be even better in your inbox.\r\nBen Carr and Caoimhe Murphy\r\nCourtesy of Anam\r\nYou log onto an online lesson, ready to mee… [+7076 chars]"
+        },
+        {
+          "title": "Polymarket Probe Ended by DOJ in Win for Crypto Bets Under Trump",
+          "description": "(Bloomberg) -- A pair of US investigations into crypto-betting platform Polymarket that went full-throttle in the waning days of the Biden administration are...",
+          "url": "https://finance.yahoo.com/news/polymarket-probe-ended-doj-win-150039007.html",
+          "published_at": "2025-07-15T15:00:39Z",
+          "source": {
+            "name": "Yahoo Entertainment",
+            "id": null
+          },
+          "author": "Lydia Beyoud and Sridhar Natarajan",
+          "url_to_image": "https://s.yimg.com/ny/api/res/1.2/uMLfi07OybxTZHHumzmZbQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA-/https://media.zenfs.com/en/bloomberg_holding_pen_162/6c2084d7bca0ffe4fa8e24faa2d6304a",
+          "content": "(Bloomberg) A pair of US investigations into crypto-betting platform Polymarket that went full-throttle in the waning days of the Biden administration are now being shut down just as Donald Trumps Wh… [+3551 chars]"
+        },
+        {
+          "title": "Mira Murati's AI startup Thinking Machines raises $2 billion in a16z-led round",
+          "description": "Venture capital firm Andreessen Horowitz led the round that also saw participation from AI chip giant Nvidia, Accel, ServiceNow, Cisco, AMD and Jane Street, ...",
+          "url": "https://finance.yahoo.com/news/mira-muratis-ai-startup-thinking-170344079.html",
+          "published_at": "2025-07-15T17:03:44Z",
+          "source": {
+            "name": "Yahoo Entertainment",
+            "id": null
+          },
+          "author": "Reuters",
+          "url_to_image": "https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo-1200x1200.png",
+          "content": "(Reuters) -Thinking Machines Lab, the artificial intelligence startup founded by former OpenAI executive Mira Murati, said on Tuesday that it has raised $2 billion in funding.\r\nVenture capital firm A… [+1367 chars]"
+        },
+        {
+          "title": "Substack raised $100M from the Chernin Group, a16z, and others, sources say at a $1.1B valuation, as it builds a social network and focuses on advertising (New York Times)",
+          "description": "New York Times:\nSubstack raised $100M from the Chernin Group, a16z, and others, sources say at a $1.1B valuation, as it builds a social network and focuses on advertising  —  Substack, originally a newsletter service, says its app now has millions of users in…",
+          "url": "https://mediagazer.com/250717/p8",
+          "published_at": "2025-07-17T14:15:00Z",
+          "source": {
+            "name": "Mediagazer.com",
+            "id": null
+          },
+          "author": null,
+          "url_to_image": "https://static01.nyt.com/images/2025/07/17/multimedia/17biz-substack-01-mgtk/17biz-substack-01-mgtk-facebookJumbo.jpg",
+          "content": "Mediagazer presents the day's must-read media news on a single page.\r\nThe media business is in tumult: from the production side to\r\nthe distribution side, new technologies are upending the industry.\r… [+416 chars]"
+        },
+        {
+          "title": "Benchmark in talks to lead Series A for Greptile, valuing AI-code reviewer at $180M, sources say",
+          "description": "YC alum Greptile raises $30M Series A.",
+          "url": "https://finance.yahoo.com/news/benchmark-talks-lead-series-greptile-232129611.html",
+          "published_at": "2025-07-18T23:21:29Z",
+          "source": {
+            "name": "Yahoo Entertainment",
+            "id": null
+          },
+          "author": "Marina Temkin",
+          "url_to_image": "https://s.yimg.com/ny/api/res/1.2/uGZ90ZxGma7j.7Oc5GEsFQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://media.zenfs.com/en/techcrunch_finance_785/bf79531ec9b51a3e789c23da61753f9c",
+          "content": "Code, HTML, php web programming source code. Abstract code background - 3d rendering | Image Credits:Sashkinw / Getty Images\r\nGreptile, an AI-powered code review startup, is in the process of raising… [+1962 chars]"
+        },
+        {
+          "title": "Leaked message show Marc Andreessen blasting elite colleges over DEI: ‘My people are furious and not going to take it anymore’",
+          "description": "Andreessen Horowitz founder criticized Stanford University and MIT in private messages to top Trump administration officials over their alleged reverse discrimination.",
+          "url": "https://fortune.com/2025/07/16/marc-andreessen-leaked-messages-dei-stanford-university-mit/",
+          "published_at": "2025-07-16T14:08:43Z",
+          "source": {
+            "name": "Fortune",
+            "id": "fortune"
+          },
+          "author": "Christiaan Hetzner",
+          "url_to_image": "https://fortune.com/img-assets/wp-content/uploads/2025/07/GettyImages-604311108-e1752665921839.jpg?resize=1200,600",
+          "content": "Venture capitalist Marc Andreessen hit out at elite U.S. universities for allegedly discriminating against children of conservative Trump voters.The leaked comments from a private WhatsApp group chat… [+3512 chars]"
+        },
+        {
+          "title": "H2Ok Innovations raises $12 million Series A to make manufacturing more precise for big-name customers like Coca-Cola and Unilever",
+          "description": "H2Ok Innovations raised a $12.42 million Series A, led by Greycroft, Fortune can exclusively report.",
+          "url": "https://fortune.com/2025/07/16/h2ok-innovations-raises-12-million-series-a-to-make-manufacturing-more-precise-for-big-name-customers-like-coca-cola-and-unilever/",
+          "published_at": "2025-07-16T11:42:26Z",
+          "source": {
+            "name": "Fortune",
+            "id": "fortune"
+          },
+          "author": "Allie Garfinkle",
+          "url_to_image": "https://fortune.com/img-assets/wp-content/uploads/2025/07/Unknown_7313a9-e1752628368932.jpeg?resize=1200,600",
+          "content": "Annie and David Lu grew up in a multi-generational manufacturing family. My first job was a janitor in the quality lab, said David. I climbed distillation towers, swept the factory floors, and worked… [+9509 chars]"
+        },
+        {
+          "title": "Box CEO Aaron Levie has some advice for bosses: Hire AI native grads and they'll 'flip your company on its head'",
+          "description": "Box CEO Aaron Levie said AI-fluent graduates are uniquely positioned to boost companies' productivity and outpace peers.",
+          "url": "https://www.businessinsider.com/ai-native-grads-will-outperform-junior-engineers-says-box-ceo-levie-2025-7",
+          "published_at": "2025-07-15T10:27:02Z",
+          "source": {
+            "name": "Business Insider",
+            "id": "business-insider"
+          },
+          "author": "tspirlet@insider.com (Thibault Spirlet)",
+          "url_to_image": "https://i.insider.com/687624843d5881a51c1d544a?width=1200&format=jpeg",
+          "content": "Recent college graduates who are fluent in AI tools could become some of the most valuable hires at major companies, according to Box CEO Aaron Levie.\r\n\"Hire a bunch of these people,\" he said in a Mo… [+2640 chars]"
+        },
+        {
+          "title": "Hadrian gets $260M in funding to accelerate defense industry manufacturing automation",
+          "description": "Defense industry manufacturing startup Hadrian Automation Inc. said today it has closed on a fresh capital infusion of $260 million led by Peter Thiel’s Founders Fund and Lux Capital, bringing its total amount raised to date to over $500 million. Today’s Seri…",
+          "url": "https://siliconangle.com/2025/07/17/hadrian-gets-260m-funding-accelerate-defense-industry-manufacturing-automation/",
+          "published_at": "2025-07-17T23:35:37Z",
+          "source": {
+            "name": "SiliconANGLE News",
+            "id": null
+          },
+          "author": "Mike Wheatley",
+          "url_to_image": "https://d15shllkswkct0.cloudfront.net/wp-content/blogs.dir/1/files/2025/07/Screenshot-from-2025-07-18-06-32-18.png",
+          "content": "Defense industry manufacturing startup Hadrian Automation Inc. said today it has closed on a fresh capital infusion of $260 million led by Peter Thiels Founders Fund and Lux Capital, bringing its tot… [+5030 chars]"
+        },
+        {
+          "title": "Polymarket’s Legal Challenges Resolved As DOJ Closes Investigation",
+          "description": "The US Department of Justice (DOJ) and the Commodity Futures Trading Commission (CFTC) have concluded their investigations into crypto-betting platform Polymarket.  This decision comes as the Trump administration seeks to revitalize support for the digital as…",
+          "url": "https://bitcoinist.com/polymarkets-legal-challenges-resolved/",
+          "published_at": "2025-07-16T11:00:00Z",
+          "source": {
+            "name": "Bitcoinist",
+            "id": null
+          },
+          "author": "Ronaldo Marquez",
+          "url_to_image": "https://bitcoinist.com/wp-content/uploads/2025/04/Screenshot_995.jpg",
+          "content": "The US Department of Justice (DOJ) and the Commodity Futures Trading Commission (CFTC) have concluded their investigations into crypto-betting platform Polymarket. \r\nThis decision comes as the Trump … [+3055 chars]"
+        },
+        {
+          "title": "Fell in a hole, got out. Medium’s recap, financial turnaround, and difficult path back to health.",
+          "description": "this doesn't get to the meat for a while and never does get around to explaining how medium allegedly solved its writing quality problem (I do not really think it has), but it's rare in the level of detail and frankness on the mechanics of turning around a fa…",
+          "url": "https://medium.com/the-coach-life/fell-in-a-hole-got-out-381356ec8d7f",
+          "published_at": "2025-07-18T05:47:01Z",
+          "source": {
+            "name": "Medium",
+            "id": null
+          },
+          "author": "absfac",
+          "url_to_image": "https://miro.medium.com/v2/da:true/resize:fit:1200/0*PmHCLwyBQURIUu4Z",
+          "content": "This is the renegotiating with investors part.\r\nTo be honest, I kind of loved working through this mess even though I dont have any background in it. Medium attracts curious people, which I am, and t… [+8465 chars]"
+        },
+        {
+          "title": "Mira Murati's Thinking Machines Lab raised a $2B seed led by a16z at a $12B valuation; Nvidia, Accel, ServiceNow, Cisco, AMD, and Jane Street also invested",
+          "description": "",
+          "url": "https://biztoc.com/x/fe81a24dcfad9824",
+          "published_at": "2025-07-16T02:42:59Z",
+          "source": {
+            "name": "Biztoc.com",
+            "id": null
+          },
+          "author": "reuters.com",
+          "url_to_image": "https://biztoc.com/cdn/950/og.png",
+          "content": "{ window.open(this.href, '_blank'); }, 200); return false;\"&gt;Why did House Republicans block crypto legislation? { window.open(this.href, '_blank'); }, 200); return false;\"&gt;How will Senate's pub… [+806 chars]"
+        },
+        {
+          "title": "PayPal-backed crypto infrastructure firm Talos inks $100M deal to acquire Coin Metrics",
+          "description": "Talos' acquisition of Coin Metrics could accelerate the integration of data analytics and investment management in the crypto sector, enhancing institutional adoption.\nThe post PayPal-backed crypto infrastructure firm Talos inks $100M deal to acquire Coin Met…",
+          "url": "https://cryptobriefing.com/crypto-infrastructure-acquisition-talos-coin-metrics/",
+          "published_at": "2025-07-16T13:37:28Z",
+          "source": {
+            "name": "Crypto Briefing",
+            "id": null
+          },
+          "author": "Vivian Nguyen",
+          "url_to_image": "https://static.cryptobriefing.com/wp-content/uploads/2025/07/16093643/27132fc9-3096-4719-bac1-60e2b8c05922-800x420.jpg",
+          "content": "Key Takeaways\r\n<ul><li>Talos has acquired Coin Metrics in a deal worth more than $100 million, aiming to offer the first fully integrated crypto data and investment-management system.</li><li>The acq… [+1100 chars]"
+        },
+        {
+          "title": "Hester Pierce Declares SEC Has No Jurisdiction Over Meme Coins",
+          "description": "Hester Pierce, a commissioner at the US SEC has stated that the regulatory body does not have full jurisdiction to oversight meme coins.",
+          "url": "https://zycrypto.com/hester-pierce-declares-sec-has-no-jurisdiction-over-meme-coins/",
+          "published_at": "2025-07-15T04:06:56Z",
+          "source": {
+            "name": "ZyCrypto",
+            "id": null
+          },
+          "author": "Muthoni Mary Kiama",
+          "url_to_image": "https://zycrypto.com/wp-content/uploads/2025/04/MMA-Champion-Conor-McGregor-Launches-REAL-Memecoin-with-Staking-Rewards-and-Status-Points.jpg",
+          "content": "Hester Pierce, a commissioner at the US Securities and Exchange Commission (SEC), has stated that the regulatory body does not have full jurisdiction to oversee meme coins.\r\nIn an interview with Bloo… [+2139 chars]"
+        },
+        {
+          "title": "Substack raised a $100M Series C from Chernin Group, a16z, and others, sources say at a $1.1B valuation, as it builds its social network and warms up to ads",
+          "description": "",
+          "url": "https://biztoc.com/x/51c0b30330207157",
+          "published_at": "2025-07-17T18:04:51Z",
+          "source": {
+            "name": "Biztoc.com",
+            "id": null
+          },
+          "author": "nytimes.com",
+          "url_to_image": "https://biztoc.com/cdn/950/og.png",
+          "content": "{ window.open(this.href, '_blank'); }, 200); return false;\"&gt;Why is JPMorgan CEO warning about private credit risk? { window.open(this.href, '_blank'); }, 200); return false;\"&gt;How did Uber's rob… [+719 chars]"
+        },
+        {
+          "title": "Former OpenAI CTO Mira Murati raises $2 billion for new AI startup Thinking Machines Lab",
+          "description": "Mira Murati rocketed into the spotlight in 2023 when she was named interim CEO of OpenAI after Sam Altman was briefly ousted by the company's board.",
+          "url": "https://www.cnbc.com/2025/07/15/openai-mira-murati-thinking-machines-lab.html",
+          "published_at": "2025-07-15T18:05:51Z",
+          "source": {
+            "name": "CNBC",
+            "id": null
+          },
+          "author": null,
+          "url_to_image": "https://image.cnbcfm.com/api/v1/image/107319104-1697629813679-gettyimages-1730510668-AFP_33YK48K.jpeg?v=1719360018&w=1920&h=1080",
+          "content": "Mira Murati, the former chief technology officer of OpenAI, said Tuesday that her artificial intelligence startup Thinking Machines Lab has raised $2 billion in fresh capital and will announce its fi… [+1273 chars]"
+        },
+        {
+          "title": "OpenAI’s former CTO Mira Murati’s startup Thinking Machines raises $2 billion led by a16z",
+          "description": "Venture capital firm Andreessen Horowitz led the round that also saw participation from AI chip giant Nvidia, Accel, ServiceNow, Cisco, AMD and Jane Street, the startup said.",
+          "url": "https://economictimes.indiatimes.com/tech/funding/openais-former-cto-mira-muratis-startup-thinking-machines-raises-2-billion-led-by-a16z/articleshow/122523250.cms",
+          "published_at": "2025-07-15T17:05:54Z",
+          "source": {
+            "name": "The Times of India",
+            "id": "the-times-of-india"
+          },
+          "author": "Reuters",
+          "url_to_image": "https://img.etimg.com/thumb/width-1200,height-900,imgsize-37464,resizemode-75,msid-122523250/tech/funding/openais-former-cto-mira-muratis-startup-thinking-machines-raises-2-billion-led-by-a16z.jpg",
+          "content": "Thinking Machines Lab, the artificial intelligence startup founded by former OpenAI executive Mira Murati, said on Tuesday that it has raised $2 billion in funding.Venture capital firm Andreessen Hor… [+1289 chars]"
+        }
+      ]
+    },
+    "1_quarter": {
+      "error": "426 Client Error: Upgrade Required for url: https://newsapi.org/v2/everything?q=%22a16z%22&from=2025-05-14&to=2025-05-21&sortBy=popularity&pageSize=20&language=en&apiKey=47475ac280c24cdfbb0b4cc42aa75787",
+      "date_range": {
+        "from": "2025-05-14",
+        "to": "2025-05-21"
+      }
+    },
+    "1_year": {
+      "error": "426 Client Error: Upgrade Required for url: https://newsapi.org/v2/everything?q=%22a16z%22&from=2024-08-12&to=2024-08-19&sortBy=popularity&pageSize=20&language=en&apiKey=47475ac280c24cdfbb0b4cc42aa75787",
+      "date_range": {
+        "from": "2024-08-12",
+        "to": "2024-08-19"
+      }
+    }
+  }
+}
