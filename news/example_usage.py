@@ -21,7 +21,7 @@ def main():
         return
     
     # Option 2: Pass API key directly (uncomment and replace with your key)
-    collector = CompanyNewsCollector(api_key="47475ac280c24cdfbb0b4cc42aa75787")
+    # collector = CompanyNewsCollector(api_key="47475ac280c24cdfbb0b4cc42aa75787")
     
     # Example companies to search
     companies = ["Palantir", "Tesla", "Microsoft"]
