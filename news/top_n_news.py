@@ -156,6 +156,9 @@ class CompanyNewsCollector:
                 print(f"{len(processed_articles)} articles (total available: {total_results})")
             else:
                 error_msg = response.get('message', 'Unknown error')
+                # Sanitize error message to remove API key
+                if 'apiKey=' in error_msg:
+                    error_msg = error_msg.split('apiKey=')[0] + 'apiKey=***HIDDEN***'
                 print(f"Error: {error_msg}")
                 results['periods'][period_name] = {
                     'error': error_msg,

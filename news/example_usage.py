@@ -20,9 +20,6 @@ def main():
         print("Please set the NEWS_API_KEY environment variable or use option 2 below.")
         return
     
-    # Option 2: Pass API key directly (uncomment and replace with your key)
-    collector = CompanyNewsCollector(api_key="47475ac280c24cdfbb0b4cc42aa75787")
-    
     # Example companies to search
     companies = ["apple", "meta", "amazon"]
     
@@ -41,12 +38,16 @@ def main():
         summary = collector.create_summary_report(results)
         print(summary)
         
+        # Create newsdata directory if it doesn't exist
+        import os
+        os.makedirs("newsdata", exist_ok=True)
+        
         # Save results to JSON file in newsdata folder
-        output_file = f"../data/newsdata/{company.lower().replace(' ', '_')}_news.json"
+        output_file = f"newsdata/{company.lower().replace(' ', '_')}_news.json"
         collector.save_results(results, output_file)
         
         # Also save to CSV for easy analysis
-        csv_file = f"../data/newsdata/{company.lower().replace(' ', '_')}_news.csv"
+        csv_file = f"newsdata/{company.lower().replace(' ', '_')}_news.csv"
         collector.export_to_csv(results, csv_file)
         
         print(f"\nFiles saved to newsdata folder:")

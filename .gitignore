@@ -109,3 +109,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 .env
+*.json
+*.csv
+newsdata/
+data/newsdata/
