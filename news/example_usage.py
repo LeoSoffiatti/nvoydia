@@ -41,15 +41,15 @@ def main():
         summary = collector.create_summary_report(results)
         print(summary)
         
-        # Save results to JSON file
-        output_file = f"{company.lower().replace(' ', '_')}_news.json"
+        # Save results to JSON file in newsdata folder
+        output_file = f"../data/newsdata/{company.lower().replace(' ', '_')}_news.json"
         collector.save_results(results, output_file)
         
         # Also save to CSV for easy analysis
-        csv_file = f"{company.lower().replace(' ', '_')}_news.csv"
+        csv_file = f"../data/newsdata/{company.lower().replace(' ', '_')}_news.csv"
         collector.export_to_csv(results, csv_file)
         
-        print(f"\nFiles saved:")
+        print(f"\nFiles saved to newsdata folder:")
         print(f"  - JSON: {output_file}")
         print(f"  - CSV: {csv_file}")
 

@@ -1,6 +1,6 @@
 {
   "company_name": "Microsoft",
-  "collected_at": "2025-08-12T21:55:55.644668",
+  "collected_at": "2025-08-12T18:40:38.672313",
   "periods": {
     "2_weeks": {
       "date_range": {
@@ -543,14 +543,14 @@
       ]
     },
     "1_quarter": {
-      "error": "426 Client Error: Upgrade Required for url: https://newsapi.org/v2/everything?q=%22Microsoft%22&from=2025-05-14&to=2025-05-21&sortBy=popularity&pageSize=20&language=en&apiKey=47475ac280c24cdfbb0b4cc42aa75787",
+      "error": "426 Client Error: Upgrade Required for url: https://newsapi.org/v2/everything?q=%22Microsoft%22&from=2025-05-14&to=2025-05-21&sortBy=popularity&pageSize=20&language=en&apiKey=b0ac0e85c24e41d1872e4eef103af4dd",
       "date_range": {
         "from": "2025-05-14",
         "to": "2025-05-21"
       }
     },
     "1_year": {
-      "error": "426 Client Error: Upgrade Required for url: https://newsapi.org/v2/everything?q=%22Microsoft%22&from=2024-08-12&to=2024-08-19&sortBy=popularity&pageSize=20&language=en&apiKey=47475ac280c24cdfbb0b4cc42aa75787",
+      "error": "426 Client Error: Upgrade Required for url: https://newsapi.org/v2/everything?q=%22Microsoft%22&from=2024-08-12&to=2024-08-19&sortBy=popularity&pageSize=20&language=en&apiKey=b0ac0e85c24e41d1872e4eef103af4dd",
       "date_range": {
         "from": "2024-08-12",
         "to": "2024-08-19"

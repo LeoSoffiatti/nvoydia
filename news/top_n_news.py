@@ -310,6 +310,11 @@ def main():
         help='Output JSON file path (default: company_news.json)'
     )
     parser.add_argument(
+        '--output-dir',
+        default='.',
+        help='Output directory for all files (default: current directory)'
+    )
+    parser.add_argument(
         '--csv',
         help='Also export to CSV file'
     )
@@ -343,12 +348,18 @@ def main():
         
         # Save results if not summary-only
         if not args.summary_only:
+            # Create output directory if it doesn't exist
+            import os
+            os.makedirs(args.output_dir, exist_ok=True)
+            
             # Save JSON
-            collector.save_results(results, args.output)
+            json_path = os.path.join(args.output_dir, args.output)
+            collector.save_results(results, json_path)
             
             # Save CSV if requested
             if args.csv:
-                collector.export_to_csv(results, args.csv)
+                csv_path = os.path.join(args.output_dir, args.csv)
+                collector.export_to_csv(results, csv_path)
         
     except Exception as e:
         print(f"Error: {e}")
