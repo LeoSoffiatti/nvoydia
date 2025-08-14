@@ -21,7 +21,7 @@ def main():
         return
     
     # Example companies to search
-    companies = ["apple", "meta", "amazon"]
+    companies = ["apple", "palantir", "amazon"]
     
     for company in companies:
         print(f"\n{'='*60}")

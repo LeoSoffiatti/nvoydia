@@ -84,7 +84,13 @@ class CompanyNewsCollector:
             'sortBy': sort_by,
             'pageSize': page_size,
             'language': 'en',  # English articles only
-            'apiKey': self.api_key
+            'apiKey': self.api_key,
+            'excludeDomains': (
+                "theonion.com,babylonbee.com,clickhole.com,thedailymash.co.uk,"
+                "reductress.com,thegatewaypundit.com,globalresearch.ca,"
+                "libertywritersnews.com,realtruenews.com,70news.com,huzlers.com,"
+                "nytimesofficial.com,cnnworldtoday.com,bbcnewstoday.com,news-pravda.com"
+            )
             #FOR EMO: u can add a 'domains' and an 'excludeDomains' parameter to the params dict to filter by specific domains
         }
         
