@@ -24,7 +24,7 @@ def main():
     collector = CompanyNewsCollector(api_key="47475ac280c24cdfbb0b4cc42aa75787")
     
     # Example companies to search
-    companies = ["a16z", "New York Times", "Bloomberg"]
+    companies = ["apple", "meta", "amazon"]
     
     for company in companies:
         print(f"\n{'='*60}")

@@ -46,18 +46,19 @@ class CompanyNewsCollector:
         self.base_url = "https://newsapi.org/v2/everything"
         self.session = requests.Session()
     
-    def _calculate_date_range(self, days_back: int, window_size: int = 7) -> tuple[str, str]:
+    def _calculate_date_range(self, days_back1: int, days_back2: int) -> tuple[str, str]:
         """
         Calculate date range for API query.
         
         Args:
-            days_back: Number of days to look back
+            days_back1: Number of days back for the end of the period (closer to today)
+            days_back2: Number of days back for the start of the period (further from today)
             
         Returns:
             Tuple of (from_date, to_date) in ISO format
         """
-        start_date = datetime.now() - timedelta(days=days_back)
-        end_date = start_date + timedelta(days=window_size)
+        end_date = datetime.now() - timedelta(days_back1)    # e.g., 7 days ago
+        start_date = datetime.now() - timedelta(days_back2)  # e.g., 30 days ago
         
         return start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')
     
@@ -77,13 +78,14 @@ class CompanyNewsCollector:
             API response as dictionary
         """
         params = {
-            'q': f'"{company_name}"',  # Exact phrase match
+            'q': f'+"{company_name}" AND (earnings OR revenue OR stock OR financial OR merger OR acquisition OR IPO OR funding OR VC OR investment OR investment round)',  # Must include company name and some financial terms
             'from': from_date,
             'to': to_date,
             'sortBy': sort_by,
             'pageSize': page_size,
             'language': 'en',  # English articles only
             'apiKey': self.api_key
+            #FOR EMO: u can add a 'domains' and an 'excludeDomains' parameter to the params dict to filter by specific domains
         }
         
         try:
@@ -106,10 +108,10 @@ class CompanyNewsCollector:
             Dictionary containing news articles organized by time period
         """
         time_periods = {
-            '2_weeks': 14,
-            '1_month': 30,
-            '1_quarter': 90,
-            '1_year': 365
+            'present_to_2weeks': (0, 14),
+            '2weeks_to_1month': (14, 30),
+            '1month_to_1quarter': (30, 90),
+            '1quarter_to_1year': (90, 365)
         }
         
         results = {
@@ -120,10 +122,10 @@ class CompanyNewsCollector:
         
         print(f"Collecting news for '{company_name}'...")
         
-        for period_name, days_back in time_periods.items():
+        for period_name, (start_days, end_days) in time_periods.items():
             print(f"  - {period_name.replace('_', ' ')}: ", end='')
             
-            from_date, to_date = self._calculate_date_range(days_back, window_size = 7)
+            from_date, to_date = self._calculate_date_range(start_days, end_days)
             
             # Make API request
             response = self._make_api_request(
@@ -131,7 +133,7 @@ class CompanyNewsCollector:
                 from_date=from_date,
                 to_date=to_date,
                 page_size=min(max_articles_per_period, 100),
-                sort_by='popularity'  # Get most popular articles first
+                sort_by='relevancy'  # Get most relevant articles first
             )
             
             if response.get('status') == 'ok':
