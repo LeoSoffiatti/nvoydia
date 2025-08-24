@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Text, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Text, ForeignKey, select
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 from sqlalchemy.sql import func
 from typing import List, Optional, Any
@@ -193,7 +193,7 @@ class PaginatedResponse(BaseModel):
 
 # Helper function to populate sample data
 def populate_sample_data(db: Session):
-    if db.query(Company).first():
+    if db.execute(select(Company)).first() is not None:
         return
     
     # Create sample people
@@ -310,18 +310,8 @@ def get_db():
     finally:
         db.close()
 
-# Lifespan context manager
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    db = SessionLocal()
-    try:
-        populate_sample_data(db)
-    finally:
-        db.close()
-    yield
-
 # Create FastAPI app
-app = FastAPI(title="NVoydia Dashboard API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="NVoydia Dashboard API", version="1.0.0")
 
 # CORS middleware
 app.add_middleware(
@@ -331,6 +321,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Startup event to populate sample data - commented out for now
+# @app.on_event("startup")
+# async def startup_event():
+#     db = SessionLocal()
+#     try:
+#         populate_sample_data(db)
+#     finally:
+#         db.close()
 
 # API Endpoints
 @app.get("/")
@@ -345,10 +344,10 @@ def get_companies(
     sort: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    query = db.query(Company)
+    query = select(Company)
     
     if industry_segment:
-        query = query.filter(Company.industry_segment == industry_segment)
+        query = query.where(Company.industry_segment == industry_segment)
     
     if sort == "name":
         query = query.order_by(Company.name)
@@ -357,8 +356,8 @@ def get_companies(
     else:
         query = query.order_by(Company.id)
     
-    total = query.count()
-    companies = query.offset((page - 1) * page_size).limit(page_size).all()
+    total = db.execute(select(func.count()).select_from(query.subquery())).scalar()
+    companies = db.execute(query.offset((page - 1) * page_size).limit(page_size)).scalars().all()
     
     return PaginatedResponse(
         page=page,
@@ -369,7 +368,7 @@ def get_companies(
 
 @app.get("/companies/{company_id}", response_model=Company)
 def get_company(company_id: int, db: Session = Depends(get_db)):
-    company = db.query(Company).filter(Company.id == company_id).first()
+    company = db.execute(select(Company).where(Company.id == company_id)).scalar_one_or_none()
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
     return company
@@ -381,10 +380,10 @@ def get_company_news(
     page_size: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
-    query = db.query(News).filter(News.company_id == company_id)
+    query = select(News).where(News.company_id == company_id)
     
-    total = query.count()
-    news = query.order_by(News.published_at.desc()).offset((page - 1) * page_size).limit(page_size).all()
+    total = db.execute(select(func.count()).select_from(query.subquery())).scalar()
+    news = db.execute(query.order_by(News.published_at.desc()).offset((page - 1) * page_size).limit(page_size)).scalars().all()
     
     return PaginatedResponse(
         page=page,
@@ -402,10 +401,10 @@ def get_news(
     sort: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    query = db.query(News).join(Company)
+    query = select(News).join(Company)
     
     if industry_segment:
-        query = query.filter(Company.industry_segment == industry_segment)
+        query = query.where(Company.industry_segment == industry_segment)
     
     if date_range:
         now = datetime.now()
@@ -421,7 +420,7 @@ def get_news(
             start_date = None
         
         if start_date:
-            query = query.filter(News.published_at >= start_date)
+            query = query.where(News.published_at >= start_date)
     
     if sort == "published_at":
         query = query.order_by(News.published_at)
@@ -430,8 +429,8 @@ def get_news(
     else:
         query = query.order_by(News.published_at.desc())
     
-    total = query.count()
-    news = query.offset((page - 1) * page_size).limit(page_size).all()
+    total = db.execute(select(func.count()).select_from(query.subquery())).scalar()
+    news = db.execute(query.offset((page - 1) * page_size).limit(page_size)).scalars().all()
     
     return PaginatedResponse(
         page=page,
@@ -447,15 +446,15 @@ def get_investments(
     company_id: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
-    query = db.query(Investment)
+    query = select(Investment)
     
     if company_id:
-        query = query.filter(Investment.company_id == company_id)
+        query = query.where(Investment.company_id == company_id)
     
     query = query.order_by(Investment.date.desc())
     
-    total = query.count()
-    investments = query.offset((page - 1) * page_size).limit(page_size).all()
+    total = db.execute(select(func.count()).select_from(query.subquery())).scalar()
+    investments = db.execute(query.offset((page - 1) * page_size).limit(page_size)).scalars().all()
     
     return PaginatedResponse(
         page=page,
@@ -471,15 +470,15 @@ def get_rankings(
     category: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    query = db.query(Ranking).join(Company)
+    query = select(Ranking).join(Company)
     
     if category:
-        query = query.filter(Ranking.category == category)
+        query = query.where(Ranking.category == category)
     
     query = query.order_by(Ranking.rank)
     
-    total = query.count()
-    rankings = query.offset((page - 1) * page_size).limit(page_size).all()
+    total = db.execute(select(func.count()).select_from(query.subquery())).scalar()
+    rankings = db.execute(query.offset((page - 1) * page_size).limit(page_size)).scalars().all()
     
     return PaginatedResponse(
         page=page,
@@ -490,7 +489,7 @@ def get_rankings(
 
 @app.get("/people/{person_id}", response_model=Person)
 def get_person(person_id: int, db: Session = Depends(get_db)):
-    person = db.query(Person).filter(Person.id == person_id).first()
+    person = db.execute(select(Person).where(Person.id == person_id)).scalar_one_or_none()
     if not person:
         raise HTTPException(status_code=404, detail="Person not found")
     return person
@@ -503,10 +502,10 @@ def get_vcs(
     investment_stage: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    query = db.query(VC)
+    query = select(VC)
     
     if investment_stage:
-        query = query.filter(VC.investment_stage == investment_stage)
+        query = query.where(VC.investment_stage == investment_stage)
     
     if sort == "final_score":
         query = query.order_by(VC.final_score)
@@ -515,8 +514,8 @@ def get_vcs(
     else:
         query = query.order_by(VC.final_score.desc())
     
-    total = query.count()
-    vcs = query.offset((page - 1) * page_size).limit(page_size).all()
+    total = db.execute(select(func.count()).select_from(query.subquery())).scalar()
+    vcs = db.execute(query.offset((page - 1) * page_size).limit(page_size)).scalars().all()
     
     return PaginatedResponse(
         page=page,
@@ -527,7 +526,7 @@ def get_vcs(
 
 @app.get("/vcs/{vc_id}", response_model=VC)
 def get_vc(vc_id: int, db: Session = Depends(get_db)):
-    vc = db.query(VC).filter(VC.id == vc_id).first()
+    vc = db.execute(select(VC).where(VC.id == vc_id)).scalar_one_or_none()
     if not vc:
         raise HTTPException(status_code=404, detail="VC not found")
     return vc
