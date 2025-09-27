@@ -1,0 +1,167 @@
+{
+  "companies": [
+    {
+      "id": 1,
+      "name": "MediTech Solutions",
+      "description": "AI-powered medical imaging platform for early disease detection",
+      "industry": "medical-imaging",
+      "founded_year": 2020,
+      "employees": 85,
+      "location": "San Francisco, CA",
+      "website": "https://meditechsolutions.com",
+      "funding_raised": 45000000,
+      "last_funding_round": "Series B",
+      "ceo": "Dr. Sarah Chen",
+      "investors": [
+        "Sequoia Capital",
+        "Andreessen Horowitz",
+        "GV"
+      ],
+      "valuation": 280000000
+    },
+    {
+      "id": 2,
+      "name": "HealthFlow",
+      "description": "Digital health platform for telemedicine and patient monitoring",
+      "industry": "digital-health",
+      "founded_year": 2019,
+      "employees": 120,
+      "location": "Austin, TX",
+      "website": "https://healthflow.io",
+      "funding_raised": 32000000,
+      "last_funding_round": "Series A",
+      "ceo": "Michael Rodriguez",
+      "investors": [
+        "First Round Capital",
+        "Khosla Ventures",
+        "General Catalyst"
+      ],
+      "valuation": 150000000
+    },
+    {
+      "id": 3,
+      "name": "BioInnovate",
+      "description": "CRISPR-based gene therapy solutions for rare diseases",
+      "industry": "biotech",
+      "founded_year": 2021,
+      "employees": 65,
+      "location": "Boston, MA",
+      "website": "https://bioinnovate.com",
+      "funding_raised": 75000000,
+      "last_funding_round": "Series A",
+      "ceo": "Dr. Lisa Thompson",
+      "investors": [
+        "Flagship Pioneering",
+        "Third Rock Ventures",
+        "Polaris Partners"
+      ],
+      "valuation": 420000000
+    },
+    {
+      "id": 4,
+      "name": "NeuroLink",
+      "description": "Brain-computer interface technology for medical applications",
+      "industry": "neurotechnology",
+      "founded_year": 2018,
+      "employees": 95,
+      "location": "Palo Alto, CA",
+      "website": "https://neuralink.com",
+      "funding_raised": 180000000,
+      "last_funding_round": "Series C",
+      "ceo": "Dr. Alex Kumar",
+      "investors": [
+        "Kleiner Perkins",
+        "Lux Capital",
+        "GV"
+      ],
+      "valuation": 1200000000
+    },
+    {
+      "id": 5,
+      "name": "VitaCare",
+      "description": "Personalized medicine platform using AI and genomics",
+      "industry": "personalized-medicine",
+      "founded_year": 2020,
+      "employees": 45,
+      "location": "Seattle, WA",
+      "website": "https://vitacare.com",
+      "funding_raised": 28000000,
+      "last_funding_round": "Series A",
+      "ceo": "Dr. Maria Santos",
+      "investors": [
+        "Andreessen Horowitz",
+        "Index Ventures",
+        "Bessemer Venture Partners"
+      ],
+      "valuation": 180000000
+    }
+  ],
+  "vcs": [
+    {
+      "id": 1,
+      "name": "Sequoia Capital",
+      "description": "Leading venture capital firm focused on technology investments",
+      "location": "Menlo Park, CA",
+      "investment_stage": "multi-stage",
+      "website": "https://sequoiacap.com",
+      "portfolio_companies": 500,
+      "total_aum": 15000000000,
+      "healthcare_focus": true,
+      "final_score": 95.8
+    },
+    {
+      "id": 2,
+      "name": "Andreessen Horowitz",
+      "description": "Silicon Valley venture capital firm",
+      "location": "Menlo Park, CA",
+      "investment_stage": "multi-stage",
+      "website": "https://a16z.com",
+      "portfolio_companies": 400,
+      "total_aum": 12000000000,
+      "healthcare_focus": true,
+      "final_score": 92.3
+    },
+    {
+      "id": 3,
+      "name": "Khosla Ventures",
+      "description": "Venture capital firm focused on early-stage technology companies",
+      "location": "Menlo Park, CA",
+      "investment_stage": "early-stage",
+      "website": "https://khoslaventures.com",
+      "portfolio_companies": 300,
+      "total_aum": 5000000000,
+      "healthcare_focus": true,
+      "final_score": 87.6
+    }
+  ],
+  "news": [
+    {
+      "id": 1,
+      "headline": "MediTech Solutions Raises $45M Series B to Scale AI Medical Imaging",
+      "content": "Medical imaging startup secures major funding round led by Sequoia Capital...",
+      "published_at": "2024-09-20T10:00:00Z",
+      "source": "TechCrunch",
+      "company_id": 1
+    },
+    {
+      "id": 2,
+      "headline": "HealthFlow Launches New Telemedicine Platform for Rural Areas",
+      "content": "Digital health company expands its offerings to underserved communities...",
+      "published_at": "2024-09-18T14:30:00Z",
+      "source": "Healthcare Weekly",
+      "company_id": 2
+    },
+    {
+      "id": 3,
+      "headline": "BioInnovate Receives FDA Breakthrough Designation for Gene Therapy",
+      "content": "CRISPR-based treatment shows promising results in clinical trials...",
+      "published_at": "2024-09-15T09:15:00Z",
+      "source": "FierceBiotech",
+      "company_id": 3
+    }
+  ],
+  "generated_at": "2025-09-27T16:51:47.512909",
+  "total_companies": 5,
+  "total_vcs": 3,
+  "total_news": 3
+}
