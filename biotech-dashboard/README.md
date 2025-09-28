@@ -1,199 +1,114 @@
-# Biotech Startup Dashboard
+# Biotech Dashboard
 
-A live-updating, interactive dashboard for tracking biotech startups, investments, and market trends. Built with modern web technologies and featuring both light and dark modes.
+A modern, responsive dashboard for tracking biotech companies, venture capital firms, and industry news.
 
 ## Features
 
-### 📊 Dashboard Overview
-- **Investment Trends Chart**: Interactive line chart showing investment trends over time
-- **Recent Funding Rounds**: Live feed of recent startup funding announcements
-- **Latest News**: Real-time news updates from the biotech industry
+- 🏥 **Company Tracking** - Monitor 10+ biotech companies with detailed profiles
+- 💰 **VC Scoring** - Track venture capital firms with investment data
+- 📰 **News Aggregation** - Latest industry news and funding announcements
+- 🔍 **Smart Search** - Search across companies, VCs, and news
+- 📱 **Responsive Design** - Works perfectly on desktop and mobile
+- 🌙 **Dark/Light Theme** - Toggle between themes
+- ⚡ **Fast Performance** - Optimized for speed
 
-### 🏢 Companies Portfolio
-- **Categorized View**: Companies organized by Digital Bio, Digital Health, and Digital Devices
-- **Detailed Company Cards**: Comprehensive information including valuation, funding stage, and employee count
-- **Summary Statistics**: Total valuations and average employee counts per category
+## Live Demo
 
-### 💰 Investments Tracking
-- **Major Corporate Investors**: Overview of top corporate venture capital firms
-- **Sector-Specific Investments**: Filterable view of investments by biotech sector
-- **Top Investors by Sector**: Leading investors in each biotech category
+Visit the live dashboard: [https://nvoydia.vercel.app](https://nvoydia.vercel.app)
 
-### 🔔 Notifications Center
-- **Priority Alerts**: High-priority notifications for important updates
-- **Real-time Updates**: Live notifications for funding rounds, company updates, and market trends
-- **Categorized Alerts**: Different types of notifications with visual indicators
+## Technology Stack
 
-### 🌙 Dark Mode Support
-- **Theme Toggle**: Switch between light and dark modes
-- **Consistent Design**: All components adapt seamlessly to the selected theme
-- **Smooth Transitions**: Animated theme switching for better user experience
-
-### 🔄 Live Updates
-- **Real-time Data**: Dashboard updates automatically every 30 seconds
-- **Simulated Live Data**: Demonstrates how real-time updates would work
-- **Interactive Elements**: All charts, lists, and data are fully interactive
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Styling**: Custom CSS with CSS Variables
+- **Icons**: Font Awesome
+- **Fonts**: Inter (Google Fonts)
+- **Deployment**: Vercel
 
 ## Getting Started
 
-### Prerequisites
-- A modern web browser (Chrome, Firefox, Safari, Edge)
-- No additional software installation required
+### Local Development
 
-### Installation
-1. Clone or download this repository
-2. Open `index.html` in your web browser
-3. The dashboard will load automatically with sample data
-
-### Usage
-
-#### Navigation
-- Use the sidebar to navigate between different sections
-- Click on any navigation item to switch pages
-- The active page is highlighted in blue
-
-#### Theme Switching
-- Click the moon/sun icon in the header to toggle between light and dark modes
-- Your theme preference will be maintained during the session
-
-#### Interactive Features
-- **Charts**: Hover over data points to see detailed information
-- **Filters**: Use year filters on the investment chart to see different time periods
-- **Tabs**: Switch between different sectors in the investments section
-- **Search**: Use the search bar to find specific companies or information
-
-#### Live Updates
-- The dashboard automatically updates every 30 seconds
-- New funding rounds and notifications appear at the top of their respective lists
-- Chart data updates smoothly to reflect market changes
-
-## Data Structure
-
-The dashboard uses realistic sample data representing:
-
-### Companies
-- **Digital Bio**: Gene editing, synthetic biology, and biotechnology companies
-- **Digital Health**: Healthcare technology, medical devices, and health analytics
-- **Digital Devices**: Medical devices, diagnostic tools, and health monitoring equipment
-
-### Investors
-- Major corporate venture capital arms
-- Focus areas and investment statistics
-- Recent investment activity
-
-### Notifications
-- Investment alerts
-- Company updates
-- Market trends
-- Portfolio alerts
-- Meeting reminders
-
-## Customization
-
-### Adding New Companies
-To add new companies, modify the `companiesData` object in `script.js`:
-
-```javascript
-const companiesData = {
-    'digitalBio': [
-        {
-            name: 'Your Company Name',
-            initials: 'YC',
-            color: '#your-color',
-            location: 'City, State',
-            valuation: '$X.XB',
-            funding: 'Series X',
-            employees: 123,
-            description: 'Company description...'
-        }
-    ]
-};
+1. Clone the repository:
+```bash
+git clone https://github.com/LeoSoffiatti/nvoydia.git
+cd nvoydia/biotech-dashboard
 ```
 
-### Modifying Chart Data
-Update the chart data in the `initializeChart()` method:
-
-```javascript
-data: {
-    labels: ['Your', 'Custom', 'Labels'],
-    datasets: [{
-        data: [your, data, values]
-    }]
-}
+2. Start a local server:
+```bash
+python -m http.server 8080
 ```
 
-### Adding New Notifications
-Extend the `notificationsData` array in `loadNotificationsData()`:
+3. Open your browser and visit: `http://localhost:8080`
 
-```javascript
-{
-    icon: 'fas fa-your-icon',
-    iconColor: '#your-color',
-    title: 'Your Notification Title',
-    hasDot: true,
-    priority: 'High Priority', // or null
-    description: 'Your notification description',
-    time: 'Time ago'
-}
+### Deployment
+
+This project is automatically deployed to Vercel. Any changes pushed to the main branch will trigger a new deployment.
+
+## Project Structure
+
+```
+biotech-dashboard/
+├── index.html              # Main HTML file
+├── styles.css              # Base styles
+├── simplified-styles.css   # Enhanced responsive styles
+├── data-service.js         # Data management and API
+├── enhanced-script.js      # Main JavaScript functionality
+├── package.json            # Project configuration
+├── vercel.json             # Vercel deployment config
+└── README.md               # This file
 ```
 
-## Technical Details
+## Data Sources
 
-### Technologies Used
-- **HTML5**: Semantic markup and structure
-- **CSS3**: Modern styling with CSS Grid and Flexbox
-- **JavaScript ES6+**: Modern JavaScript with classes and modules
-- **Chart.js**: Interactive charts and data visualization
-- **Font Awesome**: Icons and visual elements
+The dashboard uses sample data from Piloterr API integration tests, including:
 
-### Browser Support
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
-- Edge 79+
+- **Companies**: 10 biotech companies across various sectors
+- **VCs**: 6 venture capital firms with scoring data
+- **News**: 10 recent industry articles and announcements
 
-### Performance
-- Optimized for smooth animations and transitions
-- Efficient DOM manipulation for live updates
-- Responsive design for all screen sizes
+## Features Overview
 
-## Future Enhancements
+### Dashboard
+- Overview statistics
+- Top companies by valuation
+- Recent news feed
+- Top VCs by score
 
-### Planned Features
-- **Real API Integration**: Connect to actual biotech data sources
-- **User Authentication**: Login system for personalized dashboards
-- **Data Export**: Export charts and data to various formats
-- **Advanced Filtering**: More sophisticated filtering and search options
-- **Mobile App**: Native mobile application version
+### Companies Page
+- Grid view of all companies
+- Search and filter functionality
+- Detailed company profiles
+- Funding and growth data
 
-### API Integration
-The dashboard is designed to easily integrate with real APIs:
+### Investments Page
+- Investment overview
+- Funding rounds by company
+- VC investment tracking
 
-```javascript
-// Example API integration
-async function fetchRealData() {
-    const response = await fetch('/api/companies');
-    const data = await response.json();
-    return data;
-}
-```
+### Search Functionality
+- Real-time search across all data
+- Categorized results
+- Clickable search results
+
+## Browser Support
+
+- Chrome (recommended)
+- Firefox
+- Safari
+- Edge
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+4. Submit a pull request
 
 ## License
 
-This project is open source and available under the MIT License.
+This project is licensed under the MIT License.
 
-## Support
+## Contact
 
-For questions or support, please open an issue in the repository or contact the development team.
-
----
-
-**Built with ❤️ for the biotech community**
+For questions or support, please contact the NVoydia team.
