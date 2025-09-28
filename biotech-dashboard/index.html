@@ -3,337 +3,403 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biotech Dashboard</title>
+    <title>Biotech Intelligence Platform</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="simplified-styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="modern-styles.css">
 </head>
 <body>
-    <div class="app">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <h2>Biotech Tracker</h2>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-logo">
+                    <i class="fas fa-dna"></i>
+                </div>
+                <span class="brand-text">BiotechIntel</span>
             </div>
-            <ul class="sidebar-nav">
-                <li class="nav-item active" data-page="dashboard">
-                    <i class="fas fa-home"></i>
+            
+            <div class="nav-menu">
+                <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-chart-line"></i>
                     <span>Dashboard</span>
-                </li>
-                <li class="nav-item" data-page="companies">
+                </a>
+                <a href="#companies" class="nav-link" data-section="companies">
                     <i class="fas fa-building"></i>
                     <span>Companies</span>
-                </li>
-                <li class="nav-item" data-page="investments">
-                    <i class="fas fa-chart-line"></i>
+                </a>
+                <a href="#investments" class="nav-link" data-section="investments">
+                    <i class="fas fa-chart-pie"></i>
                     <span>Investments</span>
-                </li>
-                <li class="nav-item" data-page="notifications">
-                    <i class="fas fa-bell"></i>
-                    <span>Notifications</span>
-                    <span class="notification-badge">4</span>
-                </li>
-            </ul>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="header">
-                <div class="header-left">
-                    <h1 class="page-title">Dashboard</h1>
+                </a>
+                <a href="#analytics" class="nav-link" data-section="analytics">
+                    <i class="fas fa-analytics"></i>
+                    <span>Analytics</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search companies, VCs, news..." id="globalSearch">
                 </div>
-                <div class="header-center">
-                    <div class="search-bar">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search for something">
-                    </div>
-                </div>
-                <div class="header-right">
-                    <button class="theme-toggle" id="themeToggle">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                    <div class="notification-icon">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">1</span>
-                    </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="user-menu">
                     <div class="user-avatar">
-                        <span>JD</span>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Dashboard Page -->
-            <div class="page-content" id="dashboard">
-                <div class="dashboard-grid">
-                    <!-- Investment Trends -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Investment Trends ($M)</h3>
-                            <div class="year-filters">
-                                <button class="filter-btn" data-year="2023">2023</button>
-                                <button class="filter-btn active" data-year="2024">2024</button>
-                                <button class="filter-btn" data-year="2025">2025</button>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="investmentChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Recent Funding Rounds -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Recent Funding Rounds</h3>
-                        </div>
-                        <div class="funding-list" id="fundingList">
-                            <!-- Dynamic content will be loaded here -->
-                        </div>
-                    </div>
-
-                    <!-- Latest News -->
-                    <div class="card full-width">
-                        <div class="card-header">
-                            <h3>Latest News</h3>
-                            <div class="time-filters">
-                                <button class="filter-btn active" data-period="2weeks">2 Weeks</button>
-                                <button class="filter-btn" data-period="1month">1 Month</button>
-                                <button class="filter-btn" data-period="1quarter">1 Quarter</button>
-                                <button class="filter-btn" data-period="1year">1 Year</button>
-                            </div>
-                        </div>
-                        <div class="news-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Company</th>
-                                        <th>Date</th>
-                                        <th>Title</th>
-                                        <th>Summary</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="newsTableBody">
-                                    <!-- Dynamic content will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
+                        <span>AS</span>
                     </div>
                 </div>
             </div>
+        </div>
+    </nav>
 
-            <!-- Companies Page -->
-            <div class="page-content hidden" id="companies">
-                <div class="companies-header">
-                    <h2>Companies Portfolio</h2>
-                    <div class="total-companies">
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+            <!-- Hero Stats -->
+            <div class="hero-stats">
+                <div class="stat-card primary">
+                    <div class="stat-icon">
                         <i class="fas fa-building"></i>
-                        <span>Total Companies 24</span>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalCompanies">24</div>
+                        <div class="stat-label">Active Companies</div>
+                        <div class="stat-change positive">+12% this quarter</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalFunding">$2.1B</div>
+                        <div class="stat-label">Total Funding</div>
+                        <div class="stat-change positive">+28% YoY</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="avgGrowth">47%</div>
+                        <div class="stat-label">Avg Growth Rate</div>
+                        <div class="stat-change positive">+5% vs last year</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalEmployees">892</div>
+                        <div class="stat-label">Total Employees</div>
+                        <div class="stat-change positive">+18% this year</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investment Trends Chart -->
+            <div class="chart-section">
+                <div class="section-header">
+                    <h2>Investment Trends</h2>
+                    <div class="chart-controls">
+                        <div class="time-filter">
+                            <button class="filter-btn active" data-period="6m">6M</button>
+                            <button class="filter-btn" data-period="1y">1Y</button>
+                            <button class="filter-btn" data-period="2y">2Y</button>
+                            <button class="filter-btn" data-period="all">All</button>
+                        </div>
+                        <div class="chart-type">
+                            <button class="type-btn active" data-type="line">Line</button>
+                            <button class="type-btn" data-type="bar">Bar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="investmentTrendsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Activity Grid -->
+            <div class="activity-grid">
+                <!-- Recent Funding -->
+                <div class="activity-card">
+                    <div class="card-header">
+                        <h3>Recent Funding Rounds</h3>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="funding-list" id="recentFundingList">
+                        <!-- Dynamic content -->
                     </div>
                 </div>
 
-                <!-- Summary Cards -->
-                <div class="summary-cards">
-                    <div class="summary-card">
-                        <h4>Digital Bio</h4>
-                        <div class="summary-stats">
-                            <div class="stat">
-                                <span class="stat-label">Total Valuation:</span>
-                                <span class="stat-value">5980.0B</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-label">Avg Employees:</span>
-                                <span class="stat-value">309</span>
-                            </div>
-                        </div>
-                        <div class="company-count">8 companies</div>
+                <!-- Top Performers -->
+                <div class="activity-card">
+                    <div class="card-header">
+                        <h3>Top Performers</h3>
+                        <a href="#" class="view-all">View All</a>
                     </div>
-                    <div class="summary-card">
-                        <h4>Digital Health</h4>
-                        <div class="summary-stats">
-                            <div class="stat">
-                                <span class="stat-label">Total Valuation:</span>
-                                <span class="stat-value">9430.0B</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-label">Avg Employees:</span>
-                                <span class="stat-value">454</span>
-                            </div>
-                        </div>
-                        <div class="company-count">8 companies</div>
-                    </div>
-                    <div class="summary-card">
-                        <h4>Digital Devices</h4>
-                        <div class="summary-stats">
-                            <div class="stat">
-                                <span class="stat-label">Total Valuation:</span>
-                                <span class="stat-value">18770.0B</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-label">Avg Employees:</span>
-                                <span class="stat-value">649</span>
-                            </div>
-                        </div>
-                        <div class="company-count">8 companies</div>
+                    <div class="performers-list" id="topPerformersList">
+                        <!-- Dynamic content -->
                     </div>
                 </div>
 
-                <!-- Company Categories -->
-                <div class="company-categories">
-                    <div class="category-column">
-                        <h3>Digital Bio</h3>
-                        <div class="company-cards" id="digitalBioCompanies">
-                            <!-- Dynamic content will be loaded here -->
+                <!-- Latest News -->
+                <div class="activity-card full-width">
+                    <div class="card-header">
+                        <h3>Latest Industry News</h3>
+                        <div class="news-filters">
+                            <button class="filter-btn active" data-category="all">All</button>
+                            <button class="filter-btn" data-category="funding">Funding</button>
+                            <button class="filter-btn" data-category="product">Product</button>
+                            <button class="filter-btn" data-category="partnership">Partnership</button>
                         </div>
                     </div>
-                    <div class="category-column">
+                    <div class="news-grid" id="latestNewsGrid">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Companies Section -->
+        <section id="companies" class="content-section">
+            <div class="section-header">
+                <h1>Company Portfolio</h1>
+                <div class="section-controls">
+                    <div class="view-toggle">
+                        <button class="toggle-btn active" data-view="grid">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button class="toggle-btn" data-view="list">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="industryFilter">
+                            <option value="">All Industries</option>
+                            <option value="medical-imaging">Medical Imaging</option>
+                            <option value="digital-health">Digital Health</option>
+                            <option value="biotech">Biotech</option>
+                            <option value="neurotechnology">Neurotechnology</option>
+                            <option value="personalized-medicine">Personalized Medicine</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Industry Overview -->
+            <div class="industry-overview">
+                <div class="industry-card" data-industry="medical-imaging">
+                    <div class="industry-header">
+                        <h3>Medical Imaging</h3>
+                        <span class="company-count">3 companies</span>
+                    </div>
+                    <div class="industry-stats">
+                        <div class="stat">
+                            <span class="stat-value">$280M</span>
+                            <span class="stat-label">Total Valuation</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">75%</span>
+                            <span class="stat-label">Tech Employees</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="industry-card" data-industry="digital-health">
+                    <div class="industry-header">
                         <h3>Digital Health</h3>
-                        <div class="company-cards" id="digitalHealthCompanies">
-                            <!-- Dynamic content will be loaded here -->
+                        <span class="company-count">4 companies</span>
+                    </div>
+                    <div class="industry-stats">
+                        <div class="stat">
+                            <span class="stat-value">$150M</span>
+                            <span class="stat-label">Total Valuation</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">60%</span>
+                            <span class="stat-label">Tech Employees</span>
                         </div>
                     </div>
-                    <div class="category-column">
-                        <h3>Digital Devices</h3>
-                        <div class="company-cards" id="digitalDevicesCompanies">
-                            <!-- Dynamic content will be loaded here -->
+                </div>
+                
+                <div class="industry-card" data-industry="biotech">
+                    <div class="industry-header">
+                        <h3>Biotech</h3>
+                        <span class="company-count">3 companies</span>
+                    </div>
+                    <div class="industry-stats">
+                        <div class="stat">
+                            <span class="stat-value">$420M</span>
+                            <span class="stat-label">Total Valuation</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">80%</span>
+                            <span class="stat-label">Tech Employees</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Investments Page -->
-            <div class="page-content hidden" id="investments">
-                <div class="investments-grid">
-                    <!-- Major Corporate Investors -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Major Corporate Investors</h3>
-                        </div>
-                        <div class="investors-grid" id="investorsGrid">
-                            <!-- Dynamic content will be loaded here -->
-                        </div>
-                    </div>
+            <!-- Companies Grid -->
+            <div class="companies-grid" id="companiesGrid">
+                <!-- Dynamic content -->
+            </div>
+        </section>
 
-                    <!-- Investments by Sector - Horizontal Layout -->
-                    <div class="sector-investments-container">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Investments by Sector</h3>
-                                <div class="sector-tabs">
-                                    <button class="tab-btn active" data-sector="digital-bio">Digital Bio</button>
-                                    <button class="tab-btn" data-sector="digital-health">Digital Health</button>
-                                    <button class="tab-btn" data-sector="digital-devices">Digital Devices</button>
-                                </div>
-                            </div>
-                            <div class="sector-investments" id="sectorInvestments">
-                                <!-- Dynamic content will be loaded here -->
-                            </div>
-                        </div>
-
-                        <!-- Top Investors by Sector -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Top Investors by Sector</h3>
-                            </div>
-                            <div class="top-investors-container">
-                                <div class="top-investors" id="topInvestors">
-                                    <!-- Dynamic content will be loaded here -->
-                                </div>
-                            </div>
-                        </div>
+        <!-- Investments Section -->
+        <section id="investments" class="content-section">
+            <div class="section-header">
+                <h1>Investment Analytics</h1>
+                <div class="section-controls">
+                    <div class="time-range">
+                        <button class="range-btn active" data-range="ytd">YTD</button>
+                        <button class="range-btn" data-range="1y">1Y</button>
+                        <button class="range-btn" data-range="2y">2Y</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Notifications Page -->
-            <div class="page-content hidden" id="notifications">
-                <div class="notifications-header">
-                    <h2>Notifications</h2>
-                </div>
-
-                <!-- Notification Summary Cards -->
-                <div class="notification-summary">
-                    <div class="summary-card">
-                        <div class="summary-icon">
-                            <i class="fas fa-bell"></i>
-                        </div>
-                        <div class="summary-content">
-                            <h4>Unread Notifications</h4>
-                            <span class="summary-number">4</span>
-                        </div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-icon">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="summary-content">
-                            <h4>High Priority</h4>
-                            <span class="summary-number">3</span>
-                        </div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-icon">
-                            <i class="fas fa-calendar"></i>
-                        </div>
-                        <div class="summary-content">
-                            <h4>This Week</h4>
-                            <span class="summary-number">12</span>
-                        </div>
+            <!-- Investment Overview -->
+            <div class="investment-overview">
+                <div class="overview-card">
+                    <h3>Portfolio Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="portfolioChart"></canvas>
                     </div>
                 </div>
-
-                <!-- Notifications List -->
-                <div class="notifications-list" id="notificationsList">
-                    <!-- Dynamic content will be loaded here -->
+                
+                <div class="overview-card">
+                    <h3>Investment Timeline</h3>
+                    <div class="chart-container">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
                 </div>
             </div>
-        </main>
-    </div>
 
-    <!-- Modal for detailed information -->
+            <!-- Top VCs -->
+            <div class="vcs-section">
+                <div class="section-header">
+                    <h2>Top Venture Capital Firms</h2>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+                <div class="vcs-grid" id="vcsGrid">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+            <!-- Investment Trends -->
+            <div class="trends-section">
+                <div class="trends-header">
+                    <h2>Investment Trends by Sector</h2>
+                    <div class="trend-controls">
+                        <button class="trend-btn active" data-metric="funding">Funding</button>
+                        <button class="trend-btn" data-metric="deals">Deals</button>
+                        <button class="trend-btn" data-metric="valuation">Valuation</button>
+                    </div>
+                </div>
+                <div class="trends-chart">
+                    <canvas id="sectorTrendsChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="content-section">
+            <div class="section-header">
+                <h1>Advanced Analytics</h1>
+                <div class="section-controls">
+                    <div class="analytics-filters">
+                        <select id="analyticsTimeframe">
+                            <option value="6m">Last 6 Months</option>
+                            <option value="1y">Last Year</option>
+                            <option value="2y">Last 2 Years</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Grid -->
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>Market Sentiment</h3>
+                    <div class="sentiment-meter">
+                        <div class="meter-fill" style="width: 78%"></div>
+                        <span class="meter-label">78% Positive</span>
+                    </div>
+                </div>
+                
+                <div class="analytics-card">
+                    <h3>Growth Trajectory</h3>
+                    <div class="chart-container">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="analytics-card">
+                    <h3>Risk Assessment</h3>
+                    <div class="risk-indicators">
+                        <div class="risk-item low">
+                            <span class="risk-label">Market Risk</span>
+                            <span class="risk-value">Low</span>
+                        </div>
+                        <div class="risk-item medium">
+                            <span class="risk-label">Regulatory Risk</span>
+                            <span class="risk-value">Medium</span>
+                        </div>
+                        <div class="risk-item low">
+                            <span class="risk-label">Technology Risk</span>
+                            <span class="risk-value">Low</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
     <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
+        <div class="modal" id="companyModal">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Details</h2>
+                <h2 id="modalTitle">Company Details</h2>
                 <button class="modal-close" id="modalClose">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-content" id="modalContent">
-                <!-- Dynamic content will be loaded here -->
+                <!-- Dynamic content -->
             </div>
         </div>
     </div>
 
-    <!-- Enhanced Modals -->
-    <div class="modal" id="companyModal">
-        <div class="modal-content">
-            <!-- Company details will be loaded here -->
-        </div>
-    </div>
-
-    <div class="modal" id="vcModal">
-        <div class="modal-content">
-            <!-- VC details will be loaded here -->
-        </div>
-    </div>
-
-    <div class="modal" id="newsModal">
-        <div class="modal-content">
-            <!-- News details will be loaded here -->
-        </div>
-    </div>
-
-    <!-- Search Results Overlay -->
-    <div class="search-results">
-        <!-- Search results will be loaded here -->
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
     </div>
 
     <!-- Scripts -->
     <script src="data-service.js"></script>
-    <script src="enhanced-script.js"></script>
+    <script src="modern-script.js"></script>
 </body>
 </html>
