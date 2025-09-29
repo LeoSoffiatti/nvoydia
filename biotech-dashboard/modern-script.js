@@ -19,7 +19,15 @@ class ModernBiotechPlatform {
         console.log('Initializing platform...');
         this.setupEventListeners();
         this.initializeCharts();
-        this.loadDashboardData();
+        // Wait for data-ready event before populating UI
+        window.addEventListener('data-ready', (e) => {
+            console.log('Data ready from', e.detail?.source);
+            this.loadDashboardData();
+        });
+        // If data already loaded synchronously (sample), populate now
+        if (this.dataService.companies.length > 0) {
+            this.loadDashboardData();
+        }
         this.setupThemeToggle();
         this.setupSearch();
         console.log('Platform initialization complete');

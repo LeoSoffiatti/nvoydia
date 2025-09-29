@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Text, ForeignKey, select
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Text, ForeignKey, select, text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 from sqlalchemy.sql import func
@@ -109,7 +109,7 @@ class CompanyBase(BaseModel):
     industry_segment: str
     technical_employees_pct: float
 
-class Company(CompanyBase):
+class CompanyOut(CompanyBase):
     id: int
     ceo_id: int
     created_at: datetime
@@ -122,7 +122,7 @@ class PersonBase(BaseModel):
     title: str
     linkedin_url: Optional[str] = None
 
-class Person(PersonBase):
+class PersonOut(PersonBase):
     id: int
     created_at: datetime
     
@@ -135,7 +135,7 @@ class NewsBase(BaseModel):
     published_at: datetime
     source: str
 
-class News(NewsBase):
+class NewsOut(NewsBase):
     id: int
     company_id: int
     created_at: datetime
@@ -150,7 +150,7 @@ class InvestmentBase(BaseModel):
     currency: str
     date: datetime
 
-class Investment(InvestmentBase):
+class InvestmentOut(InvestmentBase):
     id: int
     created_at: datetime
     
@@ -163,7 +163,7 @@ class RankingBase(BaseModel):
     score: float
     category: str
 
-class Ranking(RankingBase):
+class RankingOut(RankingBase):
     id: int
     created_at: datetime
     
@@ -177,7 +177,7 @@ class VCBase(BaseModel):
     location: Optional[str] = None
     investment_stage: Optional[str] = None
 
-class VC(VCBase):
+class VCOut(VCBase):
     id: int
     final_score: float
     created_at: datetime
@@ -322,14 +322,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Startup event to populate sample data - commented out for now
-# @app.on_event("startup")
-# async def startup_event():
-#     db = SessionLocal()
-#     try:
-#         populate_sample_data(db)
-#     finally:
-#         db.close()
+# Populate sample data on startup (safe no-op if already populated)
+@app.on_event("startup")
+async def startup_event():
+    db = SessionLocal()
+    try:
+        populate_sample_data(db)
+    finally:
+        db.close()
 
 # API Endpoints
 @app.get("/")
@@ -344,29 +344,38 @@ def get_companies(
     sort: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    query = select(Company)
-    
+    # Use Core table to avoid any naming collisions
+    companies_table = Base.metadata.tables["companies"]
+
+    stmt = select(companies_table)
     if industry_segment:
-        query = query.where(Company.industry_segment == industry_segment)
-    
+        stmt = stmt.where(companies_table.c.industry_segment == industry_segment)
+
     if sort == "name":
-        query = query.order_by(Company.name)
+        stmt = stmt.order_by(companies_table.c.name.asc())
     elif sort == "-name":
-        query = query.order_by(Company.name.desc())
+        stmt = stmt.order_by(companies_table.c.name.desc())
     else:
-        query = query.order_by(Company.id)
-    
-    total = db.execute(select(func.count()).select_from(query.subquery())).scalar()
-    companies = db.execute(query.offset((page - 1) * page_size).limit(page_size)).scalars().all()
-    
+        stmt = stmt.order_by(companies_table.c.id.asc())
+
+    total = db.execute(
+        select(func.count()).select_from(stmt.subquery())
+    ).scalar() or 0
+
+    rows = db.execute(
+        stmt.offset((page - 1) * page_size).limit(page_size)
+    ).mappings().all()
+
+    results = [dict(r) for r in rows]
+
     return PaginatedResponse(
         page=page,
         page_size=page_size,
         total=total,
-        results=companies
+        results=results
     )
 
-@app.get("/companies/{company_id}", response_model=Company)
+@app.get("/companies/{company_id}", response_model=CompanyOut)
 def get_company(company_id: int, db: Session = Depends(get_db)):
     company = db.execute(select(Company).where(Company.id == company_id)).scalar_one_or_none()
     if not company:
@@ -487,7 +496,54 @@ def get_rankings(
         results=rankings
     )
 
-@app.get("/people/{person_id}", response_model=Person)
+# Lightweight search endpoint (by company name)
+@app.get("/search/companies", response_model=PaginatedResponse)
+def search_companies(
+    q: str = Query(..., min_length=1, description="Company name search term"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100),
+):
+    """
+    Simple name-based search over companies.
+    Returns id, name, and industry_segment for matching rows.
+    """
+    # Use raw SQL to avoid ORM naming collisions in this module
+    pattern = f"%{q.lower()}%"
+    with engine.connect() as conn:
+        total = conn.execute(
+            text("""
+                SELECT COUNT(*) as cnt
+                FROM companies
+                WHERE lower(name) LIKE :pattern
+            """),
+            {"pattern": pattern},
+        ).scalar() or 0
+
+        rows = conn.execute(
+            text("""
+                SELECT id, name, industry_segment
+                FROM companies
+                WHERE lower(name) LIKE :pattern
+                ORDER BY name ASC
+                LIMIT :limit OFFSET :offset
+            """),
+            {
+                "pattern": pattern,
+                "limit": page_size,
+                "offset": (page - 1) * page_size,
+            },
+        ).mappings().all()
+
+        results = [dict(r) for r in rows]
+
+    return PaginatedResponse(
+        page=page,
+        page_size=page_size,
+        total=total,
+        results=results,
+    )
+
+@app.get("/people/{person_id}", response_model=PersonOut)
 def get_person(person_id: int, db: Session = Depends(get_db)):
     person = db.execute(select(Person).where(Person.id == person_id)).scalar_one_or_none()
     if not person:
@@ -524,7 +580,7 @@ def get_vcs(
         results=vcs
     )
 
-@app.get("/vcs/{vc_id}", response_model=VC)
+@app.get("/vcs/{vc_id}", response_model=VCOut)
 def get_vc(vc_id: int, db: Session = Depends(get_db)):
     vc = db.execute(select(VC).where(VC.id == vc_id)).scalar_one_or_none()
     if not vc:

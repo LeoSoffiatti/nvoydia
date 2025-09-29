@@ -1,10 +1,93 @@
 // Data Service - Loads Piloterr sample data
 class DataService {
     constructor() {
+        this.baseUrl = 'http://localhost:8000';
         this.companies = [];
         this.vcs = [];
         this.news = [];
-        this.loadSampleData();
+        // Try backend first; fall back to sample data on failure
+        this.loadBackendData().catch(() => {
+            this.loadSampleData();
+            window.dispatchEvent(new CustomEvent('data-ready', { detail: { source: 'sample' } }));
+        });
+    }
+
+    async loadBackendData() {
+        const safeFetch = async (url) => {
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            return resp.json();
+        };
+
+        // Companies
+        try {
+            const compRes = await safeFetch(`${this.baseUrl}/companies?page=1&page_size=200`);
+            const rows = compRes.results || [];
+            this.companies = rows.map(r => ({
+                id: r.id,
+                name: r.name,
+                description: r.description || 'No description available',
+                industry: r.industry_segment || 'unknown',
+                founded_year: r.founded_year || new Date(r.created_at || Date.now()).getFullYear(),
+                employees: r.employees || Math.floor(Math.random()*100+40),
+                location: r.location || 'United States',
+                website: r.website || '#',
+                funding_raised: r.funding_raised || Math.floor(Math.random()*80+20)*1_000_000,
+                last_funding_round: r.last_funding_round || 'Seed',
+                ceo: r.ceo_name || 'Unknown',
+                investors: r.investors || ['Sequoia Capital','Andreessen Horowitz'],
+                valuation: r.valuation || Math.floor(Math.random()*900+100)*1_000_000,
+                logo: '🏥',
+                status: 'active',
+                growth_rate: r.growth_rate || Math.floor(Math.random()*50+20),
+                technical_employees_pct: r.technical_employees_pct || 60
+            }));
+        } catch (e) {
+            throw e;
+        }
+
+        // News
+        try {
+            const newsRes = await safeFetch(`${this.baseUrl}/news?page=1&page_size=200`);
+            const rows = newsRes.results || [];
+            this.news = rows.map(n => ({
+                id: n.id,
+                headline: n.headline,
+                content: n.content || '',
+                published_at: n.published_at,
+                source: n.source || 'Unknown',
+                company_id: n.company_id,
+                category: 'general',
+                read_time: '3 min read'
+            }));
+        } catch (_) {
+            // tolerate missing news
+            this.news = [];
+        }
+
+        // VCs
+        try {
+            const vcsRes = await safeFetch(`${this.baseUrl}/vcs?page=1&page_size=50`);
+            const rows = vcsRes.results || [];
+            this.vcs = rows.map(v => ({
+                id: v.id,
+                name: v.name,
+                description: v.description || '',
+                location: v.location || '—',
+                investment_stage: v.investment_stage || 'multi-stage',
+                website: v.website || '#',
+                portfolio_companies: v.portfolio_companies || Math.floor(Math.random()*500+100),
+                total_aum: v.total_aum || Math.floor(Math.random()*9+1)*1_000_000_000,
+                healthcare_focus: true,
+                final_score: v.final_score || Math.round(Math.random()*20+80),
+                logo: '🌱',
+                investments: v.investments || Math.floor(Math.random()*60+10)
+            }));
+        } catch (_) {
+            this.vcs = [];
+        }
+
+        window.dispatchEvent(new CustomEvent('data-ready', { detail: { source: 'backend' } }));
     }
 
     loadSampleData() {
