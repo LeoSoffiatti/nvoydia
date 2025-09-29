@@ -429,6 +429,111 @@ class DataService {
         );
     }
 
+    searchFundingRounds(query) {
+        if (!query) return [];
+        
+        const searchTerm = query.toLowerCase();
+        // Create sample funding rounds data for search
+        const fundingRounds = [
+            {
+                id: 1,
+                company_name: "MediTech Solutions",
+                round_type: "Series B",
+                amount: 45000000,
+                date: "2024-01-15",
+                industry: "medical-imaging",
+                investors: ["Sequoia Capital", "Andreessen Horowitz"]
+            },
+            {
+                id: 2,
+                company_name: "HealthFlow",
+                round_type: "Series A",
+                amount: 32000000,
+                date: "2024-02-20",
+                industry: "digital-health",
+                investors: ["First Round Capital", "Khosla Ventures"]
+            },
+            {
+                id: 3,
+                company_name: "BioGenetics Corp",
+                round_type: "Seed",
+                amount: 15000000,
+                date: "2024-03-10",
+                industry: "biotech",
+                investors: ["Y Combinator", "General Catalyst"]
+            }
+        ];
+        
+        return fundingRounds.filter(round => 
+            round.company_name.toLowerCase().includes(searchTerm) ||
+            round.round_type.toLowerCase().includes(searchTerm) ||
+            round.industry.toLowerCase().includes(searchTerm) ||
+            round.investors.some(investor => investor.toLowerCase().includes(searchTerm))
+        );
+    }
+
+    searchInvestors(query) {
+        if (!query) return [];
+        
+        const searchTerm = query.toLowerCase();
+        // Create sample investors data for search
+        const investors = [
+            {
+                id: 1,
+                name: "Sequoia Capital",
+                type: "VC",
+                location: "Menlo Park, CA",
+                investments: 1250,
+                focus_areas: ["Healthcare", "Technology", "Biotech"],
+                logo: "🌲"
+            },
+            {
+                id: 2,
+                name: "Andreessen Horowitz",
+                type: "VC",
+                location: "Menlo Park, CA",
+                investments: 980,
+                focus_areas: ["Technology", "Healthcare", "AI"],
+                logo: "🚀"
+            },
+            {
+                id: 3,
+                name: "First Round Capital",
+                type: "VC",
+                location: "San Francisco, CA",
+                investments: 750,
+                focus_areas: ["Early Stage", "Technology", "Healthcare"],
+                logo: "🎯"
+            }
+        ];
+        
+        return investors.filter(investor => 
+            investor.name.toLowerCase().includes(searchTerm) ||
+            investor.location.toLowerCase().includes(searchTerm) ||
+            investor.focus_areas.some(area => area.toLowerCase().includes(searchTerm))
+        );
+    }
+
+    formatCurrency(amount) {
+        if (amount >= 1000000000) {
+            return `$${(amount / 1000000000).toFixed(1)}B`;
+        } else if (amount >= 1000000) {
+            return `$${(amount / 1000000).toFixed(1)}M`;
+        } else if (amount >= 1000) {
+            return `$${(amount / 1000).toFixed(1)}K`;
+        }
+        return `$${amount}`;
+    }
+
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+    }
+
     // Get company by ID
     getCompanyById(id) {
         return this.companies.find(company => company.id === id);

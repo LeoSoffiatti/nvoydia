@@ -3,7 +3,11 @@
 
 class ModernBiotechPlatform {
     constructor() {
+        console.log('Creating ModernBiotechPlatform...');
         this.dataService = new DataService();
+        console.log('DataService created:', this.dataService);
+        console.log('Companies loaded:', this.dataService.companies.length);
+        
         this.currentSection = 'dashboard';
         this.charts = {};
         this.modals = {};
@@ -12,11 +16,13 @@ class ModernBiotechPlatform {
     }
 
     init() {
+        console.log('Initializing platform...');
         this.setupEventListeners();
         this.initializeCharts();
         this.loadDashboardData();
         this.setupThemeToggle();
         this.setupSearch();
+        console.log('Platform initialization complete');
     }
 
     setupEventListeners() {
@@ -181,15 +187,58 @@ class ModernBiotechPlatform {
     }
 
     setupSearch() {
+        console.log('Setting up search...');
         const searchInput = document.getElementById('globalSearch');
         let searchTimeout;
 
-        searchInput?.addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                this.performSearch(e.target.value);
-            }, 300);
-        });
+        if (searchInput) {
+            console.log('Search input found:', searchInput);
+            
+            // Input event with debouncing
+            searchInput.addEventListener('input', (e) => {
+                console.log('Search input event:', e.target.value);
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    this.performSearch(e.target.value);
+                }, 300);
+            });
+
+            // Focus event to show recent searches
+            searchInput.addEventListener('focus', () => {
+                console.log('Search input focused');
+                if (searchInput.value.trim()) {
+                    this.performSearch(searchInput.value);
+                } else {
+                    this.showRecentSearches();
+                }
+            });
+
+            // Keyboard shortcuts
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.clearSearchResults();
+                    searchInput.blur();
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.performSearch(searchInput.value);
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    this.navigateSearchResults('down');
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    this.navigateSearchResults('up');
+                }
+            });
+
+            // Click outside to close
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-container') && !e.target.closest('.search-overlay')) {
+                    this.clearSearchResults();
+                }
+            });
+        } else {
+            console.error('Search input not found!');
+        }
     }
 
     switchSection(section) {
@@ -1140,16 +1189,38 @@ class ModernBiotechPlatform {
     }
 
     performSearch(query) {
+        console.log('Performing search for:', query);
+        
         if (!query.trim()) {
             this.clearSearchResults();
             return;
         }
 
+        // Store search query for recent searches
+        this.addToRecentSearches(query);
+
+        // Search across all data types
         const companies = this.dataService.searchCompanies(query);
         const vcs = this.dataService.searchVCs(query);
         const news = this.dataService.searchNews(query);
+        
+        // Also search for funding rounds, investors, and other data
+        const fundingRounds = this.dataService.searchFundingRounds(query);
+        const investors = this.dataService.searchInvestors(query);
 
-        this.showSearchResults({ companies, vcs, news });
+        console.log('Search results:', { companies, vcs, news, fundingRounds, investors });
+
+        // Filter current page content if we're on a specific section
+        this.filterCurrentPageContent(query);
+
+        this.showSearchResults({ 
+            companies, 
+            vcs, 
+            news, 
+            fundingRounds, 
+            investors,
+            query 
+        });
     }
 
     showSearchResults(results) {
@@ -1162,61 +1233,119 @@ class ModernBiotechPlatform {
             document.body.appendChild(searchOverlay);
         }
 
-        const { companies, vcs, news } = results;
+        const { companies, vcs, news, fundingRounds, investors, query } = results;
+        const totalResults = companies.length + vcs.length + news.length + fundingRounds.length + investors.length;
+        
         searchOverlay.innerHTML = `
             <div class="search-results">
                 <div class="search-results-header">
-                    <h3>Search Results</h3>
+                    <div class="search-header-info">
+                        <h3>Search Results</h3>
+                        <span class="search-count">${totalResults} results for "${query}"</span>
+                    </div>
                     <button class="search-close" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
                 </div>
                 <div class="search-results-content">
                     ${companies.length > 0 ? `
                         <div class="search-section">
-                            <h4>Companies (${companies.length})</h4>
-                            ${companies.slice(0, 5).map(company => `
-                                <div class="search-item" onclick="window.platform.showCompanyModal(${company.id})">
-                                    <div class="search-item-logo">${company.logo}</div>
-                                    <div class="search-item-info">
-                                        <div class="search-item-name">${company.name}</div>
-                                        <div class="search-item-desc">${company.industry.replace('-', ' ')} • ${company.location}</div>
+                            <h4><i class="fas fa-building"></i> Companies (${companies.length})</h4>
+                            <div class="search-items">
+                                ${companies.slice(0, 8).map(company => `
+                                    <div class="search-item" onclick="if(window.platform) { window.platform.showCompanyModal(${company.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
+                                        <div class="search-item-logo">${company.logo}</div>
+                                        <div class="search-item-info">
+                                            <div class="search-item-name">${this.highlightSearchTerm(company.name, query)}</div>
+                                            <div class="search-item-desc">${company.industry.replace('-', ' ')} • ${company.location}</div>
+                                            <div class="search-item-meta">${company.last_funding_round} • ${this.dataService.formatCurrency(company.funding_raised)}</div>
+                                        </div>
+                                        <i class="fas fa-arrow-right search-item-arrow"></i>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                                ${companies.length > 8 ? `<div class="search-more">+${companies.length - 8} more companies</div>` : ''}
+                            </div>
                         </div>
                     ` : ''}
+                    
                     ${vcs.length > 0 ? `
                         <div class="search-section">
-                            <h4>Venture Capital (${vcs.length})</h4>
-                            ${vcs.slice(0, 5).map(vc => `
-                                <div class="search-item" onclick="window.platform.showVCModal(${vc.id})">
-                                    <div class="search-item-logo">${vc.logo}</div>
-                                    <div class="search-item-info">
-                                        <div class="search-item-name">${vc.name}</div>
-                                        <div class="search-item-desc">${vc.location} • ${vc.investments} investments</div>
+                            <h4><i class="fas fa-hand-holding-usd"></i> Venture Capital (${vcs.length})</h4>
+                            <div class="search-items">
+                                ${vcs.slice(0, 5).map(vc => `
+                                    <div class="search-item" onclick="if(window.platform) { window.platform.showVCModal(${vc.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
+                                        <div class="search-item-logo">${vc.logo}</div>
+                                        <div class="search-item-info">
+                                            <div class="search-item-name">${this.highlightSearchTerm(vc.name, query)}</div>
+                                            <div class="search-item-desc">${vc.location} • ${vc.investments} investments</div>
+                                            <div class="search-item-meta">Focus: ${vc.focus_areas.join(', ')}</div>
+                                        </div>
+                                        <i class="fas fa-arrow-right search-item-arrow"></i>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
                         </div>
                     ` : ''}
+                    
+                    ${fundingRounds.length > 0 ? `
+                        <div class="search-section">
+                            <h4><i class="fas fa-dollar-sign"></i> Funding Rounds (${fundingRounds.length})</h4>
+                            <div class="search-items">
+                                ${fundingRounds.slice(0, 5).map(round => `
+                                    <div class="search-item" onclick="if(window.platform) { window.platform.showFundingModal(${round.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
+                                        <div class="search-item-logo">💰</div>
+                                        <div class="search-item-info">
+                                            <div class="search-item-name">${this.highlightSearchTerm(round.company_name, query)}</div>
+                                            <div class="search-item-desc">${round.round_type} • ${this.dataService.formatCurrency(round.amount)}</div>
+                                            <div class="search-item-meta">${round.date} • ${round.industry}</div>
+                                        </div>
+                                        <i class="fas fa-arrow-right search-item-arrow"></i>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
                     ${news.length > 0 ? `
                         <div class="search-section">
-                            <h4>News (${news.length})</h4>
-                            ${news.slice(0, 5).map(article => `
-                                <div class="search-item" onclick="window.platform.showNewsModal(${article.id})">
-                                    <div class="search-item-info">
-                                        <div class="search-item-name">${article.headline}</div>
-                                        <div class="search-item-desc">${article.source} • ${this.dataService.formatDate(article.published_at)}</div>
+                            <h4><i class="fas fa-newspaper"></i> News (${news.length})</h4>
+                            <div class="search-items">
+                                ${news.slice(0, 5).map(article => `
+                                    <div class="search-item" onclick="if(window.platform) { window.platform.showNewsModal(${article.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
+                                        <div class="search-item-info">
+                                            <div class="search-item-name">${this.highlightSearchTerm(article.headline, query)}</div>
+                                            <div class="search-item-desc">${article.source} • ${this.dataService.formatDate(article.published_at)}</div>
+                                            <div class="search-item-meta">${article.category}</div>
+                                        </div>
+                                        <i class="fas fa-arrow-right search-item-arrow"></i>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
                         </div>
                     ` : ''}
-                    ${companies.length === 0 && vcs.length === 0 && news.length === 0 ? `
+                    
+                    ${totalResults === 0 ? `
                         <div class="search-no-results">
-                            <p>No results found for "${document.getElementById('globalSearch').value}"</p>
+                            <div class="no-results-icon">🔍</div>
+                            <h4>No results found</h4>
+                            <p>Try searching for:</p>
+                            <ul>
+                                <li>Company names (e.g., "MediTech", "BioNTech")</li>
+                                <li>Industries (e.g., "biotech", "digital health")</li>
+                                <li>Locations (e.g., "San Francisco", "Boston")</li>
+                                <li>Funding stages (e.g., "Series A", "Seed")</li>
+                                <li>VC firms (e.g., "Sequoia", "Andreessen")</li>
+                            </ul>
                         </div>
                     ` : ''}
                 </div>
+                
+                ${totalResults > 0 ? `
+                    <div class="search-footer">
+                        <div class="search-shortcuts">
+                            <span>Press <kbd>Esc</kbd> to close</span>
+                            <span>Press <kbd>Enter</kbd> to search</span>
+                        </div>
+                    </div>
+                ` : ''}
             </div>
         `;
         searchOverlay.style.display = 'block';
@@ -1227,6 +1356,144 @@ class ModernBiotechPlatform {
         if (searchOverlay) {
             searchOverlay.style.display = 'none';
         }
+        
+        // Clear any page filtering
+        this.clearPageFiltering();
+    }
+
+    // Helper methods for enhanced search
+    highlightSearchTerm(text, query) {
+        if (!query) return text;
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+    }
+
+    addToRecentSearches(query) {
+        let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+        recentSearches = recentSearches.filter(search => search !== query);
+        recentSearches.unshift(query);
+        recentSearches = recentSearches.slice(0, 10); // Keep only 10 recent searches
+        localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    }
+
+    showRecentSearches() {
+        const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+        if (recentSearches.length === 0) return;
+
+        let searchOverlay = document.getElementById('searchOverlay');
+        if (!searchOverlay) {
+            searchOverlay = document.createElement('div');
+            searchOverlay.id = 'searchOverlay';
+            searchOverlay.className = 'search-overlay';
+            document.body.appendChild(searchOverlay);
+        }
+
+        searchOverlay.innerHTML = `
+            <div class="search-results">
+                <div class="search-results-header">
+                    <div class="search-header-info">
+                        <h3>Recent Searches</h3>
+                        <span class="search-count">${recentSearches.length} recent searches</span>
+                    </div>
+                    <button class="search-close" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
+                </div>
+                <div class="search-results-content">
+                    <div class="search-section">
+                        <div class="search-items">
+                            ${recentSearches.map(search => `
+                                <div class="search-item recent-search" onclick="document.getElementById('globalSearch').value='${search}'; if(window.platform) { window.platform.performSearch('${search}'); }">
+                                    <div class="search-item-logo">🔍</div>
+                                    <div class="search-item-info">
+                                        <div class="search-item-name">${search}</div>
+                                    </div>
+                                    <i class="fas fa-arrow-right search-item-arrow"></i>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        searchOverlay.style.display = 'block';
+    }
+
+    filterCurrentPageContent(query) {
+        // Filter content on the current page based on search query
+        const currentSection = document.querySelector('.content-section.active');
+        if (!currentSection) return;
+
+        const searchTerm = query.toLowerCase();
+        
+        // Filter company cards
+        const companyCards = currentSection.querySelectorAll('.company-card');
+        companyCards.forEach(card => {
+            const cardText = card.textContent.toLowerCase();
+            if (cardText.includes(searchTerm)) {
+                card.style.display = 'block';
+                card.classList.add('search-highlight');
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Filter funding items
+        const fundingItems = currentSection.querySelectorAll('.funding-item');
+        fundingItems.forEach(item => {
+            const itemText = item.textContent.toLowerCase();
+            if (itemText.includes(searchTerm)) {
+                item.style.display = 'block';
+                item.classList.add('search-highlight');
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Filter news items
+        const newsItems = currentSection.querySelectorAll('.news-item');
+        newsItems.forEach(item => {
+            const itemText = item.textContent.toLowerCase();
+            if (itemText.includes(searchTerm)) {
+                item.style.display = 'block';
+                item.classList.add('search-highlight');
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    clearPageFiltering() {
+        // Remove search highlighting and restore all content
+        document.querySelectorAll('.search-highlight').forEach(element => {
+            element.classList.remove('search-highlight');
+        });
+        
+        document.querySelectorAll('[style*="display: none"]').forEach(element => {
+            if (element.classList.contains('company-card') || 
+                element.classList.contains('funding-item') || 
+                element.classList.contains('news-item')) {
+                element.style.display = '';
+            }
+        });
+    }
+
+    navigateSearchResults(direction) {
+        const searchItems = document.querySelectorAll('.search-item');
+        if (searchItems.length === 0) return;
+
+        const activeItem = document.querySelector('.search-item.active');
+        let newIndex = 0;
+
+        if (activeItem) {
+            const currentIndex = Array.from(searchItems).indexOf(activeItem);
+            if (direction === 'down') {
+                newIndex = Math.min(currentIndex + 1, searchItems.length - 1);
+            } else {
+                newIndex = Math.max(currentIndex - 1, 0);
+            }
+        }
+
+        searchItems.forEach(item => item.classList.remove('active'));
+        searchItems[newIndex]?.classList.add('active');
     }
 
     updateChartColors() {
@@ -1456,9 +1723,23 @@ class ModernBiotechPlatform {
     }
 }
 
-// Initialize the platform immediately
-window.platform = new ModernBiotechPlatform();
-console.log('Platform initialized:', window.platform);
+// Initialize the platform when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, initializing platform...');
+    window.platform = new ModernBiotechPlatform();
+    console.log('Platform initialized:', window.platform);
+});
+
+// Fallback initialization if DOM is already loaded
+if (document.readyState === 'loading') {
+    // DOM is still loading, wait for DOMContentLoaded
+    console.log('Waiting for DOM to load...');
+} else {
+    // DOM is already loaded, initialize immediately
+    console.log('DOM already loaded, initializing platform immediately...');
+    window.platform = new ModernBiotechPlatform();
+    console.log('Platform initialized:', window.platform);
+}
 
 // Test function to verify platform is working
 window.testPlatform = () => {
@@ -1471,10 +1752,7 @@ window.testPlatform = () => {
     }
 };
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, platform ready');
-});
+// Platform initialization is handled above
 
 // Add some additional utility functions
 window.addEventListener('resize', () => {
