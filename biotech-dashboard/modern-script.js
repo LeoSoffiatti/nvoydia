@@ -1,3 +1,4 @@
+// Updated at 1759111913
 // Modern Biotech Intelligence Platform - Interactive JavaScript
 
 class ModernBiotechPlatform {
@@ -55,6 +56,61 @@ class ModernBiotechPlatform {
 
         // Filter controls
         this.setupFilterControls();
+
+        // View All buttons
+        document.querySelectorAll('.view-all').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleViewAllClick(btn);
+            });
+        });
+
+        // Range buttons (YTD, 1Y, 2Y)
+        document.querySelectorAll('.range-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const range = btn.dataset.range;
+                this.updateInvestmentTimeframe(range);
+                this.updateActiveButton(e.target, '.range-btn');
+            });
+        });
+        
+        // Event delegation for company cards
+        document.addEventListener('click', (e) => {
+            const companyCard = e.target.closest('.company-card');
+            if (companyCard) {
+                const companyId = companyCard.dataset.companyId;
+                if (companyId) {
+                    console.log('Company card clicked via delegation:', companyId);
+                    this.showCompanyModal(parseInt(companyId));
+                }
+            }
+            
+            const fundingItem = e.target.closest('.funding-item');
+            if (fundingItem) {
+                const onclickAttr = fundingItem.getAttribute('onclick');
+                if (onclickAttr && onclickAttr.includes('showCompanyModal')) {
+                    const match = onclickAttr.match(/showCompanyModal\((\d+)\)/);
+                    if (match) {
+                        const companyId = parseInt(match[1]);
+                        console.log('Funding item clicked via delegation:', companyId);
+                        this.showCompanyModal(companyId);
+                    }
+                }
+            }
+            
+            const performerItem = e.target.closest('.performer-item');
+            if (performerItem) {
+                const onclickAttr = performerItem.getAttribute('onclick');
+                if (onclickAttr && onclickAttr.includes('showCompanyModal')) {
+                    const match = onclickAttr.match(/showCompanyModal\((\d+)\)/);
+                    if (match) {
+                        const companyId = parseInt(match[1]);
+                        console.log('Performer item clicked via delegation:', companyId);
+                        this.showCompanyModal(companyId);
+                    }
+                }
+            }
+        });
     }
 
     setupChartControls() {
@@ -110,6 +166,7 @@ class ModernBiotechPlatform {
         document.documentElement.setAttribute('data-theme', currentTheme);
         
         themeToggle?.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
@@ -117,6 +174,9 @@ class ModernBiotechPlatform {
             // Update icon
             const icon = themeToggle.querySelector('i');
             icon.className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            
+            // Update chart colors for dark mode
+            this.updateChartColors();
         });
     }
 
@@ -165,9 +225,6 @@ class ModernBiotechPlatform {
                 break;
             case 'investments':
                 this.loadInvestmentsData();
-                break;
-            case 'analytics':
-                this.loadAnalyticsData();
                 break;
         }
     }
@@ -339,10 +396,13 @@ class ModernBiotechPlatform {
         const recentCompanies = this.dataService.getTopCompaniesByValuation(5);
         
         container.innerHTML = recentCompanies.map(company => `
-            <div class="funding-item" onclick="platform.showCompanyModal(${company.id})">
+            <div class="funding-item" onclick="window.platform.showCompanyModal(${company.id})">
                 <div class="funding-header">
                     <div class="company-info">
-                        <span class="company-logo">${company.logo}</span>
+                        <div class="company-logo">
+                            <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.nextElementSibling.style.display='none';">
+                            <div class="logo-fallback" style="display: flex;">${this.getCompanyInitials(company.name)}</div>
+                        </div>
                         <div>
                             <h4>${company.name}</h4>
                             <span class="funding-round">${company.last_funding_round}</span>
@@ -365,10 +425,13 @@ class ModernBiotechPlatform {
         const topCompanies = this.dataService.getTopCompaniesByValuation(5);
         
         container.innerHTML = topCompanies.map(company => `
-            <div class="performer-item" onclick="platform.showCompanyModal(${company.id})">
+            <div class="performer-item" onclick="window.platform.showCompanyModal(${company.id})">
                 <div class="performer-header">
                     <div class="company-info">
-                        <span class="company-logo">${company.logo}</span>
+                        <div class="company-logo">
+                            <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.nextElementSibling.style.display='none';">
+                            <div class="logo-fallback" style="display: flex;">${this.getCompanyInitials(company.name)}</div>
+                        </div>
                         <div>
                             <h4>${company.name}</h4>
                             <span class="performer-industry">${company.industry.replace('-', ' ')}</span>
@@ -393,6 +456,21 @@ class ModernBiotechPlatform {
         `).join('');
     }
 
+    getCompanyLogoUrl(companyName) {
+        // For now, return empty string to use fallback initials
+        // This prevents external service errors from breaking the modal
+        return '';
+    }
+    
+    getCompanyInitials(companyName) {
+        // Generate initials from company name
+        return companyName.split(' ')
+            .map(word => word.charAt(0))
+            .join('')
+            .substring(0, 2)
+            .toUpperCase();
+    }
+
     loadLatestNews() {
         const container = document.getElementById('latestNewsGrid');
         if (!container) return;
@@ -400,7 +478,7 @@ class ModernBiotechPlatform {
         const recentNews = this.dataService.getRecentNews(6);
         
         container.innerHTML = recentNews.map(article => `
-            <div class="news-item" onclick="platform.showNewsModal(${article.id})">
+            <div class="news-item" onclick="window.platform.showNewsModal(${article.id})">
                 <div class="news-header">
                     <span class="news-category">${article.category}</span>
                     <span class="news-time">${article.read_time}</span>
@@ -427,9 +505,12 @@ class ModernBiotechPlatform {
         const companies = this.dataService.companies;
         
         container.innerHTML = companies.map(company => `
-            <div class="company-card" onclick="platform.showCompanyModal(${company.id})">
+            <div class="company-card" data-company-id="${company.id}">
                 <div class="company-header">
-                    <div class="company-logo">${company.logo}</div>
+                    <div class="company-logo">
+                        <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="logo-fallback" style="display: none;">${company.name.charAt(0)}</div>
+                    </div>
                     <div class="company-info">
                         <h3>${company.name}</h3>
                         <span class="company-industry">${company.industry.replace('-', ' ')}</span>
@@ -734,100 +815,39 @@ class ModernBiotechPlatform {
         this.charts.sectorTrends = new Chart(ctx, config);
     }
 
-    loadAnalyticsData() {
-        this.createGrowthChart();
-    }
-
-    createGrowthChart() {
-        const ctx = document.getElementById('growthChart');
-        if (!ctx) return;
-
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-        const data = {
-            labels: months,
-            datasets: [{
-                label: 'Growth Rate (%)',
-                data: [35, 42, 38, 45, 52, 47],
-                borderColor: '#00d4aa',
-                backgroundColor: 'rgba(0, 212, 170, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#00d4aa',
-                pointBorderColor: '#ffffff',
-                pointBorderWidth: 2,
-                pointRadius: 6,
-                pointHoverRadius: 8
-            }]
-        };
-
-        const config = {
-            type: 'line',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#00d4aa',
-                        borderWidth: 1,
-                        cornerRadius: 8
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            font: {
-                                size: 11,
-                                weight: '500'
-                            },
-                            color: '#737373'
-                        }
-                    },
-                    y: {
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        },
-                        ticks: {
-                            font: {
-                                size: 11,
-                                weight: '500'
-                            },
-                            color: '#737373',
-                            callback: function(value) {
-                                return value + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        };
-
-        this.charts.growth = new Chart(ctx, config);
-    }
-
     showCompanyModal(companyId) {
-        const company = this.dataService.getCompanyById(companyId);
-        if (!company) return;
+        console.log('showCompanyModal called with ID:', companyId);
+        try {
+            const company = this.dataService.getCompanyById(companyId);
+            console.log('Company found:', company);
+            if (!company) {
+                console.error('Company not found with ID:', companyId);
+                return;
+            }
 
-        const modal = document.getElementById('modalOverlay');
-        const title = document.getElementById('modalTitle');
-        const content = document.getElementById('modalContent');
+            const modal = document.getElementById('modalOverlay');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            console.log('Modal elements:', { modal, title, content });
 
-        title.textContent = company.name;
-        content.innerHTML = `
-            <div class="company-modal">
+            if (!modal || !title || !content) {
+                console.error('Modal elements not found');
+                return;
+            }
+
+            title.textContent = company.name;
+            
+            // Generate modal content step by step to avoid template string issues
+            let modalContent = '<div class="company-modal">';
+            
+            // Company header
+            modalContent += `
                 <div class="company-header">
-                    <div class="company-logo-large">${company.logo}</div>
+                    <div class="company-logo-large">
+                        <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.nextElementSibling.style.display='none';">
+                        <div class="logo-fallback" style="display: flex;">${this.getCompanyInitials(company.name)}</div>
+                    </div>
                     <div class="company-details">
                         <h2>${company.name}</h2>
                         <p class="company-description">${company.description}</p>
@@ -844,10 +864,17 @@ class ModernBiotechPlatform {
                                 <i class="fas fa-users"></i>
                                 ${company.employees} employees
                             </span>
+                            <span class="meta-item">
+                                <i class="fas fa-industry"></i>
+                                ${company.industry.replace('-', ' ')}
+                            </span>
                         </div>
                     </div>
                 </div>
-                
+            `;
+            
+            // Stats grid
+            modalContent += `
                 <div class="company-stats-grid">
                     <div class="stat-card">
                         <div class="stat-value">${this.dataService.formatCurrency(company.valuation)}</div>
@@ -862,46 +889,88 @@ class ModernBiotechPlatform {
                         <div class="stat-label">Growth Rate</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value">${company.technical_employees_pct}%</div>
-                        <div class="stat-label">Technical Employees</div>
+                        <div class="stat-value">${company.last_funding_round}</div>
+                        <div class="stat-label">Latest Round</div>
                     </div>
                 </div>
-                
+            `;
+            
+            // Leadership section
+            modalContent += `
                 <div class="company-section">
                     <h3>Leadership</h3>
                     <div class="leadership-info">
                         <div class="ceo-info">
-                            <h4>CEO: ${company.ceo}</h4>
-                            <p>Leading ${company.name} since ${company.founded_year}</p>
+                            <h4>${company.ceo}</h4>
+                            <p>CEO & Founder since ${company.founded_year}</p>
                         </div>
                     </div>
                 </div>
-                
+            `;
+            
+            // Investors section
+            modalContent += `
                 <div class="company-section">
-                    <h3>Investors</h3>
+                    <h3>Key Investors</h3>
                     <div class="investors-list">
-                        ${company.investors.map(investor => `
-                            <span class="investor-tag">${investor}</span>
-                        `).join('')}
+            `;
+            
+            company.investors.forEach(investor => {
+                modalContent += `<span class="investor-tag" onclick="window.platform.showVCModal('${investor}')">${investor}</span>`;
+            });
+            
+            modalContent += `
                     </div>
                 </div>
-                
+            `;
+            
+            // News section
+            modalContent += `
                 <div class="company-section">
                     <h3>Recent News</h3>
                     <div class="news-list">
-                        ${this.dataService.getNewsByCompanyId(companyId).slice(0, 3).map(article => `
+            `;
+            
+            try {
+                const companyNews = this.dataService.getNewsByCompanyId(companyId);
+                if (companyNews && companyNews.length > 0) {
+                    companyNews.slice(0, 2).forEach(article => {
+                        modalContent += `
                             <div class="news-item">
                                 <h4>${article.headline}</h4>
-                                <p>${article.content}</p>
+                                <p>${article.content.substring(0, 150)}...</p>
                                 <span class="news-date">${this.dataService.formatDate(article.published_at)}</span>
                             </div>
-                        `).join('')}
+                        `;
+                    });
+                } else {
+                    modalContent += '<div class="news-item"><p>No recent news available for this company.</p></div>';
+                }
+            } catch (newsError) {
+                console.warn('Error loading news:', newsError);
+                modalContent += '<div class="news-item"><p>No recent news available for this company.</p></div>';
+            }
+            
+            modalContent += `
                     </div>
                 </div>
+                
+                <div class="modal-actions">
+                    <a href="${company.website}" target="_blank" class="modal-btn">
+                        <i class="fas fa-external-link-alt"></i>
+                        Visit Website
+                    </a>
+                </div>
             </div>
-        `;
+            `;
+            
+            content.innerHTML = modalContent;
 
-        modal.classList.add('active');
+            modal.classList.add('active');
+        } catch (error) {
+            console.error('Error showing company modal:', error);
+            alert('Error loading company details. Please try again.');
+        }
     }
 
     showVCModal(vcId) {
@@ -968,14 +1037,30 @@ class ModernBiotechPlatform {
     }
 
     showNewsModal(newsId) {
+        console.log('showNewsModal called with ID:', newsId);
         const article = this.dataService.news.find(n => n.id === newsId);
-        if (!article) return;
+        console.log('Article found:', article);
+        if (!article) {
+            console.error('Article not found with ID:', newsId);
+            return;
+        }
 
         const modal = document.getElementById('modalOverlay');
         const title = document.getElementById('modalTitle');
         const content = document.getElementById('modalContent');
+        
+        console.log('Modal elements:', { modal, title, content });
+
+        if (!modal || !title || !content) {
+            console.error('Modal elements not found');
+            return;
+        }
 
         title.textContent = article.headline;
+        
+        // Generate expanded content for the full article
+        const expandedContent = this.generateExpandedNewsContent(article);
+        
         content.innerHTML = `
             <div class="news-modal">
                 <div class="news-header">
@@ -983,24 +1068,70 @@ class ModernBiotechPlatform {
                         <span class="news-category">${article.category}</span>
                         <span class="news-source">${article.source}</span>
                         <span class="news-date">${this.dataService.formatDate(article.published_at)}</span>
+                        <span class="news-read-time">
+                            <i class="fas fa-clock"></i>
+                            ${article.read_time}
+                        </span>
                     </div>
                 </div>
                 
-                <div class="news-content">
+                <div class="news-content-full">
                     <h2>${article.headline}</h2>
-                    <p>${article.content}</p>
+                    <div class="news-body">
+                        ${expandedContent}
+                    </div>
                 </div>
                 
                 <div class="news-footer">
-                    <div class="read-time">
-                        <i class="fas fa-clock"></i>
-                        ${article.read_time}
+                    <div class="news-actions">
+                        <a href="#" class="modal-btn secondary" onclick="window.open('https://${article.source.toLowerCase().replace(/\s+/g, '')}.com', '_blank')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Read on ${article.source}
+                        </a>
                     </div>
                 </div>
             </div>
         `;
 
+        console.log('About to show modal');
         modal.classList.add('active');
+        console.log('Modal should now be visible');
+    }
+    
+    generateExpandedNewsContent(article) {
+        // Generate more detailed content based on the article type and company
+        const company = this.dataService.getCompanyById(article.company_id);
+        const companyName = company ? company.name : 'the company';
+        
+        let expandedContent = `<p>${article.content}</p>`;
+        
+        // Add more context based on category
+        switch(article.category) {
+            case 'funding':
+                expandedContent += `
+                    <p>This funding round represents a significant milestone for ${companyName} in the biotech industry. The investment will enable the company to accelerate its research and development efforts, expand its team, and bring innovative solutions to market faster.</p>
+                    <p>The biotech sector continues to see strong investor interest, with companies focusing on AI-powered diagnostics, personalized medicine, and breakthrough therapies showing particular promise for future growth.</p>
+                `;
+                break;
+            case 'product':
+                expandedContent += `
+                    <p>This product launch demonstrates ${companyName}'s commitment to addressing critical healthcare challenges. The new offering is expected to have a significant impact on patient outcomes and healthcare delivery efficiency.</p>
+                    <p>Innovation in biotech products continues to drive the industry forward, with companies leveraging cutting-edge technology to create solutions that improve both patient care and healthcare provider capabilities.</p>
+                `;
+                break;
+            case 'partnership':
+                expandedContent += `
+                    <p>This strategic partnership represents a significant opportunity for ${companyName} to leverage complementary strengths and accelerate innovation in the biotech space. Such collaborations are becoming increasingly important as the industry evolves.</p>
+                    <p>Partnerships in biotech often lead to breakthrough innovations by combining different areas of expertise, from research and development to commercialization and market access.</p>
+                `;
+                break;
+            default:
+                expandedContent += `
+                    <p>This development highlights the dynamic nature of the biotech industry, where innovation and collaboration continue to drive progress in healthcare and life sciences.</p>
+                `;
+        }
+        
+        return expandedContent;
     }
 
     closeModal() {
@@ -1009,14 +1140,116 @@ class ModernBiotechPlatform {
     }
 
     performSearch(query) {
-        if (!query.trim()) return;
+        if (!query.trim()) {
+            this.clearSearchResults();
+            return;
+        }
 
         const companies = this.dataService.searchCompanies(query);
         const vcs = this.dataService.searchVCs(query);
         const news = this.dataService.searchNews(query);
 
-        // Show search results (implement search results UI)
-        console.log('Search results:', { companies, vcs, news });
+        this.showSearchResults({ companies, vcs, news });
+    }
+
+    showSearchResults(results) {
+        // Create or update search results overlay
+        let searchOverlay = document.getElementById('searchOverlay');
+        if (!searchOverlay) {
+            searchOverlay = document.createElement('div');
+            searchOverlay.id = 'searchOverlay';
+            searchOverlay.className = 'search-overlay';
+            document.body.appendChild(searchOverlay);
+        }
+
+        const { companies, vcs, news } = results;
+        searchOverlay.innerHTML = `
+            <div class="search-results">
+                <div class="search-results-header">
+                    <h3>Search Results</h3>
+                    <button class="search-close" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
+                </div>
+                <div class="search-results-content">
+                    ${companies.length > 0 ? `
+                        <div class="search-section">
+                            <h4>Companies (${companies.length})</h4>
+                            ${companies.slice(0, 5).map(company => `
+                                <div class="search-item" onclick="window.platform.showCompanyModal(${company.id})">
+                                    <div class="search-item-logo">${company.logo}</div>
+                                    <div class="search-item-info">
+                                        <div class="search-item-name">${company.name}</div>
+                                        <div class="search-item-desc">${company.industry.replace('-', ' ')} • ${company.location}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    ${vcs.length > 0 ? `
+                        <div class="search-section">
+                            <h4>Venture Capital (${vcs.length})</h4>
+                            ${vcs.slice(0, 5).map(vc => `
+                                <div class="search-item" onclick="window.platform.showVCModal(${vc.id})">
+                                    <div class="search-item-logo">${vc.logo}</div>
+                                    <div class="search-item-info">
+                                        <div class="search-item-name">${vc.name}</div>
+                                        <div class="search-item-desc">${vc.location} • ${vc.investments} investments</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    ${news.length > 0 ? `
+                        <div class="search-section">
+                            <h4>News (${news.length})</h4>
+                            ${news.slice(0, 5).map(article => `
+                                <div class="search-item" onclick="window.platform.showNewsModal(${article.id})">
+                                    <div class="search-item-info">
+                                        <div class="search-item-name">${article.headline}</div>
+                                        <div class="search-item-desc">${article.source} • ${this.dataService.formatDate(article.published_at)}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    ${companies.length === 0 && vcs.length === 0 && news.length === 0 ? `
+                        <div class="search-no-results">
+                            <p>No results found for "${document.getElementById('globalSearch').value}"</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        searchOverlay.style.display = 'block';
+    }
+
+    clearSearchResults() {
+        const searchOverlay = document.getElementById('searchOverlay');
+        if (searchOverlay) {
+            searchOverlay.style.display = 'none';
+        }
+    }
+
+    updateChartColors() {
+        // Update chart colors based on current theme
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#ffffff' : '#1a1a1a';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+        
+        Object.values(this.charts).forEach(chart => {
+            if (chart && chart.options) {
+                if (chart.options.scales) {
+                    Object.values(chart.options.scales).forEach(scale => {
+                        if (scale.grid) {
+                            scale.grid.color = gridColor;
+                        }
+                        if (scale.ticks) {
+                            scale.ticks.color = textColor;
+                        }
+                    });
+                }
+                chart.update();
+            }
+        });
     }
 
     updateActiveButton(activeBtn, selector) {
@@ -1028,38 +1261,219 @@ class ModernBiotechPlatform {
 
     updateChartTimeframe(period) {
         // Update chart data based on timeframe
-        console.log('Updating chart timeframe:', period);
+        if (this.charts.investmentTrends) {
+            const yearData = {
+                '6m': [45, 52, 38, 67, 89, 95],
+                '1y': [45, 52, 38, 67, 89, 95, 78, 102, 85, 76, 88, 95],
+                '2y': [30, 35, 28, 45, 52, 38, 67, 89, 95, 78, 102, 85, 76, 88, 95, 110, 95, 88, 102, 115, 98, 105, 112, 120],
+                'all': [20, 25, 30, 35, 28, 45, 52, 38, 67, 89, 95, 78, 102, 85, 76, 88, 95, 110, 95, 88, 102, 115, 98, 105, 112, 120, 125, 118, 130, 135]
+            };
+            
+            const months = {
+                '6m': ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                '1y': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                '2y': ['Jan 23', 'Feb 23', 'Mar 23', 'Apr 23', 'May 23', 'Jun 23', 'Jul 23', 'Aug 23', 'Sep 23', 'Oct 23', 'Nov 23', 'Dec 23', 'Jan 24', 'Feb 24', 'Mar 24', 'Apr 24', 'May 24', 'Jun 24', 'Jul 24', 'Aug 24', 'Sep 24', 'Oct 24', 'Nov 24', 'Dec 24'],
+                'all': ['2020', '2021', '2022', '2023', '2024', '2025']
+            };
+            
+            this.charts.investmentTrends.data.labels = months[period] || months['1y'];
+            this.charts.investmentTrends.data.datasets[0].data = yearData[period] || yearData['1y'];
+            this.charts.investmentTrends.update();
+        }
     }
 
     updateChartType(type) {
         // Update chart type (line/bar)
-        console.log('Updating chart type:', type);
+        if (this.charts.investmentTrends) {
+            this.charts.investmentTrends.config.type = type;
+            this.charts.investmentTrends.update();
+        }
     }
 
     updateTrendMetric(metric) {
         // Update trend chart metric
-        console.log('Updating trend metric:', metric);
+        if (this.charts.sectorTrends) {
+            const metricData = {
+                'funding': [280, 150, 420, 1200],
+                'deals': [12, 8, 15, 25],
+                'valuation': [1.2, 0.8, 2.1, 3.5]
+            };
+            
+            this.charts.sectorTrends.data.datasets[0].data = metricData[metric] || metricData['funding'];
+            this.charts.sectorTrends.update();
+        }
+    }
+
+    updateInvestmentTimeframe(range) {
+        // Update investment charts based on timeframe
+        if (this.charts.portfolio) {
+            const rangeData = {
+                'ytd': [180, 120, 280, 800, 150],
+                '1y': [280, 150, 420, 1200, 180],
+                '2y': [350, 200, 550, 1500, 250]
+            };
+            
+            this.charts.portfolio.data.datasets[0].data = rangeData[range] || rangeData['1y'];
+            this.charts.portfolio.update();
+        }
+        
+        if (this.charts.timeline) {
+            const timelineData = {
+                'ytd': [25, 35, 28, 45, 52, 38],
+                '1y': [45, 52, 38, 67, 89, 95],
+                '2y': [30, 35, 28, 45, 52, 38, 67, 89, 95, 78, 102, 85]
+            };
+            
+            this.charts.timeline.data.datasets[0].data = timelineData[range] || timelineData['1y'];
+            this.charts.timeline.update();
+        }
     }
 
     toggleView(view) {
         // Toggle between grid/list view
-        console.log('Toggling view:', view);
+        const companiesGrid = document.getElementById('companiesGrid');
+        if (companiesGrid) {
+            if (view === 'list') {
+                companiesGrid.style.gridTemplateColumns = '1fr';
+                companiesGrid.classList.add('list-view');
+            } else {
+                companiesGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(350px, 1fr))';
+                companiesGrid.classList.remove('list-view');
+            }
+        }
+    }
+
+    handleViewAllClick(button) {
+        // Determine which section the View All button belongs to
+        const card = button.closest('.activity-card');
+        if (card) {
+            const cardTitle = card.querySelector('h3').textContent;
+            
+            if (cardTitle.includes('Recent Funding Rounds')) {
+                this.switchSection('companies');
+            } else if (cardTitle.includes('Top Performers')) {
+                this.switchSection('companies');
+            } else if (cardTitle.includes('Latest Industry News')) {
+                // Show all news in a modal
+                this.showAllNews();
+            }
+        }
+    }
+
+    showAllNews() {
+        const allNews = this.dataService.news;
+        const modal = document.getElementById('modalOverlay');
+        const title = document.getElementById('modalTitle');
+        const content = document.getElementById('modalContent');
+
+        title.textContent = 'All Industry News';
+        content.innerHTML = `
+            <div class="all-news-modal">
+                ${allNews.map(article => `
+                    <div class="news-item-detailed" onclick="window.platform.showNewsModal(${article.id})">
+                        <div class="news-header">
+                            <span class="news-category">${article.category}</span>
+                            <span class="news-time">${article.read_time}</span>
+                        </div>
+                        <h3 class="news-title">${article.headline}</h3>
+                        <p class="news-content">${article.content}</p>
+                        <div class="news-footer">
+                            <span class="news-source">${article.source}</span>
+                            <span class="news-date">${this.dataService.formatDate(article.published_at)}</span>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        modal.classList.add('active');
     }
 
     filterCompaniesByIndustry(industry) {
         // Filter companies by industry
-        console.log('Filtering companies by industry:', industry);
+        const companiesGrid = document.getElementById('companiesGrid');
+        if (!companiesGrid) return;
+
+        const allCompanies = this.dataService.companies;
+        const filteredCompanies = industry ? 
+            allCompanies.filter(company => company.industry === industry) : 
+            allCompanies;
+
+        companiesGrid.innerHTML = filteredCompanies.map(company => `
+            <div class="company-card" data-company-id="${company.id}">
+                <div class="company-header">
+                    <div class="company-logo">
+                        <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="logo-fallback" style="display: none;">${company.name.charAt(0)}</div>
+                    </div>
+                    <div class="company-info">
+                        <h3>${company.name}</h3>
+                        <span class="company-industry">${company.industry.replace('-', ' ')}</span>
+                    </div>
+                </div>
+                <div class="company-stats">
+                    <div class="company-stat">
+                        <span class="company-stat-value">${this.dataService.formatCurrency(company.valuation)}</span>
+                        <span class="company-stat-label">Valuation</span>
+                    </div>
+                    <div class="company-stat">
+                        <span class="company-stat-value">${company.employees}</span>
+                        <span class="company-stat-label">Employees</span>
+                    </div>
+                </div>
+                <div class="company-growth">
+                    <div class="growth-indicator"></div>
+                    <span>${company.growth_rate}% growth</span>
+                </div>
+            </div>
+        `).join('');
     }
 
     filterNewsByCategory(category) {
         // Filter news by category
-        console.log('Filtering news by category:', category);
+        const newsGrid = document.getElementById('latestNewsGrid');
+        if (!newsGrid) return;
+
+        const allNews = this.dataService.news;
+        const filteredNews = category === 'all' ? 
+            allNews : 
+            allNews.filter(article => article.category === category);
+
+        newsGrid.innerHTML = filteredNews.slice(0, 6).map(article => `
+            <div class="news-item" onclick="window.platform.showNewsModal(${article.id})">
+                <div class="news-header">
+                    <span class="news-category">${article.category}</span>
+                    <span class="news-time">${article.read_time}</span>
+                </div>
+                <h3 class="news-title">${article.headline}</h3>
+                <p class="news-content">${article.content}</p>
+                <div class="news-footer">
+                    <span class="news-source">${article.source}</span>
+                    <span class="news-date">${this.dataService.formatDate(article.published_at)}</span>
+                </div>
+            </div>
+        `).join('');
     }
 }
 
-// Initialize the platform when DOM is loaded
+// Initialize the platform immediately
+window.platform = new ModernBiotechPlatform();
+console.log('Platform initialized:', window.platform);
+
+// Test function to verify platform is working
+window.testPlatform = () => {
+    console.log('Testing platform...');
+    if (window.platform) {
+        console.log('Platform exists');
+        window.platform.showCompanyModal(1);
+    } else {
+        console.log('Platform not found');
+    }
+};
+
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.platform = new ModernBiotechPlatform();
+    console.log('DOM loaded, platform ready');
 });
 
 // Add some additional utility functions

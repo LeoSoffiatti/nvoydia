@@ -204,7 +204,7 @@ class DataService {
 
         this.vcs = [
             {
-                id: 1,
+                id: 101,
                 name: "Sequoia Capital",
                 description: "Leading venture capital firm focused on technology investments",
                 location: "Menlo Park, CA",
@@ -218,7 +218,7 @@ class DataService {
                 investments: 45
             },
             {
-                id: 2,
+                id: 102,
                 name: "Andreessen Horowitz",
                 description: "Silicon Valley venture capital firm",
                 location: "Menlo Park, CA",
@@ -232,7 +232,7 @@ class DataService {
                 investments: 38
             },
             {
-                id: 3,
+                id: 103,
                 name: "Khosla Ventures",
                 description: "Venture capital firm focused on early-stage technology companies",
                 location: "Menlo Park, CA",
@@ -246,7 +246,7 @@ class DataService {
                 investments: 32
             },
             {
-                id: 4,
+                id: 104,
                 name: "GV (Google Ventures)",
                 description: "Venture capital arm of Alphabet Inc.",
                 location: "Mountain View, CA",
@@ -260,7 +260,7 @@ class DataService {
                 investments: 28
             },
             {
-                id: 5,
+                id: 105,
                 name: "Flagship Pioneering",
                 description: "Biotechnology venture capital firm",
                 location: "Cambridge, MA",
@@ -274,7 +274,7 @@ class DataService {
                 investments: 35
             },
             {
-                id: 6,
+                id: 106,
                 name: "Third Rock Ventures",
                 description: "Healthcare-focused venture capital firm",
                 location: "Boston, MA",

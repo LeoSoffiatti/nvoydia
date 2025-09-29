@@ -1,14 +1,14 @@
 /* Modern Biotech Intelligence Platform - a16z Inspired Design */
 
 :root {
-    /* Color Palette - Inspired by a16z */
-    --primary-color: #000000;
+    /* Color Palette - Minimal Tech Refined */
+    --primary-color: #1a1a1a;
     --secondary-color: #ffffff;
-    --accent-color: #0066ff;
-    --accent-hover: #0052cc;
-    --success-color: #00d4aa;
-    --warning-color: #ff6b35;
-    --error-color: #ff4757;
+    --accent-color: #0066cc;
+    --accent-hover: #004499;
+    --success-color: #00a86b;
+    --warning-color: #ff8c00;
+    --error-color: #dc3545;
     
     /* Neutral Colors */
     --gray-50: #fafafa;
@@ -56,17 +56,19 @@
 /* Dark Theme */
 [data-theme="dark"] {
     --primary-color: #ffffff;
-    --secondary-color: #000000;
-    --gray-50: #171717;
-    --gray-100: #262626;
-    --gray-200: #404040;
-    --gray-300: #525252;
-    --gray-400: #737373;
-    --gray-500: #a3a3a3;
-    --gray-600: #d4d4d4;
-    --gray-700: #e5e5e5;
-    --gray-800: #f5f5f5;
-    --gray-900: #fafafa;
+    --secondary-color: #1a1a1a;
+    --accent-color: #4d9fff;
+    --accent-hover: #66b3ff;
+    --gray-50: #1a1a1a;
+    --gray-100: #2a2a2a;
+    --gray-200: #3a3a3a;
+    --gray-300: #4a4a4a;
+    --gray-400: #6a6a6a;
+    --gray-500: #8a8a8a;
+    --gray-600: #aaaaaa;
+    --gray-700: #cacaca;
+    --gray-800: #eaeaea;
+    --gray-900: #ffffff;
 }
 
 /* Reset and Base Styles */
@@ -302,13 +304,13 @@ body {
 }
 
 .stat-card.primary {
-    background: linear-gradient(135deg, var(--accent-color), var(--success-color));
-    color: white;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
 }
 
 .stat-card.primary .stat-icon {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
+    background-color: var(--gray-100);
+    color: var(--accent-color);
 }
 
 .stat-icon {
@@ -404,7 +406,8 @@ body {
 }
 
 .filter-btn,
-.type-btn {
+.type-btn,
+.range-btn {
     padding: var(--spacing-sm) var(--spacing-md);
     border: 1px solid var(--gray-200);
     background-color: var(--gray-100);
@@ -413,18 +416,79 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition-fast);
+    color: var(--primary-color);
 }
 
 .filter-btn:hover,
-.type-btn:hover {
+.type-btn:hover,
+.range-btn:hover {
     background-color: var(--gray-200);
+    border-color: var(--gray-300);
 }
 
 .filter-btn.active,
-.type-btn.active {
+.type-btn.active,
+.range-btn.active {
     background-color: var(--accent-color);
     color: white;
     border-color: var(--accent-color);
+}
+
+/* View Toggle Buttons */
+.view-toggle {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-xs);
+}
+
+.toggle-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--gray-200);
+    background-color: var(--secondary-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-600);
+}
+
+.toggle-btn:hover {
+    background-color: var(--gray-100);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.toggle-btn.active {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+/* Industry Filter Dropdown */
+.filter-dropdown select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--gray-200);
+    background-color: var(--secondary-color);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    min-width: 150px;
+}
+
+.filter-dropdown select:hover {
+    border-color: var(--accent-color);
+}
+
+.filter-dropdown select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
 }
 
 .chart-container {
@@ -436,8 +500,8 @@ body {
 /* Activity Grid */
 .activity-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: var(--spacing-lg);
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
     margin-bottom: var(--spacing-2xl);
 }
 
@@ -556,6 +620,31 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: var(--spacing-lg);
+}
+
+.companies-grid.list-view {
+    grid-template-columns: 1fr;
+}
+
+.companies-grid.list-view .company-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.companies-grid.list-view .company-header {
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.companies-grid.list-view .company-stats {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-bottom: 0;
+}
+
+.companies-grid.list-view .company-growth {
+    margin-left: auto;
 }
 
 .company-card {
@@ -919,6 +1008,377 @@ body {
     color: var(--error-color);
 }
 
+/* News Section */
+.news-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.news-item {
+    background-color: var(--secondary-color);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.news-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-color);
+    background-color: var(--gray-50);
+}
+
+.news-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-sm);
+}
+
+.news-category {
+    background-color: var(--accent-color);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.news-time {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    font-weight: 500;
+}
+
+.news-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.4;
+}
+
+.news-content {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-sm);
+}
+
+.news-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--gray-500);
+}
+
+.news-source {
+    font-weight: 500;
+}
+
+.news-date {
+    font-weight: 400;
+}
+
+/* Funding and Performers Lists */
+.funding-list,
+.performers-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.funding-item,
+.performer-item {
+    background-color: var(--secondary-color);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.funding-item:hover,
+.performer-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-color);
+    background-color: var(--gray-50);
+}
+
+.funding-header,
+.performer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-sm);
+}
+
+.company-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.company-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    font-weight: 600;
+    overflow: hidden;
+    position: relative;
+}
+
+.company-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+}
+
+.logo-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+    color: white;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.company-info h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.funding-round,
+.performer-industry {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    background-color: var(--gray-100);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    width: fit-content;
+}
+
+.funding-amount {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+.performer-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.score-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent-color);
+}
+
+.score-label {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    font-weight: 500;
+}
+
+.funding-details,
+.performer-stats {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-size: 0.8rem;
+    color: var(--gray-500);
+}
+
+.funding-date,
+.funding-industry {
+    background-color: var(--gray-100);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+}
+
+.performer-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    font-weight: 500;
+}
+
+/* Search Overlay */
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    z-index: 1500;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 100px;
+}
+
+.search-results {
+    background-color: var(--secondary-color);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    max-width: 600px;
+    width: 90%;
+    max-height: 70vh;
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.search-results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.search-results-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.search-close {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--gray-100);
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.search-close:hover {
+    background-color: var(--gray-200);
+    color: var(--primary-color);
+}
+
+.search-results-content {
+    padding: var(--spacing-lg);
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.search-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.search-section h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    margin-bottom: var(--spacing-xs);
+}
+
+.search-item:hover {
+    background-color: var(--gray-100);
+}
+
+.search-item-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    font-weight: 600;
+}
+
+.search-item-info {
+    flex: 1;
+}
+
+.search-item-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.search-item-desc {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+}
+
+.search-no-results {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--gray-500);
+}
+
 /* Modals */
 .modal-overlay {
     position: fixed;
@@ -926,7 +1386,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5) !important;
     backdrop-filter: blur(10px);
     z-index: 2000;
     display: none;
@@ -940,14 +1400,16 @@ body {
 }
 
 .modal {
-    background-color: var(--secondary-color);
+    background-color: var(--secondary-color) !important;
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
-    max-width: 600px;
+    max-width: 800px;
     width: 100%;
-    max-height: 80vh;
+    max-height: 90vh;
     overflow: hidden;
     animation: modalSlideIn 0.3s ease-out;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes modalSlideIn {
@@ -998,6 +1460,390 @@ body {
     padding: var(--spacing-xl);
     max-height: 60vh;
     overflow-y: auto;
+}
+
+/* Modal Button Styling */
+.modal-btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background-color: var(--accent-color);
+    color: white;
+    border: 1px solid var(--accent-color);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.modal-btn:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: white;
+    text-decoration: none;
+}
+
+.modal-btn.secondary {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border-color: var(--gray-200);
+}
+
+.modal-btn.secondary:hover {
+    background-color: var(--gray-100);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+/* Modal Actions */
+.modal-actions {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+}
+
+/* News Modal Specific Styles */
+.news-modal {
+    padding: 0;
+    background-color: var(--secondary-color) !important;
+    color: var(--primary-color) !important;
+    position: relative;
+    z-index: 1;
+}
+
+.news-modal .news-header {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.news-modal .news-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.news-modal .news-meta span {
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.news-modal .news-category {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+}
+
+.news-modal .news-content-full h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.3;
+}
+
+.news-modal .news-body {
+    line-height: 1.6;
+    color: var(--primary-color);
+}
+
+.news-modal .news-body p {
+    margin-bottom: var(--spacing-md);
+    font-size: 1rem;
+}
+
+.news-modal .news-footer {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--gray-200);
+}
+
+.news-modal .news-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.news-modal .modal-btn.secondary {
+    background-color: transparent;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+}
+
+.news-modal .modal-btn.secondary:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+/* Company Modal Specific Styles */
+.company-modal {
+    padding: 0;
+    background-color: var(--secondary-color) !important;
+    color: var(--primary-color) !important;
+    position: relative;
+    z-index: 1;
+}
+
+.company-modal * {
+    background-color: transparent !important;
+}
+
+.company-modal .company-logo-large {
+    background: linear-gradient(135deg, var(--accent-color), var(--success-color)) !important;
+}
+
+.company-modal .modal-btn {
+    background-color: var(--accent-color) !important;
+    color: white !important;
+    border: 1px solid var(--accent-color) !important;
+}
+
+.company-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.company-logo-large {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    font-weight: 600;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.company-details h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.2;
+}
+
+.company-description {
+    font-size: 1rem;
+    color: var(--gray-600);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-md);
+}
+
+.company-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    background-color: var(--gray-100);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+}
+
+.meta-item i {
+    color: var(--accent-color);
+    width: 16px;
+}
+
+.company-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.stat-card {
+    background-color: var(--gray-50);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    border: 1px solid var(--gray-200);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+.company-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.company-section h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 2px solid var(--accent-color);
+    display: inline-block;
+}
+
+.leadership-info {
+    background-color: var(--gray-50);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+}
+
+.ceo-info h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.ceo-info p {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+}
+
+.investors-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.investor-tag {
+    background-color: var(--accent-color);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.investor-tag:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.news-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.news-item {
+    background-color: var(--gray-50);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    transition: var(--transition-fast);
+}
+
+.news-item:hover {
+    background-color: var(--gray-100);
+    border-color: var(--accent-color);
+}
+
+.news-item h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.4;
+}
+
+.news-item p {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: var(--spacing-sm);
+}
+
+.news-date {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    font-weight: 500;
+}
+
+/* Responsive Modal Design */
+@media (max-width: 768px) {
+    .modal {
+        max-width: 95vw;
+        margin: var(--spacing-md);
+        max-height: 95vh;
+    }
+    
+    .company-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .company-logo-large {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .company-details h2 {
+        font-size: 1.5rem;
+    }
+    
+    .company-meta {
+        justify-content: center;
+    }
+    
+    .company-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .stat-card {
+        padding: var(--spacing-md);
+    }
+    
+    .stat-value {
+        font-size: 1.2rem;
+    }
+    
+    .investors-list {
+        justify-content: center;
+    }
+    
+    .modal-actions {
+        justify-content: center;
+    }
 }
 
 /* Loading Spinner */
@@ -1191,4 +2037,28 @@ body {
         opacity: 1;
         transform: scale(1);
     }
+}
+
+/* All News Modal */
+.all-news-modal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.news-item-detailed {
+    background-color: var(--gray-100);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border: 1px solid var(--gray-200);
+}
+
+.news-item-detailed:hover {
+    background-color: var(--gray-200);
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
 }
