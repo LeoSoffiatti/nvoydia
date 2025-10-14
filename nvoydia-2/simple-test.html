@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Modal Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-card { 
+            border: 2px solid #007bff; 
+            padding: 20px; 
+            margin: 10px; 
+            cursor: pointer; 
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .test-card:hover { background: #e9ecef; }
+        .modal { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background: rgba(0,0,0,0.5); 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000;
+        }
+        .modal.active { display: flex; }
+        .modal-content { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            max-width: 500px; 
+            width: 90%;
+        }
+        .close { 
+            float: right; 
+            font-size: 24px; 
+            cursor: pointer; 
+            background: none; 
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Modal Test</h1>
+    <p>This tests if the basic modal functionality works.</p>
+    
+    <div class="test-card" onclick="openModal()">
+        <h3>Click Me to Test Modal</h3>
+        <p>This should open a simple modal</p>
+    </div>
+    
+    <div class="modal" id="testModal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal()">&times;</button>
+            <h2>Test Modal</h2>
+            <p>If you can see this, the basic modal functionality works!</p>
+            <p>This means the issue is with the company data or JavaScript generation.</p>
+        </div>
+    </div>
+    
+    <script>
+        function openModal() {
+            console.log('Opening modal...');
+            document.getElementById('testModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            console.log('Closing modal...');
+            document.getElementById('testModal').classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('testModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        console.log('Simple modal test loaded');
+    </script>
+</body>
+</html>
+
