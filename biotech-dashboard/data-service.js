@@ -1,7 +1,7 @@
 // Data Service - Loads Piloterr sample data
 class DataService {
     constructor() {
-        this.baseUrl = 'http://localhost:8000';
+        this.baseUrl = 'http://localhost:1000';
         this.companies = [];
         this.vcs = [];
         this.news = [];

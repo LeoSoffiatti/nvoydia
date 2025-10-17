@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Text, ForeignKey, select, text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
@@ -8,6 +10,7 @@ from typing import List, Optional, Any
 from datetime import datetime, timedelta
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
+import os
 
 # Database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./ass31.db"
@@ -322,6 +325,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files from nvoydia-2 directory
+frontend_path = "/Users/main/nvoydia-3/nvoydia-2"
+if os.path.exists(frontend_path):
+    app.mount("/static", StaticFiles(directory=frontend_path), name="static")
+
 # Populate sample data on startup (safe no-op if already populated)
 @app.on_event("startup")
 async def startup_event():
@@ -331,8 +339,16 @@ async def startup_event():
     finally:
         db.close()
 
-# API Endpoints
+# Root route to serve the frontend
 @app.get("/")
+def serve_frontend():
+    frontend_file = "/Users/main/nvoydia-3/nvoydia-2/index.html"
+    if os.path.exists(frontend_file):
+        return FileResponse(frontend_file)
+    return {"message": "NVoydia Dashboard API", "version": "1.0.0"}
+
+# API Endpoints
+@app.get("/api")
 def read_root():
     return {"message": "NVoydia Dashboard API", "version": "1.0.0"}
 
@@ -593,4 +609,4 @@ def recompute_vc_scores(db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=1000)

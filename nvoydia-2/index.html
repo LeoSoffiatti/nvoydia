@@ -18,7 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/3.0.0/chartjs-adapter-date-fns.bundle.min.js"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="modern-styles.css?v=4">
+    <link rel="stylesheet" href="/static/modern-styles.css?v=62">
 </head>
 <body>
     <!-- Navigation -->
@@ -47,6 +47,11 @@
                 <div class="search-container">
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Search digital natives, VCs, news..." id="globalSearch">
+                    <div class="search-dropdown" id="searchDropdown">
+                        <div class="search-results" id="searchResults">
+                            <!-- Search results will be populated here -->
+                        </div>
+                    </div>
                 </div>
                 <button class="theme-toggle" id="themeToggle">
                     <i class="fas fa-moon"></i>
@@ -64,75 +69,6 @@
     <main class="main-content">
         <!-- Dashboard Section -->
         <section id="dashboard" class="content-section active">
-            <!-- Hero Stats -->
-            <div class="hero-stats">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-number" id="totalCompanies">12</div>
-                        <div class="stat-label">Total Companies</div>
-                        <div class="stat-change positive">+2 this quarter</div>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-number" id="ncpProgress">67%</div>
-                        <div class="stat-label">NCP Progress</div>
-                        <div class="stat-change positive">8 partners</div>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-number" id="totalFunding">$2.1B</div>
-                        <div class="stat-label">Total Funding</div>
-                        <div class="stat-change positive">+28% YoY</div>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-number" id="aiNatives">4</div>
-                        <div class="stat-label">AI Natives</div>
-                        <div class="stat-change positive">33% of portfolio</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Investment Trends Chart -->
-            <div class="chart-section">
-                <div class="section-header">
-                    <h2>Investment Trends</h2>
-                    <div class="chart-controls">
-                        <div class="time-filter">
-                            <button class="filter-btn active" data-period="6m">6M</button>
-                            <button class="filter-btn" data-period="1y">1Y</button>
-                            <button class="filter-btn" data-period="2y">2Y</button>
-                            <button class="filter-btn" data-period="all">All</button>
-                        </div>
-                        <div class="chart-type">
-                            <button class="type-btn active" data-type="line">Line</button>
-                            <button class="type-btn" data-type="bar">Bar</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="investmentTrendsChart"></canvas>
-                </div>
-            </div>
-
             <!-- NCP Progress Section -->
             <div class="ncp-progress-section">
                 <div class="section-header">
@@ -184,44 +120,66 @@
                 </div>
             </div>
 
-            <!-- Recent Activity Grid -->
-            <div class="activity-grid">
-                <!-- Latest News -->
-                <div class="activity-card full-width">
-                    <div class="card-header">
-                        <h3>Latest Company News</h3>
-                        <div class="news-filters">
-                            <button class="filter-btn active" data-category="all">All</button>
-                            <button class="filter-btn" data-category="funding">Funding</button>
-                            <button class="filter-btn" data-category="product">Product</button>
-                            <button class="filter-btn" data-category="partnership">Partnership</button>
+            <!-- Investment Trends Summary -->
+            <div class="chart-section">
+                <div class="section-header">
+                    <h2>Investment Trends</h2>
+                    <div class="chart-controls">
+                        <div class="time-filter">
+                            <button class="filter-btn active" data-period="6m">6M</button>
+                            <button class="filter-btn" data-period="1y">1Y</button>
+                            <button class="filter-btn" data-period="2y">2Y</button>
+                            <button class="filter-btn" data-period="all">All</button>
                         </div>
                     </div>
-                    <div class="news-grid" id="latestNewsGrid">
-                        <!-- Dynamic content -->
+                </div>
+                <div class="trends-summary">
+                    <div class="trend-card">
+                        <div class="trend-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="trend-content">
+                            <div class="trend-value" id="totalFundingTrend">$2.4B</div>
+                            <div class="trend-label">Total Funding</div>
+                            <div class="trend-change positive">+23% vs last year</div>
+                        </div>
+                    </div>
+                    <div class="trend-card">
+                        <div class="trend-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="trend-content">
+                            <div class="trend-value" id="totalDealsTrend">156</div>
+                            <div class="trend-label">Total Deals</div>
+                            <div class="trend-change positive">+18% vs last year</div>
+                        </div>
+                    </div>
+                    <div class="trend-card">
+                        <div class="trend-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="trend-content">
+                            <div class="trend-value" id="avgDealSizeTrend">$15.4M</div>
+                            <div class="trend-label">Avg Deal Size</div>
+                            <div class="trend-change positive">+8% vs last year</div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Recent Funding -->
-                <div class="activity-card">
-                    <div class="card-header">
-                        <h3>Recent Funding Rounds</h3>
-                        <a href="#" class="view-all">View All</a>
-                    </div>
-                    <div class="funding-list" id="recentFundingList">
-                        <!-- Dynamic content -->
+            <!-- Latest News -->
+            <div class="activity-card full-width">
+                <div class="card-header">
+                    <h3>Latest Company News</h3>
+                    <div class="news-filters">
+                        <button class="filter-btn active" data-category="all">All</button>
+                        <button class="filter-btn" data-category="funding">Funding</button>
+                        <button class="filter-btn" data-category="product">Product</button>
+                        <button class="filter-btn" data-category="partnership">Partnership</button>
                     </div>
                 </div>
-
-                <!-- Top Performers -->
-                <div class="activity-card">
-                    <div class="card-header">
-                        <h3>Top Performers</h3>
-                        <a href="#" class="view-all">View All</a>
-                    </div>
-                    <div class="performers-list" id="topPerformersList">
-                        <!-- Dynamic content -->
-                    </div>
+                <div class="news-grid" id="latestNewsGrid">
+                    <!-- Dynamic content -->
                 </div>
             </div>
         </section>
@@ -239,47 +197,50 @@
                             <i class="fas fa-list"></i>
                         </button>
                     </div>
-                    <div class="filter-dropdown">
-                        <select id="industryFilter">
-                            <option value="">All Industries</option>
-                            <option value="ai-natives">AI Natives</option>
-                            <option value="digital-natives">Digital Natives</option>
-                            <option value="fintech">Fintech</option>
-                            <option value="social-media">Social Media</option>
-                        </select>
-                    </div>
-                    <div class="filter-dropdown">
-                        <select id="fundingFilter">
-                            <option value="">All Funding</option>
-                            <option value="0-1000000">$0 - $1M</option>
-                            <option value="1000000-10000000">$1M - $10M</option>
-                            <option value="10000000-100000000">$10M - $100M</option>
-                            <option value="100000000-1000000000">$100M - $1B</option>
-                            <option value="1000000000+">$1B+</option>
-                        </select>
-                    </div>
-                    <div class="filter-dropdown">
-                        <select id="dateFilter">
-                            <option value="">All Dates</option>
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                        </select>
-                    </div>
-                    <div class="filter-dropdown">
-                        <select id="vcFilter">
-                            <option value="">All VC Tiers</option>
-                            <option value="Tier 1">Tier 1</option>
-                            <option value="Tier 2">Tier 2</option>
-                            <option value="Tier 3">Tier 3</option>
-                        </select>
-                    </div>
-                    <button class="download-btn" id="downloadNonPartners">
-                        <i class="fas fa-download"></i>
-                        Download Non-Partners
-                    </button>
                 </div>
+            </div>
+            
+            <!-- Filter Controls - Single Row -->
+            <div class="filter-controls">
+                <div class="filter-dropdown">
+                    <select id="industryFilter">
+                        <option value="">All Industries</option>
+                        <option value="frontier-model-builders">Frontier Models</option>
+                        <option value="agentic-generative-ai">Generative AI</option>
+                        <option value="customer-experience">Customer Experience</option>
+                        <option value="code-generation">Dev Tools</option>
+                        <option value="productivity-collaboration">Productivity</option>
+                        <option value="infrastructure-hosting">Infrastructure</option>
+                        <option value="mlops-data-infrastructure">MLOps</option>
+                        <option value="cuda-nvidia-ai">NVIDIA</option>
+                    </select>
+                </div>
+                <div class="filter-dropdown">
+                    <select id="valuationFilter">
+                        <option value="">All Valuations</option>
+                        <option value="0-1000000000">$0 - $1B</option>
+                        <option value="1000000000-10000000000">$1B - $10B</option>
+                        <option value="10000000000-100000000000">$10B - $100B</option>
+                        <option value="100000000000+">$100B+</option>
+                    </select>
+                </div>
+                <div class="filter-dropdown">
+                    <select id="vcFilter">
+                        <option value="">All Funding Rounds</option>
+                        <option value="Seed">Seed</option>
+                        <option value="Series A">Series A</option>
+                        <option value="Series B">Series B</option>
+                        <option value="Series C">Series C</option>
+                        <option value="Series D">Series D</option>
+                        <option value="Series E">Series E</option>
+                        <option value="Series F">Series F</option>
+                        <option value="IPO">IPO</option>
+                    </select>
+                </div>
+                <button class="download-btn" id="downloadNonPartners">
+                    <i class="fas fa-download"></i>
+                    Download Non-Partners
+                </button>
             </div>
 
             <!-- Industry Overview -->
@@ -358,16 +319,38 @@
             <!-- Investment Overview -->
             <div class="investment-overview">
                 <div class="overview-card">
-                    <h3>Portfolio Distribution</h3>
-                    <div class="chart-container">
-                        <canvas id="portfolioChart"></canvas>
+                    <h3>Portfolio Summary</h3>
+                    <div class="portfolio-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">$850M</div>
+                            <div class="stat-label">Total Portfolio Value</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24</div>
+                            <div class="stat-label">Active Companies</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">3.2x</div>
+                            <div class="stat-label">Avg ROI</div>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="overview-card">
-                    <h3>Investment Timeline</h3>
-                    <div class="chart-container">
-                        <canvas id="timelineChart"></canvas>
+                    <h3>Recent Activity</h3>
+                    <div class="activity-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">Deals This Quarter</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">$180M</div>
+                            <div class="stat-label">Q3 Investment</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">2</div>
+                            <div class="stat-label">New Exits</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -376,7 +359,7 @@
             <div class="vcs-section">
                 <div class="section-header">
                     <h2>Top Venture Capital Firms</h2>
-                    <a href="#" class="view-all">View All</a>
+                    <a class="view-all">View All</a>
                 </div>
                 <div class="vcs-grid" id="vcsGrid">
                     <!-- Dynamic content -->
@@ -399,7 +382,7 @@
                 </div>
             </div>
 
-            <!-- Investment Trends -->
+            <!-- Sector Trends Summary -->
             <div class="trends-section">
                 <div class="trends-header">
                     <h2>Investment Trends by Sector</h2>
@@ -409,8 +392,31 @@
                         <button class="trend-btn" data-metric="valuation">Valuation</button>
                     </div>
                 </div>
-                <div class="trends-chart">
-                    <canvas id="sectorTrendsChart"></canvas>
+                <div class="sector-trends-summary">
+                    <div class="sector-trend-card">
+                        <div class="sector-name">Digital Health</div>
+                        <div class="sector-stats">
+                            <span class="funding">$450M</span>
+                            <span class="deals">45 deals</span>
+                            <span class="growth">+25%</span>
+                        </div>
+                    </div>
+                    <div class="sector-trend-card">
+                        <div class="sector-name">Biotech</div>
+                        <div class="sector-stats">
+                            <span class="funding">$380M</span>
+                            <span class="deals">32 deals</span>
+                            <span class="growth">+18%</span>
+                        </div>
+                    </div>
+                    <div class="sector-trend-card">
+                        <div class="sector-name">Medical Devices</div>
+                        <div class="sector-stats">
+                            <span class="funding">$290M</span>
+                            <span class="deals">28 deals</span>
+                            <span class="growth">+22%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -453,7 +459,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="data-service.js"></script>
-    <script src="modern-script.js?v=8"></script>
+    <script src="/static/data-service.js?v=62"></script>
+    <script src="/static/modern-script.js?v=62"></script>
 </body>
 </html>

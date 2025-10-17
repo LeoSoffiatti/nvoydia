@@ -14,6 +14,8 @@ A modern, action-first dashboard for tracking NVIDIA Partner Program (NCP) progr
 - 🎮 **Gamification** - Progress bars and completion metrics for engagement
 - 📱 **Responsive Design** - Works perfectly on desktop and mobile
 - 🌙 **Dark/Light Theme** - Toggle between themes
+- 📧 **Email Templates** - Pre-built templates for partnership outreach
+- 🔗 **LinkedIn Integration** - Direct links to company executives
 
 ## Live Demo
 
@@ -22,6 +24,7 @@ Visit the live dashboard: [https://nvoydia.vercel.app](https://nvoydia.vercel.ap
 ## Technology Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Backend**: FastAPI with SQLite database
 - **Styling**: Custom CSS with CSS Variables
 - **Icons**: Font Awesome
 - **Fonts**: Inter (Google Fonts)
@@ -34,15 +37,23 @@ Visit the live dashboard: [https://nvoydia.vercel.app](https://nvoydia.vercel.ap
 1. Clone the repository:
 ```bash
 git clone https://github.com/LeoSoffiatti/nvoydia.git
-cd nvoydia
+cd nvoydia/nvoydia-2
 ```
 
-2. Start a local server:
+2. Start the backend server:
 ```bash
-python -m http.server 8080
+cd ../dashboard/backend
+pip install -r requirements.txt
+python main.py
 ```
 
-3. Open your browser and visit: `http://localhost:8080`
+3. Start the frontend server:
+```bash
+cd ../../nvoydia-2
+python -m http.server 9000
+```
+
+4. Open your browser and visit: `http://localhost:9000`
 
 ### Deployment
 
@@ -52,10 +63,10 @@ This project is automatically deployed to Vercel. Any changes pushed to the main
 
 ```
 nvoydia-2/
-├── index.html              # Main HTML file
-├── modern-styles.css       # Enhanced responsive styles
-├── modern-script.js        # Main JavaScript functionality
-├── data-service.js         # Data management and API
+├── index.html              # Main HTML file with reordered sections
+├── modern-styles.css       # Enhanced responsive styles with NCP badges
+├── modern-script.js        # Main JavaScript functionality with filters
+├── data-service.js         # Data management with NCP fields
 ├── package.json            # Project configuration
 ├── vercel.json             # Vercel deployment config
 └── README.md               # This file
@@ -66,7 +77,7 @@ nvoydia-2/
 The dashboard now includes comprehensive company data:
 
 - **NCP Status**: Partner/Not Partner with tier information
-- **Partner Tier**: Premier, Standard, or null
+- **Partner Tier**: Gold, Silver, Bronze classification
 - **VC Tier**: Tier 1, Tier 2, Tier 3 classification
 - **AI/Digital Native**: Boolean flags for company type
 - **Funding Details**: Round type, amount, and date
@@ -96,10 +107,22 @@ The dashboard now includes comprehensive company data:
 - Funding timeline visualization
 
 ### Company Modals
-- NCP status prominently displayed
-- Recent news with summaries
-- Contact actions (LinkedIn/Email)
-- Detailed company information
+- NCP status prominently displayed at the top
+- Recent news with AI-powered summaries
+- Contact actions (LinkedIn/Email templates)
+- Detailed company information and stats
+
+### News Modals
+- Full article content with related company info
+- AI summarization capabilities
+- Direct links to company details
+- Source and publication date tracking
+
+### VC Modals
+- Comprehensive VC information and stats
+- Portfolio company listings
+- Contact information and website links
+- Executive and email template access
 
 ## Browser Support
 

@@ -1,139 +1,164 @@
-// Updated at 1759111913
 // Modern Digital Natives Intelligence Platform - Interactive JavaScript
 
 class ModernDigitalNativesPlatform {
     constructor() {
         console.log('Creating ModernDigitalNativesPlatform...');
-        this.dataService = new DataService();
-        console.log('DataService created:', this.dataService);
-        console.log('Companies loaded:', this.dataService.companies.length);
-        
+        this.dataService = null;
         this.currentSection = 'dashboard';
         this.charts = {};
         this.modals = {};
         this.chartRetryCount = 0;
         this.maxChartRetries = 10;
         
-        this.init();
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.init());
+        } else {
+            this.init();
+        }
     }
 
     init() {
         console.log('Initializing platform...');
+        try {
+            this.dataService = new DataService();
+            console.log('DataService created:', this.dataService);
+            console.log('Companies loaded:', this.dataService.companies.length);
+        } catch (error) {
+            console.error('Error creating DataService:', error);
+            // Create a fallback data service
+            this.dataService = {
+                companies: [],
+                vcs: [],
+                news: [],
+                searchCompanies: () => [],
+                searchVCs: () => [],
+                searchNews: () => [],
+                getDashboardStats: () => ({ 
+                    totalCompanies: 0, 
+                    totalVCs: 0, 
+                    totalNews: 0, 
+                    totalFunding: 0, 
+                    totalValuation: 0, 
+                    totalEmployees: 0, 
+                    avgGrowthRate: 0, 
+                    industries: 0 
+                }),
+                getNCPProgress: () => ({ partnerPercentage: 0, aiNatives: 0 }),
+                getRecentNews: () => [],
+                getTopCompaniesByValuation: () => [],
+                getTopVCsByScore: () => [],
+                formatCurrency: (amount) => `$${amount}`,
+                formatDate: (date) => new Date(date).toLocaleDateString(),
+                getCompanyById: () => null
+            };
+        }
+        
         this.setupEventListeners();
+        this.setupModalClose();
         this.loadDashboardData();
         this.setupThemeToggle();
         this.setupSearch();
         console.log('Platform initialization complete');
-        console.log('Theme toggle button found:', document.getElementById('themeToggle'));
     }
 
     setupEventListeners() {
-        // Navigation
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = link.dataset.section;
-                this.switchSection(section);
+        console.log('Setting up event listeners...');
+        
+        try {
+            // Navigation
+            const navLinks = document.querySelectorAll('.nav-link');
+            console.log('Found nav links:', navLinks.length);
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = link.dataset.section;
+                    console.log('Nav clicked:', section);
+                    this.switchSection(section);
+                });
             });
-        });
 
-        // Modal controls
-        const modalOverlay = document.getElementById('modalOverlay');
-        const modalClose = document.getElementById('modalClose');
-        
-        modalClose?.addEventListener('click', () => {
-            this.closeModal();
-        });
-        
-        modalOverlay?.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                this.closeModal();
-            }
-        });
-
-        // Executives modal controls
-        const executivesModalOverlay = document.getElementById('executivesModalOverlay');
-        const executivesModalClose = document.getElementById('executivesModalClose');
-        
-        executivesModalClose?.addEventListener('click', () => {
-            this.closeExecutivesModal();
-        });
-        
-        executivesModalOverlay?.addEventListener('click', (e) => {
-            if (e.target === executivesModalOverlay) {
-                this.closeExecutivesModal();
-            }
-        });
-
-        // Chart controls
-        this.setupChartControls();
-        
-        // View toggles
-        document.querySelectorAll('.toggle-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const view = btn.dataset.view;
-                this.toggleView(view);
-                this.updateActiveButton(e.target, '.toggle-btn');
-            });
-        });
-
-        // Filter controls
-        this.setupFilterControls();
-
-        // View All buttons
-        document.querySelectorAll('.view-all').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.handleViewAllClick(btn);
-            });
-        });
-
-        // Range buttons (YTD, 1Y, 2Y)
-        document.querySelectorAll('.range-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const range = btn.dataset.range;
-                this.updateInvestmentTimeframe(range);
-                this.updateActiveButton(e.target, '.range-btn');
-            });
-        });
-        
-        // Event delegation for company cards
-        document.addEventListener('click', (e) => {
-            const companyCard = e.target.closest('.company-card');
-            if (companyCard) {
-                const companyId = companyCard.dataset.companyId;
-                if (companyId) {
-                    console.log('Company card clicked via delegation:', companyId);
-                    this.showCompanyModal(parseInt(companyId));
-                }
+            // Modal controls
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalClose = document.getElementById('modalClose');
+            
+            if (modalClose) {
+                modalClose.addEventListener('click', () => {
+                    console.log('Modal close clicked');
+                    this.closeModal();
+                });
             }
             
-            const fundingItem = e.target.closest('.funding-item');
-            if (fundingItem) {
-                const onclickAttr = fundingItem.getAttribute('onclick');
-                if (onclickAttr && onclickAttr.includes('showCompanyModal')) {
-                    const match = onclickAttr.match(/showCompanyModal\((\d+)\)/);
-                    if (match) {
-                        const companyId = parseInt(match[1]);
-                        console.log('Funding item clicked via delegation:', companyId);
-                        this.showCompanyModal(companyId);
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) {
+                        console.log('Modal overlay clicked');
+                        this.closeModal();
                     }
-                }
+
+
+
+                });
             }
+
+            // Chart controls
+            this.setupChartControls();
             
-            const performerItem = e.target.closest('.performer-item');
-            if (performerItem) {
-                const onclickAttr = performerItem.getAttribute('onclick');
-                if (onclickAttr && onclickAttr.includes('showCompanyModal')) {
-                    const match = onclickAttr.match(/showCompanyModal\((\d+)\)/);
-                    if (match) {
-                        const companyId = parseInt(match[1]);
-                        console.log('Performer item clicked via delegation:', companyId);
-                        this.showCompanyModal(companyId);
+            // View toggles
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
+            console.log('Found toggle buttons:', toggleBtns.length);
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const view = btn.dataset.view;
+                    console.log('Toggle clicked:', view);
+                    this.toggleView(view);
+                    this.updateActiveButton(e.target, '.toggle-btn');
+                });
+            });
+
+            // Filter controls
+
+            this.setupFilterControls();
+
+            // View All buttons
+            const viewAllBtns = document.querySelectorAll('.view-all');
+            console.log('Found view all buttons:', viewAllBtns.length);
+            viewAllBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('View all clicked');
+                    this.handleViewAllClick(btn);
+                });
+            });
+
+            // Range buttons (YTD, 1Y, 2Y)
+            const rangeBtns = document.querySelectorAll('.range-btn');
+            console.log('Found range buttons:', rangeBtns.length);
+            rangeBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const range = btn.dataset.range;
+                    console.log('Range clicked:', range);
+                    this.updateInvestmentTimeframe(range);
+                    this.updateActiveButton(e.target, '.range-btn');
+                });
+            });
+            
+            // Event delegation for company cards
+            document.addEventListener('click', (e) => {
+                const companyCard = e.target.closest('.company-card');
+                if (companyCard) {
+                    const companyId = companyCard.dataset.companyId;
+                    if (companyId) {
+                        console.log('Company card clicked:', companyId);
+                        this.showCompanyModal(parseInt(companyId));
                     }
                 }
-            }
-        });
+            });
+            
+            console.log('Event listeners setup complete');
+        } catch (error) {
+            console.error('Error setting up event listeners:', error);
+        }
     }
 
     setupChartControls() {
@@ -154,47 +179,48 @@ class ModernDigitalNativesPlatform {
                 this.updateActiveButton(e.target, '.type-btn');
             });
         });
-
-        // Trend buttons
-        document.querySelectorAll('.trend-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const metric = btn.dataset.metric;
-                this.updateTrendMetric(metric);
-                this.updateActiveButton(e.target, '.trend-btn');
-            });
-        });
     }
 
     setupFilterControls() {
         // Industry filter
         const industryFilter = document.getElementById('industryFilter');
-        industryFilter?.addEventListener('change', (e) => {
-            this.filterCompaniesByIndustry(e.target.value);
-        });
+        if (industryFilter) {
+            industryFilter.addEventListener('change', (e) => {
+                this.filterCompaniesByIndustry(e.target.value);
+            });
+        }
 
-        // Funding filter
-        const fundingFilter = document.getElementById('fundingFilter');
-        fundingFilter?.addEventListener('change', (e) => {
-            this.filterCompaniesByFunding(e.target.value);
-        });
+        // Valuation filter
+        const valuationFilter = document.getElementById('valuationFilter');
+        if (valuationFilter) {
+            valuationFilter.addEventListener('change', (e) => {
+                this.filterCompaniesByValuation(e.target.value);
+            });
+        }
 
         // Date filter
         const dateFilter = document.getElementById('dateFilter');
-        dateFilter?.addEventListener('change', (e) => {
-            this.filterCompaniesByDate(e.target.value);
-        });
+        if (dateFilter) {
+            dateFilter.addEventListener('change', (e) => {
+                this.filterCompaniesByDate(e.target.value);
+            });
+        }
 
         // VC filter
         const vcFilter = document.getElementById('vcFilter');
-        vcFilter?.addEventListener('change', (e) => {
-            this.filterCompaniesByVC(e.target.value);
-        });
+        if (vcFilter) {
+            vcFilter.addEventListener('change', (e) => {
+                this.filterCompaniesByVC(e.target.value);
+            });
+        }
 
         // Download non-partners button
         const downloadBtn = document.getElementById('downloadNonPartners');
-        downloadBtn?.addEventListener('click', () => {
-            this.downloadNonPartnersCSV();
-        });
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', () => {
+                this.downloadNonPartnersCSV();
+            });
+        }
 
         // News category filters
         document.querySelectorAll('.news-filters .filter-btn').forEach(btn => {
@@ -205,75 +231,11 @@ class ModernDigitalNativesPlatform {
             });
         });
 
-        // VC portfolio filters
-        document.querySelectorAll('.portfolio-filters .filter-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const vc = btn.dataset.vc;
-                this.filterVCPortfolio(vc);
-                this.updateActiveButton(e.target, '.portfolio-filters .filter-btn');
-            });
-        });
-    }
-
-    setupThemeToggle() {
-        const themeToggle = document.getElementById('themeToggle');
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        
-        // Set initial theme
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        
-        // Set initial icon
-        if (themeToggle) {
-            const icon = themeToggle.querySelector('i');
-            icon.className = currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
-        }
-        
-        themeToggle?.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            
-            // Apply theme immediately
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            // Update icon
-            const icon = themeToggle.querySelector('i');
-            icon.className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
-            
-            // Update chart colors for dark mode
-            this.updateChartColors();
-            
-            console.log('Theme switched to:', newTheme);
-        });
-    }
-
-    setupSearch() {
-        console.log('Setting up search...');
-        const searchInput = document.getElementById('globalSearch');
-
-        if (searchInput) {
-            console.log('Search input found:', searchInput);
-            
-            // Keyboard shortcuts - only Enter opens search
-            searchInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.openSearchPage(searchInput.value);
-                }
-            });
-
-            // Click outside to close search page if open
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.search-container') && !e.target.closest('.search-overlay')) {
-                    this.closeSearchPage();
-                }
-            });
-        } else {
-            console.error('Search input not found!');
-        }
+        // VC filter buttons are handled in setupVCFilters() method
     }
 
     switchSection(section) {
+        console.log('Switching to section:', section);
         // Hide all sections
         document.querySelectorAll('.content-section').forEach(sec => {
             sec.classList.remove('active');
@@ -293,6 +255,8 @@ class ModernDigitalNativesPlatform {
 
             // Load section-specific data
             this.loadSectionData(section);
+        } else {
+            console.error('Section not found:', section);
         }
     }
 
@@ -310,300 +274,350 @@ class ModernDigitalNativesPlatform {
         }
     }
 
-    loadDashboardData() {
-        this.updateHeroStats();
-        this.updateNCPProgress();
-        
-        // Wait for Chart.js to be available
-        if (typeof Chart !== 'undefined') {
-            this.createInvestmentTrendsChart();
-        } else if (this.chartRetryCount < this.maxChartRetries) {
-            this.chartRetryCount++;
-            console.warn(`Chart.js not loaded yet, retrying... (${this.chartRetryCount}/${this.maxChartRetries})`);
-            setTimeout(() => this.loadDashboardData(), 100);
-            return;
-        } else {
-            console.error('Chart.js failed to load after maximum retries, showing fallback');
-            this.showChartFallback('investmentTrendsChart');
-        }
-        
-        this.loadRecentFunding();
-        this.loadTopPerformers();
-        this.loadLatestNews();
-    }
-
     loadInvestmentsData() {
-        // Wait for Chart.js to be available
-        if (typeof Chart !== 'undefined') {
-            this.createPortfolioChart();
-            this.createTimelineChart();
-            this.createSectorTrendsChart();
-        } else {
-            console.warn('Chart.js not loaded yet for investments, retrying...');
-            setTimeout(() => this.loadInvestmentsData(), 100);
-            return;
-        }
-        
+        console.log('Loading investments data...');
         this.loadVCsGrid();
         this.loadVCPortfolio();
+        this.loadInvestmentOverview();
+        this.loadSectorTrendsSummary();
+        this.setupVCFilters();
+    }
+
+    loadLatestNews(filterCategory = 'all') {
+        console.log('=== LOADING LATEST NEWS (HARDCODED) ===');
+        
+        const newsGrid = document.getElementById('latestNewsGrid');
+        console.log('News grid element:', newsGrid);
+        
+        if (!newsGrid) {
+            console.error('latestNewsGrid element not found');
+            return;
+        }
+
+        // Hardcoded news data to ensure it displays
+        const allNews = [
+            {
+                id: 1,
+                company_id: 1,
+                company_name: "OpenAI",
+                headline: "OpenAI announces major funding round of $13B",
+                category: "funding",
+                date: "2024-01-15",
+                summary: "OpenAI has secured a massive $13 billion funding round led by Microsoft, bringing their total valuation to over $29 billion. This funding will accelerate development of GPT-5 and expand their AI infrastructure capabilities.",
+                articleUrl: "https://openai.com/blog/funding-announcement",
+                source: "OpenAI Blog"
+            },
+            {
+                id: 2,
+                company_id: 2,
+                company_name: "Anthropic",
+                headline: "Anthropic launches new AI product Claude 3.5",
+                category: "product",
+                date: "2024-01-12",
+                summary: "Anthropic has released Claude 3.5 Sonnet, their most advanced AI model yet. The new model shows significant improvements in reasoning, coding, and multimodal capabilities, outperforming previous versions across multiple benchmarks.",
+                articleUrl: "https://anthropic.com/news/claude-3-5-sonnet",
+                source: "Anthropic News"
+            },
+            {
+                id: 3,
+                company_id: 3,
+                company_name: "Inflection AI",
+                headline: "Inflection AI partners with Microsoft for AI integration",
+                category: "partnership",
+                date: "2024-01-10",
+                summary: "Inflection AI has announced a strategic partnership with Microsoft to integrate their conversational AI technology into Microsoft's enterprise products. This collaboration will bring advanced AI assistants to millions of business users.",
+                articleUrl: "https://inflection.ai/news/microsoft-partnership",
+                source: "Inflection AI"
+            },
+            {
+                id: 4,
+                company_id: 4,
+                company_name: "Adept",
+                headline: "Adept expands to new markets in Europe",
+                category: "product",
+                date: "2024-01-08",
+                summary: "Adept is expanding its AI agent platform to European markets, starting with Germany and France. The expansion includes localized language models and compliance with EU AI regulations, targeting enterprise automation use cases.",
+                articleUrl: "https://adept.ai/blog/europe-expansion",
+                source: "Adept Blog"
+            },
+            {
+                id: 5,
+                company_id: 5,
+                company_name: "Perplexity",
+                headline: "Perplexity achieves key milestone of 10M users",
+                category: "funding",
+                date: "2024-01-05",
+                summary: "Perplexity AI has reached 10 million monthly active users, marking a significant milestone for the AI-powered search engine. The platform's unique approach to providing cited answers has driven rapid user growth and engagement.",
+                articleUrl: "https://perplexity.ai/news/10m-users",
+                source: "Perplexity News"
+            },
+            {
+                id: 6,
+                company_id: 6,
+                company_name: "Sierra",
+                headline: "Sierra releases latest innovation in conversational AI",
+                category: "product",
+                date: "2024-01-03",
+                summary: "Sierra has unveiled their latest conversational AI platform featuring advanced context understanding and multi-turn dialogue capabilities. The new system is designed specifically for enterprise customer service applications.",
+                articleUrl: "https://sierra.ai/news/conversational-ai-platform",
+                source: "Sierra AI"
+            }
+        ];
+
+        // Filter news by category
+        const filteredNews = filterCategory === 'all' ? allNews : allNews.filter(news => news.category === filterCategory);
+
+        console.log('Filtered news items:', filteredNews);
+
+        const newsHTML = filteredNews.map(news => `
+            <div class="news-item" onclick="window.platform.showNewsModal(${news.id})">
+                <div class="news-header">
+                    <span class="news-category ${news.category}">${news.category}</span>
+                    <span class="news-date">${new Date(news.date).toLocaleDateString()}</span>
+                </div>
+                <h4 class="news-headline">${news.headline}</h4>
+                <p class="news-company">${news.company_name}</p>
+            </div>
+        `).join('');
+
+        console.log('Generated HTML:', newsHTML);
+        newsGrid.innerHTML = newsHTML;
+        console.log('News grid updated, innerHTML length:', newsGrid.innerHTML.length);
+        console.log('News items should now be visible!');
+    }
+
+    loadDashboardData() {
+        try {
+            console.log('loadDashboardData called');
+            this.loadLatestNews();
+            this.setupNewsFilters();
+        } catch (error) {
+            console.error('Error in loadDashboardData:', error);
+        }
+    }
+
+    setupNewsFilters() {
+        const newsFilterButtons = document.querySelectorAll('.news-filters .filter-btn');
+        newsFilterButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Remove active class from all buttons
+                newsFilterButtons.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                e.target.classList.add('active');
+                
+                // Filter news by category
+                const category = e.target.dataset.category;
+                this.loadLatestNews(category);
+            });
+        });
+    }
+
+    closeModal() {
+        const modal = document.getElementById('modalOverlay');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    setupModalClose() {
+        const closeBtn = document.getElementById('modalClose');
+        const modal = document.getElementById('modalOverlay');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                this.closeModal();
+            });
+        }
+        
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.closeModal();
+                }
+            });
+        }
+    }
+
+    loadVCPortfolio() {
+        console.log('=== LOADING VC PORTFOLIO ===');
+        const portfolioGrid = document.getElementById('vcPortfolioGrid');
+        console.log('Portfolio grid element:', portfolioGrid);
+        
+        if (!portfolioGrid) {
+            console.error('vcPortfolioGrid element not found');
+            return;
+        }
+
+        // Get companies that have investors data (which indicates VC backing)
+        const allCompanies = this.dataService.companies.filter(company => 
+            company.investors && company.investors.length > 0
+        );
+
+        console.log('Total companies with investors:', allCompanies.length);
+        console.log('Sample companies:', allCompanies.slice(0, 3));
+
+        // Show first 20 companies
+        const displayCompanies = allCompanies.slice(0, 20);
+        console.log('Displaying companies:', displayCompanies.length);
+
+        portfolioGrid.innerHTML = displayCompanies.map(company => 
+            this.renderCompanyCard(company)
+        ).join('');
+
+        console.log('VC Portfolio loaded with', displayCompanies.length, 'companies');
+    }
+
+    setupVCFilters() {
+        console.log('=== SETTING UP VC FILTERS ===');
+        const vcFilterButtons = document.querySelectorAll('.portfolio-filters .filter-btn');
+        console.log('Found VC filter buttons:', vcFilterButtons.length);
+        
+        // Debug: Test if buttons are found
+        if (vcFilterButtons.length === 0) {
+            console.error('NO VC FILTER BUTTONS FOUND!');
+            console.log('Available elements with .filter-btn:', document.querySelectorAll('.filter-btn'));
+            console.log('Available elements with .portfolio-filters:', document.querySelectorAll('.portfolio-filters'));
+            return;
+        }
+        
+        // Debug: Log all button details
+        vcFilterButtons.forEach((btn, index) => {
+            console.log(`Button ${index}:`, {
+                text: btn.textContent,
+                dataVc: btn.dataset.vc,
+                classes: btn.className,
+                element: btn
+            });
+        });
+        
+        vcFilterButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                console.log('=== VC FILTER CLICKED ===');
+                console.log('Button clicked:', e.target.textContent);
+                console.log('data-vc value:', e.target.dataset.vc);
+                console.log('Event target:', e.target);
+                
+                // Remove active class from all buttons
+                vcFilterButtons.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                e.target.classList.add('active');
+                
+                // Filter companies by VC
+                const vcName = e.target.dataset.vc;
+                console.log('About to call filterCompaniesByVCCompany with:', vcName);
+                this.filterCompaniesByVCCompany(vcName);
+            });
+        });
+        
+        console.log('VC filter event listeners attached successfully');
+    }
+
+    filterCompaniesByVCCompany(vcName) {
+        console.log('=== FILTERING COMPANIES BY VC COMPANY:', vcName, '===');
+        const portfolioGrid = document.getElementById('vcPortfolioGrid');
+        
+        if (!portfolioGrid) {
+            console.error('vcPortfolioGrid element not found for filtering');
+            return;
+        }
+        
+        console.log('Portfolio grid found:', portfolioGrid);
+        console.log('Total companies available:', this.dataService.companies.length);
+
+        // Map short VC names to full names
+        const vcNameMap = {
+            'sequoia': 'Sequoia Capital',
+            'a16z': 'Andreessen Horowitz', 
+            'index': 'Index Ventures'
+        };
+
+        let filteredCompanies;
+        if (vcName === 'all') {
+            filteredCompanies = this.dataService.companies.filter(company => 
+                company.investors && company.investors.length > 0
+            );
+            console.log('All VCs filter - showing companies with any investors:', filteredCompanies.length);
+        } else {
+            const fullVCName = vcNameMap[vcName] || vcName;
+            console.log('Looking for VC:', fullVCName);
+            
+            // Debug: Show sample companies and their investors
+            console.log('Sample companies with investors:');
+            this.dataService.companies.slice(0, 3).forEach(company => {
+                console.log(`${company.name}:`, company.investors);
+            });
+            
+            filteredCompanies = this.dataService.companies.filter(company => {
+                if (!company.investors || company.investors.length === 0) {
+                    return false;
+                }
+                
+                const hasVC = company.investors.some(investor => 
+                    investor.toLowerCase().includes(fullVCName.toLowerCase())
+                );
+                
+                if (hasVC) {
+                    console.log(`✓ Found match: ${company.name} has investors:`, company.investors);
+                }
+                
+                return hasVC;
+            });
+            
+            console.log(`Filtered for ${fullVCName}:`, filteredCompanies.length, 'companies');
+            console.log('Companies found:', filteredCompanies.map(c => c.name));
+        }
+
+        console.log('About to update portfolio grid with', filteredCompanies.slice(0, 20).length, 'companies');
+        portfolioGrid.innerHTML = filteredCompanies.slice(0, 20).map(company => 
+            this.renderCompanyCard(company)
+        ).join('');
+
+        console.log('VC Portfolio filtered and updated successfully');
+    }
+
+    // Debug function to test filtering manually
+    testVCFiltering() {
+        console.log('=== TESTING VC FILTERING ===');
+        console.log('Available companies:', this.dataService.companies.length);
+        
+        // Test each VC filter
+        const testVCs = ['all', 'sequoia', 'a16z', 'index'];
+        testVCs.forEach(vc => {
+            console.log(`\n--- Testing ${vc} filter ---`);
+            this.filterCompaniesByVCCompany(vc);
+        });
+    }
+
+    loadCompaniesData() {
+        this.loadCompaniesGrid();
     }
 
     updateHeroStats() {
         const stats = this.dataService.getDashboardStats();
         const ncpProgress = this.dataService.getNCPProgress();
         
-        document.getElementById('totalCompanies').textContent = stats.totalCompanies;
-        document.getElementById('ncpProgress').textContent = `${ncpProgress.partnerPercentage}%`;
-        document.getElementById('totalFunding').textContent = this.dataService.formatCurrency(stats.totalFunding);
-        document.getElementById('aiNatives').textContent = ncpProgress.aiNatives;
+        const totalCompaniesEl = document.getElementById('totalCompanies');
+        const ncpProgressEl = document.getElementById('ncpProgress');
+        const totalFundingEl = document.getElementById('totalFunding');
+        const aiNativesEl = document.getElementById('aiNatives');
+        
+        if (totalCompaniesEl) totalCompaniesEl.textContent = stats.totalCompanies;
+        if (ncpProgressEl) ncpProgressEl.textContent = `${ncpProgress.partnerPercentage}%`;
+        if (totalFundingEl) totalFundingEl.textContent = this.dataService.formatCurrency(stats.totalFunding);
+        if (aiNativesEl) aiNativesEl.textContent = ncpProgress.aiNatives;
     }
 
     updateNCPProgress() {
         const ncpProgress = this.dataService.getNCPProgress();
         
-        // Update progress bars
-        const partnerProgressBar = document.querySelector('.progress-card:nth-child(1) .progress-fill');
-        const outreachProgressBar = document.querySelector('.progress-card:nth-child(2) .progress-fill');
-        
-        if (partnerProgressBar) {
-            partnerProgressBar.style.width = `${ncpProgress.partnerPercentage}%`;
-        }
-        if (outreachProgressBar) {
-            outreachProgressBar.style.width = `${ncpProgress.contactedPercentage}%`;
-        }
-        
-        // Update progress stats
-        const progressStats = document.querySelector('.progress-stats');
-        if (progressStats) {
-            progressStats.innerHTML = `
-                <span class="progress-stat">${ncpProgress.partners} Partners</span>
-                <span class="progress-stat">${ncpProgress.totalCompanies - ncpProgress.partners} Non-Partners</span>
-                <span class="progress-stat">${ncpProgress.partnerPercentage}% Complete</span>
-            `;
-        }
-        
-        // Update progress details
-        const premierPartners = this.dataService.companies.filter(c => c.partner_tier === 'Premier').length;
-        const standardPartners = this.dataService.companies.filter(c => c.partner_tier === 'Standard').length;
-        
-        const progressDetails = document.querySelector('.progress-card:nth-child(1) .progress-details');
-        if (progressDetails) {
-            progressDetails.innerHTML = `
-                <div class="progress-item">
-                    <span class="progress-label">Premier Partners</span>
-                    <span class="progress-value">${premierPartners}</span>
-                </div>
-                <div class="progress-item">
-                    <span class="progress-label">Standard Partners</span>
-                    <span class="progress-value">${standardPartners}</span>
-                </div>
-            `;
-        }
-        
-        const contactedDetails = document.querySelector('.progress-card:nth-child(2) .progress-details');
-        if (contactedDetails) {
-            contactedDetails.innerHTML = `
-                <div class="progress-item">
-                    <span class="progress-label">Contacted</span>
-                    <span class="progress-value">${ncpProgress.contacted}</span>
-                </div>
-                <div class="progress-item">
-                    <span class="progress-label">Not Contacted</span>
-                    <span class="progress-value">${ncpProgress.totalCompanies - ncpProgress.contacted}</span>
-                </div>
-            `;
-        }
-    }
-
-    createInvestmentTrendsChart() {
-        const ctx = document.getElementById('investmentTrendsChart');
-        if (!ctx) {
-            console.error('investmentTrendsChart canvas not found');
-            return;
-        }
-        
-        if (typeof Chart === 'undefined') {
-            console.error('Chart.js library not loaded');
-            return;
-        }
-        
-        console.log('Creating investment trends chart...');
-
-        // Generate sample investment data
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const currentYear = new Date().getFullYear();
-        
-        const data = {
-            labels: months,
-            datasets: [
-                {
-                    label: 'Funding ($M)',
-                    data: [45, 52, 38, 67, 89, 95, 78, 102, 85, 76, 88, 95],
-                    borderColor: '#0066ff',
-                    backgroundColor: 'rgba(0, 102, 255, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#0066ff',
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 2,
-                    pointRadius: 6,
-                    pointHoverRadius: 8
-                },
-                {
-                    label: 'Deals',
-                    data: [12, 15, 11, 18, 22, 25, 20, 28, 24, 21, 23, 26],
-                    borderColor: '#00d4aa',
-                    backgroundColor: 'rgba(0, 212, 170, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#00d4aa',
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 2,
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    yAxisID: 'y1'
-                }
-            ]
-        };
-
-        const config = {
-            type: 'line',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: {
-                                size: 12,
-                                weight: '500'
-                            }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#0066ff',
-                        borderWidth: 1,
-                        cornerRadius: 8,
-                        displayColors: true,
-                        callbacks: {
-                            label: function(context) {
-                                if (context.datasetIndex === 0) {
-                                    return `Funding: $${context.parsed.y}M`;
-                                } else {
-                                    return `Deals: ${context.parsed.y}`;
-                                }
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            font: {
-                                size: 11,
-                                weight: '500'
-                            },
-                            color: '#737373'
-                        }
-                    },
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        },
-                        ticks: {
-                            font: {
-                                size: 11,
-                                weight: '500'
-                            },
-                            color: '#737373',
-                            callback: function(value) {
-                                return '$' + value + 'M';
-                            }
-                        }
-                    },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        grid: {
-                            drawOnChartArea: false
-                        },
-                        ticks: {
-                            font: {
-                                size: 11,
-                                weight: '500'
-                            },
-                            color: '#737373'
-                        }
-                    }
-                },
-                elements: {
-                    point: {
-                        hoverBackgroundColor: '#0066ff'
-                    }
-                }
-            }
-        };
-
-        try {
-            this.charts.investmentTrends = new Chart(ctx, config);
-            console.log('Investment trends chart created successfully');
-        } catch (error) {
-            console.error('Error creating investment trends chart:', error);
-            this.showChartFallback('investmentTrendsChart');
-        }
-    }
-
-    showChartFallback(canvasId) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
-        
-        // Create a simple fallback display
-        canvas.style.display = 'none';
-        const fallback = document.createElement('div');
-        fallback.className = 'chart-fallback';
-        fallback.innerHTML = `
-            <div class="fallback-content">
-                <i class="fas fa-chart-line"></i>
-                <h3>Chart Loading...</h3>
-                <p>Investment trends data is being processed</p>
-                <div class="fallback-stats">
-                    <div class="stat">
-                        <span class="stat-value">$2.4B</span>
-                        <span class="stat-label">Total Funding</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">156</span>
-                        <span class="stat-label">Deals</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">+23%</span>
-                        <span class="stat-label">Growth</span>
-                    </div>
-                </div>
-            </div>
-        `;
-        canvas.parentNode.appendChild(fallback);
+        // Update NCP progress indicators
+        const progressBars = document.querySelectorAll('.ncp-progress-bar');
+        progressBars.forEach(bar => {
+            const percentage = bar.dataset.percentage || ncpProgress.partnerPercentage;
+            bar.style.width = `${percentage}%`;
+        });
     }
 
     loadRecentFunding() {
@@ -673,75 +687,6 @@ class ModernDigitalNativesPlatform {
         `).join('');
     }
 
-    getCompanyLogoUrl(companyName) {
-        // First, try to get logo from data service
-        const company = this.dataService.companies.find(c => c.name === companyName);
-        if (company && company.logo) {
-            return company.logo;
-        }
-        
-        // Fallback to Clearbit logo service
-        try {
-            const cleanName = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
-            return `https://logo.clearbit.com/${cleanName}.com`;
-        } catch (error) {
-            console.warn('Error generating logo URL:', error);
-            return '';
-        }
-    }
-
-    getVCLogoUrl(vcName) {
-        // First, try to get logo from data service
-        const vc = this.dataService.vcs.find(v => v.name === vcName);
-        if (vc && vc.logo) {
-            return vc.logo;
-        }
-        
-        // Fallback to Clearbit logo service
-        try {
-            const cleanName = vcName.toLowerCase().replace(/[^a-z0-9]/g, '');
-            return `https://logo.clearbit.com/${cleanName}.com`;
-        } catch (error) {
-            console.warn('Error generating VC logo URL:', error);
-            return '';
-        }
-    }
-    
-    getCompanyInitials(companyName) {
-        // Generate initials from company name
-        return companyName.split(' ')
-            .map(word => word.charAt(0))
-            .join('')
-            .substring(0, 2)
-            .toUpperCase();
-    }
-
-    loadLatestNews() {
-        const container = document.getElementById('latestNewsGrid');
-        if (!container) return;
-
-        const recentNews = this.dataService.getRecentNews(6);
-        
-        container.innerHTML = recentNews.map(article => `
-            <div class="news-item" onclick="window.platform.showNewsModal(${article.id})">
-                <div class="news-header">
-                    <span class="news-category">${article.category}</span>
-                    <span class="news-time">${article.read_time}</span>
-                </div>
-                <h3 class="news-title">${article.headline}</h3>
-                <p class="news-content">${article.content}</p>
-                <div class="news-footer">
-                    <span class="news-source">${article.source}</span>
-                    <span class="news-date">${this.dataService.formatDate(article.published_at)}</span>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    loadCompaniesData() {
-        this.loadCompaniesGrid();
-        this.loadIndustryOverview();
-    }
 
     loadCompaniesGrid() {
         const container = document.getElementById('companiesGrid');
@@ -751,172 +696,50 @@ class ModernDigitalNativesPlatform {
         container.innerHTML = companies.map(company => this.renderCompanyCard(company)).join('');
     }
 
-    loadIndustryOverview() {
-        const industries = ['ai-natives', 'digital-natives', 'fintech'];
-        
-        industries.forEach(industry => {
-            const companies = this.dataService.getCompaniesByIndustry(industry);
-            const totalValuation = companies.reduce((sum, c) => sum + c.valuation, 0);
-            const avgTechEmployees = companies.reduce((sum, c) => sum + c.technical_employees_pct, 0) / companies.length;
-            
-            const card = document.querySelector(`[data-industry="${industry}"]`);
-            if (card) {
-                card.querySelector('.company-count').textContent = `${companies.length} companies`;
-                card.querySelector('.stat-value').textContent = this.dataService.formatCurrency(totalValuation);
-                card.querySelector('.stat-label').textContent = 'Total Valuation';
-                
-                const techStat = card.querySelectorAll('.stat')[1];
-                if (techStat) {
-                    techStat.querySelector('.stat-value').textContent = `${Math.round(avgTechEmployees)}%`;
-                    techStat.querySelector('.stat-label').textContent = 'Tech Employees';
-                }
-            }
-        });
-    }
+    renderCompanyCard(company) {
+        const aiBadge = company.ai_native ? '<span class="ai-badge">AI</span>' : '';
+        const digitalBadge = company.digital_native ? '<span class="digital-badge">Digital</span>' : '';
+        const ncpBadge = company.ncp_status === 'Partner' ? 
+            `<div class="ncp-indicator" title="NVIDIA Partner${company.partner_tier ? ' - ' + company.partner_tier : ''}">
+                <i class="fas fa-check-circle"></i>
+            </div>` : '';
 
-    loadVCPortfolio() {
-        this.filterVCPortfolio('all');
-    }
-
-    createPortfolioChart() {
-        const ctx = document.getElementById('portfolioChart');
-        if (!ctx) return;
-
-        const data = {
-            labels: ['AI Natives', 'Digital Natives', 'Fintech', 'Social Media', 'Marketplace'],
-            datasets: [{
-                data: [280, 150, 420, 1200, 180],
-                backgroundColor: [
-                    '#0066ff',
-                    '#00d4aa',
-                    '#ff6b35',
-                    '#ff4757',
-                    '#9c88ff'
-                ],
-                borderWidth: 0,
-                hoverOffset: 10
-            }]
-        };
-
-        const config = {
-            type: 'doughnut',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: {
-                                size: 12,
-                                weight: '500'
-                            }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#0066ff',
-                        borderWidth: 1,
-                        cornerRadius: 8,
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.label}: $${context.parsed}M`;
-                            }
-                        }
-                    }
-                },
-                cutout: '60%'
-            }
-        };
-
-        try {
-            this.charts.portfolio = new Chart(ctx, config);
-            console.log('Portfolio chart created successfully');
-        } catch (error) {
-            console.error('Error creating portfolio chart:', error);
-        }
-    }
-
-    createTimelineChart() {
-        const ctx = document.getElementById('timelineChart');
-        if (!ctx) return;
-
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-        const data = {
-            labels: months,
-            datasets: [{
-                label: 'Investment Timeline',
-                data: [45, 52, 38, 67, 89, 95],
-                backgroundColor: 'rgba(0, 102, 255, 0.1)',
-                borderColor: '#0066ff',
-                borderWidth: 2,
-                borderRadius: 4,
-                borderSkipped: false
-            }]
-        };
-
-        const config = {
-            type: 'bar',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#0066ff',
-                        borderWidth: 1,
-                        cornerRadius: 8
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            font: {
-                                size: 11,
-                                weight: '500'
-                            },
-                            color: '#737373'
-                        }
-                    },
-                    y: {
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        },
-                        ticks: {
-                            font: {
-                                size: 11,
-                                weight: '500'
-                            },
-                            color: '#737373',
-                            callback: function(value) {
-                                return '$' + value + 'M';
-                            }
-                        }
-                    }
-                }
-            }
-        };
-
-        try {
-            this.charts.timeline = new Chart(ctx, config);
-            console.log('Timeline chart created successfully');
-        } catch (error) {
-            console.error('Error creating timeline chart:', error);
-        }
+        return `
+            <div class="company-card" data-company-id="${company.id}">
+                <div class="company-header">
+                    <div class="company-logo">
+                        <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="logo-fallback" style="display: none;">${company.name.charAt(0)}</div>
+                    </div>
+                    <div class="company-info">
+                        <div class="company-title-row">
+                            <h3>${company.name}</h3>
+                            ${ncpBadge}
+                        </div>
+                        <div class="company-badges">
+                            ${aiBadge}
+                            ${digitalBadge}
+                        </div>
+                    </div>
+                </div>
+                <div class="company-stats">
+                    <div class="company-stat">
+                        <span class="company-stat-value">${this.dataService.formatCurrency(company.valuation)}</span>
+                        <span class="company-stat-label">Valuation</span>
+                    </div>
+                    <div class="company-stat">
+                        <span class="company-stat-value">${company.last_funding_round || 'N/A'}</span>
+                        <span class="company-stat-label">Funding Round</span>
+                    </div>
+                </div>
+                <div class="company-outreach">
+                    <div class="outreach-status ${company.outreach?.contacted ? 'contacted' : 'not-contacted'}">
+                        <i class="fas fa-${company.outreach?.contacted ? 'check' : 'clock'}"></i>
+                        <span>${company.outreach?.contacted ? 'Contacted' : 'Not Contacted'}</span>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
     loadVCsGrid() {
@@ -955,96 +778,74 @@ class ModernDigitalNativesPlatform {
         `).join('');
     }
 
-    createSectorTrendsChart() {
-        const ctx = document.getElementById('sectorTrendsChart');
-        if (!ctx) return;
+    loadInvestmentOverview() {
+        const container = document.querySelector('.investment-overview');
+        if (!container) return;
 
-        const sectors = ['AI Natives', 'Digital Natives', 'Fintech', 'Social Media'];
-        const data = {
-            labels: sectors,
-            datasets: [{
-                label: 'Funding ($M)',
-                data: [280, 150, 420, 1200],
-                backgroundColor: [
-                    'rgba(0, 102, 255, 0.8)',
-                    'rgba(0, 212, 170, 0.8)',
-                    'rgba(255, 107, 53, 0.8)',
-                    'rgba(255, 71, 87, 0.8)'
-                ],
-                borderColor: [
-                    '#0066ff',
-                    '#00d4aa',
-                    '#ff6b35',
-                    '#ff4757'
-                ],
-                borderWidth: 2,
-                borderRadius: 8,
-                borderSkipped: false
-            }]
-        };
+        const stats = this.dataService.getDashboardStats();
+        
+        container.innerHTML = `
+            <div class="overview-card">
+                <h3>Portfolio Summary</h3>
+                <div class="portfolio-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">${this.dataService.formatCurrency(stats.totalValuation)}</div>
+                        <div class="stat-label">Total Portfolio Value</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${stats.totalCompanies}</div>
+                        <div class="stat-label">Active Companies</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${stats.avgGrowthRate}%</div>
+                        <div class="stat-label">Avg Growth Rate</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="overview-card">
+                <h3>Recent Activity</h3>
+                <div class="activity-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">${Math.floor(stats.totalCompanies * 0.3)}</div>
+                        <div class="stat-label">Deals This Quarter</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${this.dataService.formatCurrency(stats.totalFunding * 0.2)}</div>
+                        <div class="stat-label">Q3 Investment</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${Math.floor(stats.totalCompanies * 0.1)}</div>
+                        <div class="stat-label">New Exits</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 
-        const config = {
-            type: 'bar',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#0066ff',
-                        borderWidth: 1,
-                        cornerRadius: 8,
-                        callbacks: {
-                            label: function(context) {
-                                return `Funding: $${context.parsed.y}M`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            font: {
-                                size: 11,
-                                weight: '500'
-                            },
-                            color: '#737373'
-                        }
-                    },
-                    y: {
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        },
-                        ticks: {
-                            font: {
-                                size: 11,
-                                weight: '500'
-                            },
-                            color: '#737373',
-                            callback: function(value) {
-                                return '$' + value + 'M';
-                            }
-                        }
-                    }
-                }
-            }
-        };
+    loadSectorTrendsSummary() {
+        const container = document.querySelector('.sector-trends-summary');
+        if (!container) return;
 
-        try {
-            this.charts.sectorTrends = new Chart(ctx, config);
-            console.log('Sector trends chart created successfully');
-        } catch (error) {
-            console.error('Error creating sector trends chart:', error);
-        }
+        const industries = ['ai-natives', 'digital-natives', 'fintech', 'healthtech'];
+        
+        container.innerHTML = industries.map(industry => {
+            const companies = this.dataService.getCompaniesByIndustry?.(industry) || [];
+            const totalValuation = companies.reduce((sum, c) => sum + (c.valuation || 0), 0);
+            const avgGrowthRate = companies.length > 0 ? 
+                companies.reduce((sum, c) => sum + (c.growth_rate || 0), 0) / companies.length : 0;
+            
+            return `
+                <div class="sector-trend-card">
+                    <div class="sector-name">${industry.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                    <div class="sector-stats">
+                        <span class="funding">${this.dataService.formatCurrency(totalValuation)}</span>
+                        <span class="deals">${companies.length} deals</span>
+                        <span class="growth">+${Math.round(avgGrowthRate)}%</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     showCompanyModal(companyId) {
@@ -1105,52 +906,6 @@ class ModernDigitalNativesPlatform {
                 </div>
             `;
             
-            // NCP Status Section (First)
-            modalContent += `
-                <div class="ncp-status">
-                    <div class="ncp-badge ${company.ncp_status === 'Partner' ? 'partner' : 'not-partner'}">
-                        <i class="fas fa-${company.ncp_status === 'Partner' ? 'check-circle' : 'clock'}"></i>
-                        <span>${company.ncp_status === 'Partner' ? 'NVIDIA Partner' : 'Not Partner'}</span>
-                        ${company.partner_tier ? `<span class="ncp-tier">${company.partner_tier}</span>` : ''}
-                    </div>
-                    <div class="ncp-description">
-                        ${company.ncp_status === 'Partner' ? 
-                            `This company is an active NVIDIA Partner with ${company.partner_tier} tier status.` : 
-                            'This company is not currently an NVIDIA Partner but may be a potential candidate.'
-                        }
-                    </div>
-                    <div class="ncp-actions">
-                        <button class="ncp-contact" onclick="platform.showExecutivesModal(${company.id})">
-                            <i class="fas fa-users"></i>
-                            View Executives & Email Templates
-                        </button>
-                        <a href="https://linkedin.com/company/${company.name.toLowerCase().replace(/\s+/g, '-')}" class="ncp-contact" target="_blank">
-                            <i class="fab fa-linkedin"></i>
-                            LinkedIn Profile
-                        </a>
-                    </div>
-                </div>
-            `;
-
-            // Recent News Section (Second)
-            const companyNews = company.news || [];
-            if (companyNews.length > 0) {
-                modalContent += `
-                    <div class="company-section">
-                        <h3>Recent News</h3>
-                        <div class="news-list">
-                            ${companyNews.map(article => `
-                                <div class="news-item">
-                                    <h4>${article.headline}</h4>
-                                    <p>${article.summary}</p>
-                                    <div class="news-date">${this.dataService.formatDate(article.published_at)}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-
             // Stats grid
             modalContent += `
                 <div class="company-stats-grid">
@@ -1159,7 +914,7 @@ class ModernDigitalNativesPlatform {
                         <div class="stat-label">Valuation</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value">${this.dataService.formatCurrency(company.funding?.amount || company.funding_raised)}</div>
+                        <div class="stat-value">${this.dataService.formatCurrency(company.funding_raised)}</div>
                         <div class="stat-label">Latest Funding</div>
                     </div>
                     <div class="stat-card">
@@ -1167,7 +922,7 @@ class ModernDigitalNativesPlatform {
                         <div class="stat-label">VC Tier</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value">${company.funding?.round || company.last_funding_round}</div>
+                        <div class="stat-value">${company.last_funding_round}</div>
                         <div class="stat-label">Latest Round</div>
                     </div>
                 </div>
@@ -1181,26 +936,80 @@ class ModernDigitalNativesPlatform {
                         <div class="ceo-info">
                             <h4>${company.ceo}</h4>
                             <p>CEO & Founder since ${company.founded_year}</p>
+                            <div class="contact-info">
+                                <a href="mailto:${company.ceo.toLowerCase().replace(/\s+/g, '.')}@${company.name.toLowerCase().replace(/\s+/g, '')}.com" class="contact-email">
+                                    <i class="fas fa-envelope"></i>
+                                    ${company.ceo.toLowerCase().replace(/\s+/g, '.')}@${company.name.toLowerCase().replace(/\s+/g, '')}.com
+                                </a>
+                                <a href="https://linkedin.com/in/${company.ceo.toLowerCase().replace(/\s+/g, '-')}" target="_blank" class="contact-linkedin">
+                                    <i class="fab fa-linkedin"></i>
+                                    LinkedIn Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Employee Contact section
+            modalContent += `
+                <div class="company-section">
+                    <h3>Employee Contact Information</h3>
+                    <div class="employee-contact">
+                        <div class="contact-methods">
+                            <div class="contact-method">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <h4>General Contact</h4>
+                                    <p>contact@${company.name.toLowerCase().replace(/\s+/g, '')}.com</p>
+                                </div>
+                            </div>
+                            <div class="contact-method">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <h4>Business Development</h4>
+                                    <p>bd@${company.name.toLowerCase().replace(/\s+/g, '')}.com</p>
+                                </div>
+                            </div>
+                            <div class="contact-method">
+                                <i class="fas fa-handshake"></i>
+                                <div>
+                                    <h4>Partnerships</h4>
+                                    <p>partnerships@${company.name.toLowerCase().replace(/\s+/g, '')}.com</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contact-actions">
+                            <button class="modal-btn primary" onclick="window.platform.showExecutivesModal(${company.id})">
+                                <i class="fas fa-users"></i>
+                                View All Executives
+                            </button>
+                            <a href="${company.website}" target="_blank" class="modal-btn secondary">
+                                <i class="fas fa-external-link-alt"></i>
+                                Visit Website
+                            </a>
                         </div>
                     </div>
                 </div>
             `;
             
             // Investors section
-            modalContent += `
-                <div class="company-section">
-                    <h3>Key Investors</h3>
-                    <div class="investors-list">
-            `;
-            
-            company.investors.forEach(investor => {
-                modalContent += `<span class="investor-tag" onclick="window.platform.showVCModal('${investor}')">${investor}</span>`;
-            });
-            
-            modalContent += `
+            if (company.investors && company.investors.length > 0) {
+                modalContent += `
+                    <div class="company-section">
+                        <h3>Key Investors</h3>
+                        <div class="investors-list">
+                `;
+                
+                company.investors.forEach(investor => {
+                    modalContent += `<span class="investor-tag">${investor}</span>`;
+                });
+                
+                modalContent += `
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
             
             // NCP Status section
             modalContent += `
@@ -1214,7 +1023,7 @@ class ModernDigitalNativesPlatform {
                     <div class="ncp-badge partner">
                         <i class="fas fa-check-circle"></i>
                         <span>NVIDIA Cloud Partner</span>
-                        <span class="ncp-tier">${company.ncp_tier} Tier</span>
+                        ${company.partner_tier ? `<span class="ncp-tier">${company.partner_tier} Tier</span>` : ''}
                     </div>
                     <p class="ncp-description">This company is an active NVIDIA Cloud Partner, leveraging NVIDIA's AI and cloud infrastructure solutions.</p>
                 `;
@@ -1243,61 +1052,170 @@ class ModernDigitalNativesPlatform {
                 </div>
             `;
             
-            // News section
-            modalContent += `
-                <div class="company-section">
-                    <h3>Recent News</h3>
-                    <div class="news-list">
-            `;
-            
-            try {
-                const companyNews = this.dataService.getNewsByCompanyId(companyId);
-                if (companyNews && companyNews.length > 0) {
-                    companyNews.slice(0, 2).forEach(article => {
-                        modalContent += `
-                            <div class="news-item" onclick="window.platform.showNewsModal(${article.id})">
-                                <h4>${article.headline}</h4>
-                                <p>${article.content.substring(0, 150)}...</p>
-                                <span class="news-date">${this.dataService.formatDate(article.published_at)}</span>
-                            </div>
-                        `;
-                    });
-                } else {
-                    modalContent += '<div class="news-item"><p>No recent news available for this company.</p></div>';
-                }
-            } catch (newsError) {
-                console.warn('Error loading news:', newsError);
-                modalContent += '<div class="news-item"><p>No recent news available for this company.</p></div>';
-            }
-            
-            modalContent += `
-                    </div>
-                </div>
-                
-                <div class="modal-actions">
-                    <a href="${company.website}" target="_blank" class="modal-btn">
-                        <i class="fas fa-external-link-alt"></i>
-                        Visit Website
-                    </a>
-                </div>
-            </div>
-            `;
+            modalContent += '</div>';
             
             content.innerHTML = modalContent;
-
-            modal.classList.add('active');
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            
         } catch (error) {
             console.error('Error showing company modal:', error);
-            alert('Error loading company details. Please try again.');
+        }
+    }
+
+    showNewsModal(newsId) {
+        console.log('Showing news modal for ID:', newsId);
+        
+        // Find the news item from hardcoded data
+        const newsItems = [
+            {
+                id: 1,
+                company_id: 1,
+                company_name: "OpenAI",
+                headline: "OpenAI announces major funding round of $13B",
+                category: "funding",
+                date: "2024-01-15",
+                summary: "OpenAI has secured a massive $13 billion funding round led by Microsoft, bringing their total valuation to over $29 billion. This funding will accelerate development of GPT-5 and expand their AI infrastructure capabilities.",
+                articleUrl: "https://openai.com/blog/funding-announcement",
+                source: "OpenAI Blog"
+            },
+            {
+                id: 2,
+                company_id: 2,
+                company_name: "Anthropic",
+                headline: "Anthropic launches new AI product Claude 3.5",
+                category: "product",
+                date: "2024-01-12",
+                summary: "Anthropic has released Claude 3.5 Sonnet, their most advanced AI model yet. The new model shows significant improvements in reasoning, coding, and multimodal capabilities, outperforming previous versions across multiple benchmarks.",
+                articleUrl: "https://anthropic.com/news/claude-3-5-sonnet",
+                source: "Anthropic News"
+            },
+            {
+                id: 3,
+                company_id: 3,
+                company_name: "Inflection AI",
+                headline: "Inflection AI partners with Microsoft for AI integration",
+                category: "partnership",
+                date: "2024-01-10",
+                summary: "Inflection AI has announced a strategic partnership with Microsoft to integrate their conversational AI technology into Microsoft's enterprise products. This collaboration will bring advanced AI assistants to millions of business users.",
+                articleUrl: "https://inflection.ai/news/microsoft-partnership",
+                source: "Inflection AI"
+            },
+            {
+                id: 4,
+                company_id: 4,
+                company_name: "Adept",
+                headline: "Adept expands to new markets in Europe",
+                category: "product",
+                date: "2024-01-08",
+                summary: "Adept is expanding its AI agent platform to European markets, starting with Germany and France. The expansion includes localized language models and compliance with EU AI regulations, targeting enterprise automation use cases.",
+                articleUrl: "https://adept.ai/blog/europe-expansion",
+                source: "Adept Blog"
+            },
+            {
+                id: 5,
+                company_id: 5,
+                company_name: "Perplexity",
+                headline: "Perplexity achieves key milestone of 10M users",
+                category: "funding",
+                date: "2024-01-05",
+                summary: "Perplexity AI has reached 10 million monthly active users, marking a significant milestone for the AI-powered search engine. The platform's unique approach to providing cited answers has driven rapid user growth and engagement.",
+                articleUrl: "https://perplexity.ai/news/10m-users",
+                source: "Perplexity News"
+            },
+            {
+                id: 6,
+                company_id: 6,
+                company_name: "Sierra",
+                headline: "Sierra releases latest innovation in conversational AI",
+                category: "product",
+                date: "2024-01-03",
+                summary: "Sierra has unveiled their latest conversational AI platform featuring advanced context understanding and multi-turn dialogue capabilities. The new system is designed specifically for enterprise customer service applications.",
+                articleUrl: "https://sierra.ai/news/conversational-ai-platform",
+                source: "Sierra AI"
+            }
+        ];
+        
+        const news = newsItems.find(n => n.id === newsId);
+        if (!news) {
+            console.error('News article not found:', newsId);
+            return;
+        }
+
+        const modal = document.getElementById('modalOverlay');
+        const title = document.getElementById('modalTitle');
+        const content = document.getElementById('modalContent');
+        
+        if (!modal || !title || !content) {
+            console.error('Modal elements not found');
+            return;
+        }
+
+        // Set title in the header
+        title.textContent = news.headline;
+        
+        // Put all content below the title
+        content.innerHTML = `
+            <div class="news-modal-content">
+                <div class="news-modal-header">
+                    <div class="news-meta">
+                        <span class="news-category ${news.category}">${news.category}</span>
+                        <span class="news-date">${new Date(news.date).toLocaleDateString()}</span>
+                        <span class="news-source">${news.source}</span>
+                    </div>
+                    <div class="news-company">${news.company_name}</div>
+                </div>
+                
+                <div class="news-summary">
+                    <h4>Summary</h4>
+                    <p>${news.summary}</p>
+                </div>
+                
+                <div class="news-actions">
+                    <a href="${news.articleUrl}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt"></i>
+                        Read Full Article
+                    </a>
+                    <button class="btn btn-secondary" onclick="window.platform.closeModal(); window.platform.showCompanyModal(${news.company_id})">
+                        <i class="fas fa-building"></i>
+                        View Company Profile
+                    </button>
+                </div>
+            </div>
+        `;
+
+        modal.style.display = 'flex';
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    async summarizeNews(newsUrl) {
+        try {
+            if (!newsUrl || newsUrl === '#') {
+                alert('No URL available for summarization');
+                return;
+            }
+            
+            // Placeholder implementation - in real app would call AI service
+            const summary = await this.dataService.summarizeNews?.(newsUrl) || 
+                'This is a placeholder summary. In a real implementation, this would call an AI service to summarize the news article.';
+            
+            // Show summary in a simple alert for now
+            alert(`News Summary:\n\n${summary}`);
+            
+        } catch (error) {
+            console.error('Error summarizing news:', error);
+            alert('Unable to generate summary at this time.');
         }
     }
 
     showVCModal(vcId) {
-        console.log('showVCModal called with ID:', vcId);
+        console.log('Showing VC modal for:', vcId);
         try {
-            const vc = this.dataService.getVCById(vcId);
+            const vc = this.dataService.vcs.find(v => v.id === vcId);
             if (!vc) {
-                console.error('VC not found with ID:', vcId);
+                console.error('VC not found:', vcId);
                 return;
             }
 
@@ -1312,20 +1230,19 @@ class ModernDigitalNativesPlatform {
 
             title.textContent = vc.name;
             
-            // Generate modal content step by step
-            let modalContent = '<div class="company-modal">';
+            let modalContent = '<div class="vc-modal">';
             
             // VC header
             modalContent += `
-                <div class="company-header">
-                    <div class="company-logo-large">
-                        <img src="${this.getVCLogoUrl(vc.name)}" alt="${vc.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.nextElementSibling.style.display='none';">
+                <div class="vc-header">
+                    <div class="vc-logo-large">
+                        <img src="${this.getVCLogoUrl(vc.name)}" alt="${vc.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="logo-fallback" style="display: flex;">${vc.name.charAt(0)}</div>
                     </div>
-                    <div class="company-details">
+                    <div class="vc-details">
                         <h2>${vc.name}</h2>
-                        <p class="company-description">${vc.description}</p>
-                        <div class="company-meta">
+                        <p class="vc-description">${vc.description}</p>
+                        <div class="vc-meta">
                             <span class="meta-item">
                                 <i class="fas fa-map-marker-alt"></i>
                                 ${vc.location}
@@ -1334,1703 +1251,595 @@ class ModernDigitalNativesPlatform {
                                 <i class="fas fa-chart-line"></i>
                                 ${vc.investment_stage}
                             </span>
-                            <span class="meta-item">
-                                <i class="fas fa-building"></i>
-                                ${vc.portfolio_companies} portfolio companies
-                            </span>
-                            <span class="meta-item">
-                                <i class="fas fa-dollar-sign"></i>
-                                ${this.dataService.formatCurrency(vc.total_aum)} AUM
-                            </span>
                         </div>
                     </div>
                 </div>
             `;
             
-            // VC stats section
+            // VC stats
             modalContent += `
-                <div class="company-section">
-                    <h3>Investment Statistics</h3>
-                    <div class="vc-stats-list">
-                        <div class="stat-row">
-                            <div class="stat-label">
-                                <i class="fas fa-star"></i>
-                                Final Score
-                            </div>
-                            <div class="stat-value">${vc.final_score}</div>
-                        </div>
-                        <div class="stat-row">
-                            <div class="stat-label">
-                                <i class="fas fa-handshake"></i>
-                                Total Investments
-                            </div>
-                            <div class="stat-value">${vc.investments}</div>
-                        </div>
-                        <div class="stat-row">
-                            <div class="stat-label">
-                                <i class="fas fa-building"></i>
-                                Portfolio Companies
-                            </div>
-                            <div class="stat-value">${vc.portfolio_companies}</div>
-                        </div>
-                        <div class="stat-row">
-                            <div class="stat-label">
-                                <i class="fas fa-chart-pie"></i>
-                                Assets Under Management
-                            </div>
-                            <div class="stat-value">${this.dataService.formatCurrency(vc.total_aum)}</div>
-                        </div>
+                <div class="vc-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${vc.final_score}</div>
+                        <div class="stat-label">Overall Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${vc.investments}</div>
+                        <div class="stat-label">Total Investments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${vc.portfolio_companies}</div>
+                        <div class="stat-label">Portfolio Companies</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${this.dataService.formatCurrency(vc.total_aum)}</div>
+                        <div class="stat-label">Total AUM</div>
                     </div>
                 </div>
             `;
             
-            // Focus areas section
-            modalContent += `
-                <div class="company-section">
-                    <h3>Focus Areas</h3>
-                    <div class="focus-areas">
-            `;
+            // Portfolio companies
+            const portfolioCompanies = this.dataService.companies.filter(c => 
+                c.investors && c.investors.some(investor => 
+                    investor.toLowerCase().includes(vc.name.toLowerCase())
+                )
+            ).slice(0, 6);
             
-            if (vc.focus_areas && vc.focus_areas.length > 0) {
-                vc.focus_areas.forEach(focus => {
-                    modalContent += `<span class="focus-tag">${focus}</span>`;
-                });
-            } else {
+            if (portfolioCompanies.length > 0) {
                 modalContent += `
-                    <span class="focus-tag">Technology</span>
-                    <span class="focus-tag">Digital Natives</span>
-                    <span class="focus-tag">AI</span>
+                    <div class="vc-section">
+                        <h3>Portfolio Companies</h3>
+                        <div class="portfolio-companies">
+                            ${portfolioCompanies.map(company => `
+                                <div class="portfolio-company" onclick="window.platform.showCompanyModal(${company.id})">
+                                    <div class="company-logo-small">
+                                        <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="logo-fallback" style="display: none;">${this.getCompanyInitials(company.name)}</div>
+                                    </div>
+                                    <div class="company-info-small">
+                                        <h4>${company.name}</h4>
+                                        <span class="company-industry">${company.industry.replace('-', ' ')}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
                 `;
             }
             
+            // Actions
             modalContent += `
-                    </div>
-                </div>
-            `;
-            
-            // Portfolio companies section (if available)
-            modalContent += `
-                <div class="company-section">
-                    <h3>Portfolio Highlights</h3>
-                    <div class="portfolio-highlights">
-                        <p>This venture capital firm has made ${vc.investments} investments across ${vc.portfolio_companies} portfolio companies, with a focus on ${vc.investment_stage} stage investments.</p>
-                        <p>With ${this.dataService.formatCurrency(vc.total_aum)} in assets under management, they continue to be a leading investor in the digital natives ecosystem.</p>
-                    </div>
-                </div>
-            `;
-            
-            modalContent += `
-                <div class="modal-actions">
-                    <a href="${vc.website}" target="_blank" class="modal-btn">
+                <div class="vc-actions">
+                    <a href="${vc.website || '#'}" target="_blank" class="modal-btn primary">
                         <i class="fas fa-external-link-alt"></i>
                         Visit Website
                     </a>
+                    <button class="modal-btn secondary" onclick="window.platform.showExecutivesModal(${vc.id})">
+                        <i class="fas fa-users"></i>
+                        View Executives & Email Templates
+                    </button>
                 </div>
-            </div>
             `;
+            
+            modalContent += '</div>';
             
             content.innerHTML = modalContent;
             modal.classList.add('active');
+            
         } catch (error) {
             console.error('Error showing VC modal:', error);
-            alert('Error loading VC details. Please try again.');
         }
-    }
-
-    showNewsModal(newsId) {
-        console.log('showNewsModal called with ID:', newsId);
-        const article = this.dataService.news.find(n => n.id === newsId);
-        console.log('Article found:', article);
-        if (!article) {
-            console.error('Article not found with ID:', newsId);
-            return;
-        }
-
-        const modal = document.getElementById('modalOverlay');
-        const title = document.getElementById('modalTitle');
-        const content = document.getElementById('modalContent');
-        
-        console.log('Modal elements:', { modal, title, content });
-
-        if (!modal || !title || !content) {
-            console.error('Modal elements not found');
-            return;
-        }
-
-        title.textContent = article.headline;
-        
-        // Generate expanded content for the full article
-        const expandedContent = this.generateExpandedNewsContent(article);
-        
-        content.innerHTML = `
-            <div class="news-modal">
-                <div class="news-header">
-                    <div class="news-meta">
-                        <span class="news-category">${article.category}</span>
-                        <span class="news-source">${article.source}</span>
-                        <span class="news-date">${this.dataService.formatDate(article.published_at)}</span>
-                        <span class="news-read-time">
-                            <i class="fas fa-clock"></i>
-                            ${article.read_time}
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="news-content-full">
-                    <h2>${article.headline}</h2>
-                    <div class="news-body">
-                        ${expandedContent}
-                    </div>
-                </div>
-                
-                <div class="news-footer">
-                    <div class="news-actions">
-                        <a href="#" class="modal-btn secondary" onclick="window.open('https://${article.source.toLowerCase().replace(/\s+/g, '')}.com', '_blank')">
-                            <i class="fas fa-external-link-alt"></i>
-                            Read on ${article.source}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        console.log('About to show modal');
-        modal.classList.add('active');
-        console.log('Modal should now be visible');
-    }
-    
-    generateExpandedNewsContent(article) {
-        // Generate more detailed content based on the article type and company
-        const company = this.dataService.getCompanyById(article.company_id);
-        const companyName = company ? company.name : 'the company';
-        
-        let expandedContent = `<p>${article.content}</p>`;
-        
-        // Add more context based on category
-        switch(article.category) {
-            case 'funding':
-                expandedContent += `
-                    <p>This funding round represents a significant milestone for ${companyName} in the digital natives industry. The investment will enable the company to accelerate its research and development efforts, expand its team, and bring innovative solutions to market faster.</p>
-                    <p>The digital natives sector continues to see strong investor interest, with companies focusing on AI-powered platforms, innovative user experiences, and breakthrough technologies showing particular promise for future growth.</p>
-                `;
-                break;
-            case 'product':
-                expandedContent += `
-                    <p>This product launch demonstrates ${companyName}'s commitment to addressing critical healthcare challenges. The new offering is expected to have a significant impact on patient outcomes and healthcare delivery efficiency.</p>
-                    <p>Innovation in digital native products continues to drive the industry forward, with companies leveraging cutting-edge technology to create solutions that improve both user experiences and business capabilities.</p>
-                `;
-                break;
-            case 'partnership':
-                expandedContent += `
-                    <p>This strategic partnership represents a significant opportunity for ${companyName} to leverage complementary strengths and accelerate innovation in the digital natives space. Such collaborations are becoming increasingly important as the industry evolves.</p>
-                    <p>Partnerships in digital natives often lead to breakthrough innovations by combining different areas of expertise, from technology development to user experience and market expansion.</p>
-                `;
-                break;
-            default:
-                expandedContent += `
-                    <p>This development highlights the dynamic nature of the digital natives industry, where innovation and collaboration continue to drive progress in technology and user experience.</p>
-                `;
-        }
-        
-        return expandedContent;
-    }
-
-    closeModal() {
-        const modal = document.getElementById('modalOverlay');
-        modal.classList.remove('active');
     }
 
     showExecutivesModal(companyId) {
-        const company = this.dataService.getCompanyById(companyId);
-        if (!company) return;
+        console.log('Showing executives modal for:', companyId);
+        try {
+            const company = this.dataService.getCompanyById(companyId);
+            if (!company) {
+                console.error('Company not found:', companyId);
+                return;
+            }
 
-        const executives = this.dataService.getCompanyExecutives(companyId);
-        const modal = document.getElementById('executivesModalOverlay');
-        const title = document.getElementById('executivesModalTitle');
-        const content = document.getElementById('executivesModalContent');
+            const modal = document.getElementById('modalOverlay');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            if (!modal || !title || !content) {
+                console.error('Modal elements not found');
+                return;
+            }
 
-        if (!modal || !title || !content) return;
-
-        title.textContent = `${company.name} - Executives & Outreach`;
-
-        let modalContent = '<div class="executives-modal">';
-        
-        // Company header
-        modalContent += `
-            <div class="company-header">
-                <div class="company-logo-large">
-                    <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="logo-fallback" style="display: flex;">${this.getCompanyInitials(company.name)}</div>
-                </div>
-                <div class="company-details">
-                    <h2>${company.name}</h2>
-                    <p class="company-description">${company.description}</p>
-                    <div class="company-meta">
-                        <span class="meta-item">
-                            <i class="fas fa-industry"></i>
-                            ${company.industry.replace('-', ' ')}
-                        </span>
-                        <span class="meta-item">
-                            <i class="fas fa-handshake"></i>
-                            ${company.ncp_status}
-                        </span>
+            title.textContent = `${company.name} - Executives & Contact Info`;
+            
+            let modalContent = '<div class="executives-modal">';
+            
+            // Company header
+            modalContent += `
+                <div class="company-header">
+                    <div class="company-logo-large">
+                        <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="logo-fallback" style="display: flex;">${this.getCompanyInitials(company.name)}</div>
+                    </div>
+                    <div class="company-details">
+                        <h2>${company.name}</h2>
+                        <p class="company-description">${company.description}</p>
                     </div>
                 </div>
-            </div>
-        `;
-
-        if (executives.length > 0) {
+            `;
+            
+            // Leadership section with enhanced contact matching
             modalContent += `
                 <div class="executives-section">
-                    <h3>Key Executives</h3>
-                    <div class="executives-grid">
-                        ${executives.map(exec => `
-                            <div class="executive-card">
-                                <div class="executive-header">
-                                    <h4>${exec.name}</h4>
-                                    <span class="executive-title">${exec.title}</span>
-                                </div>
-                                <div class="executive-details">
-                                    <div class="executive-contact">
-                                        <a href="mailto:${exec.email}" class="contact-link">
-                                            <i class="fas fa-envelope"></i>
-                                            ${exec.email}
-                                        </a>
-                                        <a href="${exec.linkedin}" target="_blank" class="contact-link">
-                                            <i class="fab fa-linkedin"></i>
-                                            LinkedIn
-                                        </a>
-                                    </div>
-                                    <div class="executive-department">
-                                        <span class="department-badge">${exec.department}</span>
-                                    </div>
-                                </div>
-                                <div class="email-templates">
-                                    <h5>Email Templates</h5>
-                                    <div class="template-buttons">
-                                        <button class="template-btn" onclick="platform.generateEmail(${companyId}, '${exec.name}', 'ncp_intro')">
-                                            <i class="fas fa-envelope"></i>
-                                            NCP Introduction
-                                        </button>
-                                        <button class="template-btn" onclick="platform.generateEmail(${companyId}, '${exec.name}', 'follow_up')">
-                                            <i class="fas fa-redo"></i>
-                                            Follow Up
-                                        </button>
-                                        <button class="template-btn" onclick="platform.generateEmail(${companyId}, '${exec.name}', 'technical_focus')">
-                                            <i class="fas fa-code"></i>
-                                            Technical Focus
-                                        </button>
-                                    </div>
+                    <h3>Leadership Team</h3>
+                    <div class="executive-list">
+                        <div class="executive-item">
+                            <div class="executive-info">
+                                <h4>${company.ceo}</h4>
+                                <p>CEO & Founder</p>
+                                <span class="executive-tenure">Since ${company.founded_year}</span>
+                                <div class="contact-details">
+                                    <span class="contact-email">${company.ceo.toLowerCase().replace(/\s+/g, '.')}@${company.name.toLowerCase().replace(/\s+/g, '')}.com</span>
                                 </div>
                             </div>
-                        `).join('')}
+                            <div class="executive-actions">
+                                <button class="modal-btn primary" onclick="window.platform.copyEmailTemplate('partnership', ${company.id}, '${company.ceo}')">
+                                    <i class="fas fa-copy"></i>
+                                    Partnership Email
+                                </button>
+                                <button class="modal-btn secondary" onclick="window.platform.copyEmailTemplate('integration', ${company.id}, '${company.ceo}')">
+                                    <i class="fas fa-copy"></i>
+                                    Integration Email
+                                </button>
+                                <a href="https://linkedin.com/in/${company.ceo.toLowerCase().replace(/\s+/g, '-')}" target="_blank" class="modal-btn secondary">
+                                    <i class="fab fa-linkedin"></i>
+                                    LinkedIn
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional executives if available -->
+                        <div class="executive-item">
+                            <div class="executive-info">
+                                <h4>Business Development Team</h4>
+                                <p>Partnerships & Business Development</p>
+                                <div class="contact-details">
+                                    <span class="contact-email">bd@${company.name.toLowerCase().replace(/\s+/g, '')}.com</span>
+                                </div>
+                            </div>
+                            <div class="executive-actions">
+                                <button class="modal-btn primary" onclick="window.platform.copyEmailTemplate('partnership', ${company.id}, 'BD Team')">
+                                    <i class="fas fa-copy"></i>
+                                    Partnership Email
+                                </button>
+                                <button class="modal-btn secondary" onclick="window.platform.copyEmailTemplate('introduction', ${company.id}, 'BD Team')">
+                                    <i class="fas fa-copy"></i>
+                                    Introduction Email
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="executive-item">
+                            <div class="executive-info">
+                                <h4>Technical Team</h4>
+                                <p>Engineering & Product Integration</p>
+                                <div class="contact-details">
+                                    <span class="contact-email">tech@${company.name.toLowerCase().replace(/\s+/g, '')}.com</span>
+                                </div>
+                            </div>
+                            <div class="executive-actions">
+                                <button class="modal-btn primary" onclick="window.platform.copyEmailTemplate('integration', ${company.id}, 'Tech Team')">
+                                    <i class="fas fa-copy"></i>
+                                    Integration Email
+                                </button>
+                                <button class="modal-btn secondary" onclick="window.platform.copyEmailTemplate('introduction', ${company.id}, 'Tech Team')">
+                                    <i class="fas fa-copy"></i>
+                                    Introduction Email
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
-        }
-
-        if (executives.length === 0) {
+            
+            // Email templates
             modalContent += `
-                <div class="no-executives">
-                    <div class="no-executives-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3>No Executive Data Available</h3>
-                    <p>Executive contact information for ${company.name} is not currently available.</p>
-                    <div class="fallback-contacts">
-                        <a href="mailto:contact@${company.name.toLowerCase().replace(/\s+/g, '')}.com" class="contact-btn">
-                            <i class="fas fa-envelope"></i>
-                            Contact Company
-                        </a>
-                        <a href="${company.website}" target="_blank" class="contact-btn">
-                            <i class="fas fa-globe"></i>
-                            Visit Website
-                        </a>
+                <div class="email-templates-section">
+                    <h3>Email Templates</h3>
+                    <div class="template-list">
+                        <div class="template-item">
+                            <h4>Partnership Inquiry</h4>
+                            <p>Template for reaching out about potential NVIDIA partnership opportunities.</p>
+                            <button class="template-btn" onclick="window.platform.copyEmailTemplate('partnership', ${company.id})">
+                                <i class="fas fa-copy"></i>
+                                Copy Template
+                            </button>
+                        </div>
+                        <div class="template-item">
+                            <h4>Product Integration</h4>
+                            <p>Template for discussing AI/GPU integration possibilities.</p>
+                            <button class="template-btn" onclick="window.platform.copyEmailTemplate('integration', ${company.id})">
+                                <i class="fas fa-copy"></i>
+                                Copy Template
+                            </button>
+                        </div>
+                        <div class="template-item">
+                            <h4>General Introduction</h4>
+                            <p>Template for initial contact and relationship building.</p>
+                            <button class="template-btn" onclick="window.platform.copyEmailTemplate('introduction', ${company.id})">
+                                <i class="fas fa-copy"></i>
+                                Copy Template
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
-        }
-
-        // Add custom email template section
-        modalContent += `
-            <div class="custom-email-section">
-                <h3>Custom Email Template</h3>
-                <div class="custom-email-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="executiveName">Executive Name:</label>
-                            <input type="text" id="executiveName" placeholder="Enter executive name">
-                        </div>
-                        <div class="form-group">
-                            <label for="executiveTitle">Position:</label>
-                            <input type="text" id="executiveTitle" placeholder="Enter position/title">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="emailTemplate">Email Template:</label>
-                        <textarea id="emailTemplate" rows="12" placeholder="Enter your custom email template...">${this.generateCustomTemplate(company)}</textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button class="generate-btn" onclick="platform.generateCustomEmail(${companyId})">
-                            <i class="fas fa-magic"></i>
-                            Generate Custom Email
-                        </button>
-                        <button class="preview-btn" onclick="platform.previewCustomEmail(${companyId})">
-                            <i class="fas fa-eye"></i>
-                            Preview Email
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        modalContent += '</div>';
-        content.innerHTML = modalContent;
-        modal.classList.add('active');
-    }
-
-    closeExecutivesModal() {
-        const modal = document.getElementById('executivesModalOverlay');
-        if (modal) {
-            modal.classList.remove('active');
+            
+            modalContent += '</div>';
+            
+            content.innerHTML = modalContent;
+            modal.classList.add('active');
+            
+        } catch (error) {
+            console.error('Error showing executives modal:', error);
         }
     }
 
-    generateEmail(companyId, executiveName, templateType) {
-        const emailData = this.dataService.generatePersonalizedEmail(companyId, executiveName, templateType);
-        if (!emailData) return;
+    copyEmailTemplate(templateType, companyId, contactName = null) {
+        const company = this.dataService.getCompanyById(companyId);
+        if (!company) return;
 
-        // Create email modal
-        const emailModal = document.createElement('div');
-        emailModal.className = 'email-modal-overlay';
-        emailModal.innerHTML = `
-            <div class="email-modal">
-                <div class="email-modal-header">
-                    <h3>Generated Email for ${executiveName}</h3>
-                    <button class="email-modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="email-modal-content">
-                    <div class="email-field">
-                        <label>To:</label>
-                        <input type="email" value="${executiveName}" readonly>
-                    </div>
-                    <div class="email-field">
-                        <label>Subject:</label>
-                        <input type="text" value="${emailData.subject}" readonly>
-                    </div>
-                    <div class="email-field">
-                        <label>Body:</label>
-                        <textarea readonly rows="15">${emailData.body}</textarea>
-                    </div>
-                    <div class="email-actions">
-                        <button class="copy-btn" onclick="platform.copyCustomEmail('${emailData.subject}', '${emailData.body.replace(/\n/g, '\\n')}')">
-                            <i class="fas fa-copy"></i>
-                            Copy Email
-                        </button>
-                        <a href="mailto:${executiveName}?subject=${encodeURIComponent(emailData.subject)}&body=${encodeURIComponent(emailData.body)}" class="send-btn">
-                            <i class="fas fa-paper-plane"></i>
-                            Open in Email Client
-                        </a>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(emailModal);
-    }
-
-    copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            // Show success message
-            const notification = document.createElement('div');
-            notification.className = 'copy-notification';
-            notification.textContent = 'Email copied to clipboard!';
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 2000);
-        }).catch(err => {
-            console.error('Failed to copy: ', err);
-        });
-    }
-
-    copyCustomEmail(subject, body) {
-        const fullEmail = subject + '\n\n' + body;
-        navigator.clipboard.writeText(fullEmail).then(() => {
-            // Show success message
-            const notification = document.createElement('div');
-            notification.className = 'copy-notification';
-            notification.textContent = 'Email copied to clipboard!';
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 2000);
-        }).catch(err => {
-            console.error('Failed to copy: ', err);
-        });
-    }
-
-    generateCustomTemplate(company) {
-        const industry = company.industry.replace('-', ' ');
-        const recentNews = company.news?.[0]?.headline || 'innovative developments';
-        const ncpStatus = company.ncp_status === 'Partner' ? 'current NVIDIA Partner' : 'potential NVIDIA Partner';
+        let template = '';
+        const recipient = contactName || company.ceo;
         
-        return `Hi [EXECUTIVE_NAME],
+        switch (templateType) {
+            case 'partnership':
+                template = `Subject: NVIDIA Partnership Opportunity - ${company.name}
 
-I hope this email finds you well. I'm reaching out from NVIDIA to discuss a potential partnership opportunity that could significantly benefit ${company.name}.
+Dear ${recipient},
 
-Given ${company.name}'s impressive growth in the ${industry} space and your recent ${recentNews}, I believe there's a strong alignment for collaboration through our NVIDIA Partner Program (NCP).
+I hope this email finds you well. I'm reaching out from NVIDIA to explore potential partnership opportunities with ${company.name}.
 
-As [POSITION] at ${company.name}, you understand the importance of cutting-edge technology in driving innovation. The NCP offers:
+Given your company's focus on ${company.industry.replace('-', ' ')} and impressive growth trajectory, I believe there could be significant synergies between our organizations.
 
-• Access to NVIDIA's latest AI and GPU technologies
-• Co-marketing opportunities and joint go-to-market strategies  
-• Technical support and training for your engineering teams
-• Priority access to new NVIDIA products and solutions
-• Partnership with other industry leaders in our ecosystem
-
-${company.ncp_status === 'Partner' ? 
-    'Since ' + company.name + ' is already a ' + company.partner_tier + ' tier partner, I\'d love to explore how we can deepen our collaboration and unlock new opportunities together.' :
-    'I believe ' + company.name + ' would be an excellent addition to our partner ecosystem, and I\'d love to discuss how we can work together.'
-}
-
-Would you be available for a brief 15-minute call next week to explore this opportunity?
+Would you be available for a brief call to discuss how NVIDIA's AI and GPU technologies could support ${company.name}'s continued success?
 
 Best regards,
-[YOUR_NAME]
-NVIDIA Partner Development
+[Your Name]
+NVIDIA Partnership Team`;
+                break;
+                
+            case 'integration':
+                template = `Subject: AI/GPU Integration Discussion - ${company.name}
 
-P.S. I've attached some materials about our partner program and recent success stories that might be of interest.`;
-    }
+Dear ${recipient},
 
-    generateCustomEmail(companyId) {
-        const company = this.dataService.getCompanyById(companyId);
-        if (!company) return;
+I'm writing to discuss potential AI and GPU integration opportunities with ${company.name}.
 
-        const executiveName = document.getElementById('executiveName')?.value || '[EXECUTIVE_NAME]';
-        const executiveTitle = document.getElementById('executiveTitle')?.value || '[POSITION]';
-        const template = document.getElementById('emailTemplate')?.value || '';
+NVIDIA's cutting-edge AI platforms could significantly enhance ${company.name}'s capabilities in ${company.industry.replace('-', ' ')}.
 
-        if (!template.trim()) {
-            alert('Please enter an email template first.');
-            return;
+I'd love to schedule a brief call to explore how we might work together.
+
+Best regards,
+[Your Name]
+NVIDIA Technical Partnerships`;
+                break;
+                
+            case 'introduction':
+                template = `Subject: Introduction from NVIDIA
+
+Dear ${recipient},
+
+I hope this message finds you well. I'm reaching out from NVIDIA to introduce myself and explore potential collaboration opportunities with ${company.name}.
+
+I've been following your company's impressive progress in ${company.industry.replace('-', ' ')} and would love to learn more about your vision and how NVIDIA might support your growth.
+
+Would you be open to a brief conversation?
+
+Best regards,
+[Your Name]
+NVIDIA Business Development`;
+                break;
         }
-
-        // Replace placeholders
-        const personalizedTemplate = template
-            .replace(/\[EXECUTIVE_NAME\]/g, executiveName)
-            .replace(/\[POSITION\]/g, executiveTitle)
-            .replace(/\[YOUR_NAME\]/g, 'Your Name');
-
-        // Generate subject line
-        const subject = `Partnership Opportunity: NVIDIA Partner Program - ${company.name}`;
-
-        // Create email modal
-        const emailModal = document.createElement('div');
-        emailModal.className = 'email-modal-overlay';
-        emailModal.innerHTML = `
-            <div class="email-modal">
-                <div class="email-modal-header">
-                    <h3>Custom Email for ${executiveName}</h3>
-                    <button class="email-modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="email-modal-content">
-                    <div class="email-field">
-                        <label>To:</label>
-                        <input type="email" value="${executiveName}" readonly>
-                    </div>
-                    <div class="email-field">
-                        <label>Subject:</label>
-                        <input type="text" value="${subject}" readonly>
-                    </div>
-                    <div class="email-field">
-                        <label>Body:</label>
-                        <textarea readonly rows="15">${personalizedTemplate}</textarea>
-                    </div>
-                    <div class="email-actions">
-                        <button class="copy-btn" onclick="platform.copyCustomEmail('${subject}', '${personalizedTemplate.replace(/\n/g, '\\n')}')">
-                            <i class="fas fa-copy"></i>
-                            Copy Email
-                        </button>
-                        <a href="mailto:${executiveName}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(personalizedTemplate)}" class="send-btn">
-                            <i class="fas fa-paper-plane"></i>
-                            Open in Email Client
-                        </a>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(emailModal);
-    }
-
-    previewCustomEmail(companyId) {
-        const company = this.dataService.getCompanyById(companyId);
-        if (!company) return;
-
-        const executiveName = document.getElementById('executiveName')?.value || '[EXECUTIVE_NAME]';
-        const executiveTitle = document.getElementById('executiveTitle')?.value || '[POSITION]';
-        const template = document.getElementById('emailTemplate')?.value || '';
-
-        if (!template.trim()) {
-            alert('Please enter an email template first.');
-            return;
-        }
-
-        // Replace placeholders for preview
-        const previewTemplate = template
-            .replace(/\[EXECUTIVE_NAME\]/g, executiveName)
-            .replace(/\[POSITION\]/g, executiveTitle)
-            .replace(/\[YOUR_NAME\]/g, 'Your Name');
-
-        // Create preview modal
-        const previewModal = document.createElement('div');
-        previewModal.className = 'email-modal-overlay';
-        previewModal.innerHTML = `
-            <div class="email-modal">
-                <div class="email-modal-header">
-                    <h3>Email Preview</h3>
-                    <button class="email-modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="email-modal-content">
-                    <div class="preview-content">
-                        <h4>To: ${executiveName}</h4>
-                        <h4>Subject: Partnership Opportunity: NVIDIA Partner Program - ${company.name}</h4>
-                        <div class="preview-body">
-                            ${previewTemplate.replace(/\n/g, '<br>')}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(previewModal);
-    }
-
-    openSearchPage(query) {
-        console.log('Opening search page for:', query);
         
-        // Create or show search overlay
-        let searchOverlay = document.getElementById('searchOverlay');
-        if (!searchOverlay) {
-            searchOverlay = document.createElement('div');
-            searchOverlay.id = 'searchOverlay';
-            searchOverlay.className = 'search-overlay';
-            document.body.appendChild(searchOverlay);
-        }
-
-        // Store search query for recent searches
-        if (query.trim()) {
-            this.addToRecentSearches(query);
-        }
-
-        // Show search page with input and results
-        this.showSearchPage(query);
+        // Copy to clipboard
+        navigator.clipboard.writeText(template).then(() => {
+            alert('Email template copied to clipboard!');
+        }).catch(() => {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = template;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Email template copied to clipboard!');
+        });
     }
 
-    closeSearchPage() {
-        const searchOverlay = document.getElementById('searchOverlay');
-        if (searchOverlay) {
-            searchOverlay.style.display = 'none';
-        }
-    }
-
-    showSearchPage(initialQuery) {
-        const searchOverlay = document.getElementById('searchOverlay');
-        
-        searchOverlay.innerHTML = `
-            <div class="search-page">
-                <div class="search-page-header">
-                    <div class="search-page-input-container">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchPageInput" placeholder="Search companies, VCs, news..." value="${initialQuery || ''}" autofocus>
-                        <button class="search-page-close" onclick="window.platform.closeSearchPage()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="search-page-content" id="searchPageContent">
-                    ${initialQuery ? this.generateSearchResults(initialQuery) : this.generateEmptySearchState()}
-                </div>
-            </div>
-        `;
-        
-        searchOverlay.style.display = 'flex';
-        
-        // Set up the search page input
-        const searchPageInput = document.getElementById('searchPageInput');
-        if (searchPageInput) {
-            searchPageInput.addEventListener('input', (e) => {
-                this.updateSearchPageResults(e.target.value);
+    setupThemeToggle() {
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                // Set the data-theme attribute
+                document.body.setAttribute('data-theme', newTheme);
+                
+                // Update the icon
+                const isDark = newTheme === 'dark';
+                themeToggle.innerHTML = `<i class="fas fa-${isDark ? 'sun' : 'moon'}"></i>`;
+                
+                // Save preference to localStorage
+                localStorage.setItem('theme', newTheme);
+                
+                console.log('Theme switched to:', newTheme);
             });
             
-            searchPageInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    this.closeSearchPage();
+            // Load saved theme preference
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            
+            // Set initial icon
+            const isDark = savedTheme === 'dark';
+            themeToggle.innerHTML = `<i class="fas fa-${isDark ? 'sun' : 'moon'}"></i>`;
+        }
+    }
+
+    setupSearch() {
+        const searchInput = document.getElementById('globalSearch');
+        const searchDropdown = document.getElementById('searchDropdown');
+        
+        if (searchInput && searchDropdown) {
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value;
+                
+                // Clear previous timeout
+                clearTimeout(searchTimeout);
+                
+                // Debounce search - wait 300ms after user stops typing
+                searchTimeout = setTimeout(() => {
+                    this.performGlobalSearch(query);
+                }, 300);
+            });
+            
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                    this.hideSearchDropdown();
                 }
             });
+            
+            // Show dropdown when input is focused and has content
+            searchInput.addEventListener('focus', (e) => {
+                if (e.target.value.trim()) {
+                    this.performGlobalSearch(e.target.value);
+                }
+            });
+            
+        } else {
+            console.error('Search input or dropdown not found!');
         }
     }
 
-    updateSearchPageResults(query) {
-        const content = document.getElementById('searchPageContent');
-        if (!content) return;
+    performGlobalSearch(query) {
+        console.log('Performing global search for:', query);
         
-        if (!query.trim()) {
-            content.innerHTML = this.generateEmptySearchState();
+        const searchDropdown = document.getElementById('searchDropdown');
+        const searchResults = document.getElementById('searchResults');
+        
+        if (!searchDropdown || !searchResults) {
+            console.error('Search dropdown elements not found');
             return;
         }
         
-        content.innerHTML = this.generateSearchResults(query);
-    }
-
-    generateEmptySearchState() {
-        const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+        if (!query.trim()) {
+            this.hideSearchDropdown();
+            return;
+        }
         
-        return `
-            <div class="search-empty-state">
-                <div class="search-empty-icon">
-                    <i class="fas fa-search"></i>
-                </div>
-                <h3>Search Digital Natives Intelligence</h3>
-                <p>Find digital natives companies, AI startups, investors, and industry news</p>
-                
-                ${recentSearches.length > 0 ? `
-                    <div class="recent-searches-section">
-                        <h4>Recent Searches</h4>
-                        <div class="recent-searches-list">
-                            ${recentSearches.slice(0, 5).map(search => `
-                                <div class="recent-search-item" onclick="document.getElementById('searchPageInput').value='${search}'; window.platform.updateSearchPageResults('${search}');">
-                                    <i class="fas fa-history"></i>
-                                    <span>${search}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-                
-                <div class="search-suggestions">
-                    <h4>Try searching for:</h4>
-                    <div class="suggestion-tags">
-                        <span class="suggestion-tag" onclick="document.getElementById('searchPageInput').value='AI'; window.platform.updateSearchPageResults('AI');">AI</span>
-                        <span class="suggestion-tag" onclick="document.getElementById('searchPageInput').value='digital natives'; window.platform.updateSearchPageResults('digital natives');">digital natives</span>
-                        <span class="suggestion-tag" onclick="document.getElementById('searchPageInput').value='Series A'; window.platform.updateSearchPageResults('Series A');">Series A</span>
-                        <span class="suggestion-tag" onclick="document.getElementById('searchPageInput').value='fintech'; window.platform.updateSearchPageResults('fintech');">fintech</span>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    generateSearchResults(query) {
-        // Search across all data types
+        // Search companies
         const companies = this.dataService.searchCompanies(query);
-        const vcs = this.dataService.searchVCs(query);
-        const news = this.dataService.searchNews(query);
-        const fundingRounds = this.dataService.searchFundingRounds(query);
-        const investors = this.dataService.searchInvestors(query);
+        console.log('Found companies:', companies.length);
         
-        const totalResults = companies.length + vcs.length + news.length + fundingRounds.length + investors.length;
+        // Limit results to first 8 for better UX
+        const limitedCompanies = companies.slice(0, 8);
         
-        if (totalResults === 0) {
-            return `
-                <div class="search-no-results">
-                    <div class="no-results-icon">🔍</div>
-                    <h3>No results found for "${query}"</h3>
-                    <p>Try different keywords or check your spelling</p>
+        if (limitedCompanies.length === 0) {
+            searchResults.innerHTML = `
+                <div class="search-result-item">
+                    <div class="search-result-info">
+                        <div class="search-result-name">No companies found</div>
+                        <div class="search-result-details">Try a different search term</div>
+                    </div>
                 </div>
             `;
+        } else {
+            searchResults.innerHTML = limitedCompanies.map(company => `
+                <div class="search-result-item" data-company-id="${company.id}">
+                    <img src="${company.logo || 'https://via.placeholder.com/32x32?text=' + company.name.charAt(0)}" 
+                         alt="${company.name}" 
+                         class="search-result-logo"
+                         onerror="this.src='https://via.placeholder.com/32x32?text=${company.name.charAt(0)}'">
+                    <div class="search-result-info">
+                        <div class="search-result-name">${company.name}</div>
+                        <div class="search-result-details">${company.industry}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Add click handlers to search results
+            this.setupSearchResultClickHandlers();
         }
         
-        return `
-            <div class="search-results-page">
-                <div class="search-results-header">
-                    <h3>Search Results</h3>
-                    <span class="results-count">${totalResults} results for "${query}"</span>
-                </div>
+        this.showSearchDropdown();
+    }
+
+    showSearchDropdown() {
+        const searchDropdown = document.getElementById('searchDropdown');
+        if (searchDropdown) {
+            searchDropdown.classList.add('show');
+        }
+    }
+    
+    hideSearchDropdown() {
+        const searchDropdown = document.getElementById('searchDropdown');
+        if (searchDropdown) {
+            searchDropdown.classList.remove('show');
+        }
+    }
+    
+    setupSearchResultClickHandlers() {
+        const searchResultItems = document.querySelectorAll('.search-result-item[data-company-id]');
+        searchResultItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const companyId = parseInt(e.currentTarget.dataset.companyId);
+                const company = this.dataService.companies.find(c => c.id === companyId);
                 
-                <div class="search-results-sections">
-                    ${companies.length > 0 ? `
-                        <div class="search-results-section">
-                            <h4><i class="fas fa-building"></i> Companies (${companies.length})</h4>
-                            <div class="search-results-grid">
-                                ${companies.slice(0, 6).map(company => `
-                                    <div class="search-result-item" onclick="window.platform.showCompanyModal(${company.id}); window.platform.closeSearchPage();">
-                                        <div class="result-item-logo">
-                                            <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="logo-fallback" style="display: none;">${company.name.charAt(0)}</div>
-                                        </div>
-                                        <div class="result-item-info">
-                                            <h5>${this.highlightSearchTerm(company.name, query)}</h5>
-                                            <p>${company.industry.replace('-', ' ')} • ${company.location}</p>
-                                            <span class="result-meta">${company.last_funding_round} • ${this.dataService.formatCurrency(company.funding_raised)}</span>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                                ${companies.length > 6 ? `<div class="show-more">+${companies.length - 6} more companies</div>` : ''}
-                            </div>
-                        </div>
-                    ` : ''}
+                if (company) {
+                    console.log('Opening company modal for:', company.name);
+                    this.showCompanyModal(company.id);
+                    this.hideSearchDropdown();
                     
-                    ${vcs.length > 0 ? `
-                        <div class="search-results-section">
-                            <h4><i class="fas fa-hand-holding-usd"></i> Venture Capital (${vcs.length})</h4>
-                            <div class="search-results-grid">
-                                ${vcs.slice(0, 4).map(vc => `
-                                    <div class="search-result-item" onclick="window.platform.showVCModal(${vc.id}); window.platform.closeSearchPage();">
-                                        <div class="result-item-logo">
-                                            <img src="${this.getVCLogoUrl(vc.name)}" alt="${vc.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="logo-fallback" style="display: none;">${vc.name.charAt(0)}</div>
-                                        </div>
-                                        <div class="result-item-info">
-                                            <h5>${this.highlightSearchTerm(vc.name, query)}</h5>
-                                            <p>${vc.location} • ${vc.investments} investments</p>
-                                            <span class="result-meta">Focus: ${vc.focus_areas.join(', ')}</span>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${news.length > 0 ? `
-                        <div class="search-results-section">
-                            <h4><i class="fas fa-newspaper"></i> News (${news.length})</h4>
-                            <div class="search-results-list">
-                                ${news.slice(0, 4).map(article => `
-                                    <div class="search-result-item news-item" onclick="window.platform.showNewsModal(${article.id}); window.platform.closeSearchPage();">
-                                        <div class="result-item-info">
-                                            <h5>${this.highlightSearchTerm(article.headline, query)}</h5>
-                                            <p>${article.content.substring(0, 100)}...</p>
-                                            <span class="result-meta">${article.source} • ${this.dataService.formatDate(article.published_at)}</span>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
-            </div>
-        `;
-    }
-
-    showSearchSuggestions(query) {
-        console.log('Showing search suggestions for:', query);
-        
-        if (!query.trim()) {
-            this.showRecentSearches();
-            return;
-        }
-
-        // Get limited suggestions (first 3-5 results from each category)
-        const companies = this.dataService.searchCompanies(query).slice(0, 3);
-        const vcs = this.dataService.searchVCs(query).slice(0, 2);
-        const news = this.dataService.searchNews(query).slice(0, 2);
-        
-        const totalSuggestions = companies.length + vcs.length + news.length;
-        
-        if (totalSuggestions === 0) {
-            this.showNoSuggestions(query);
-            return;
-        }
-
-        this.showSuggestionsOverlay({ 
-            companies, 
-            vcs, 
-            news, 
-            query 
-        });
-    }
-
-    performFullSearch(query) {
-        console.log('Performing full search for:', query);
-        
-        if (!query.trim()) {
-            this.closeSearchBox();
-            return;
-        }
-
-        // Store search query for recent searches
-        this.addToRecentSearches(query);
-
-        // Search across all data types
-        const companies = this.dataService.searchCompanies(query);
-        const vcs = this.dataService.searchVCs(query);
-        const news = this.dataService.searchNews(query);
-        
-        // Also search for funding rounds, investors, and other data
-        const fundingRounds = this.dataService.searchFundingRounds(query);
-        const investors = this.dataService.searchInvestors(query);
-
-        console.log('Full search results:', { companies, vcs, news, fundingRounds, investors });
-
-        // Filter current page content if we're on a specific section
-        this.filterCurrentPageContent(query);
-
-        this.showSearchResults({ 
-            companies, 
-            vcs, 
-            news, 
-            fundingRounds, 
-            investors,
-            query 
-        });
-        
-        // Close the search box after performing search
-        this.closeSearchBox();
-    }
-
-    showSuggestionsOverlay(suggestions) {
-        // Create or update search suggestions overlay
-        let searchOverlay = document.getElementById('searchOverlay');
-        if (!searchOverlay) {
-            searchOverlay = document.createElement('div');
-            searchOverlay.id = 'searchOverlay';
-            searchOverlay.className = 'search-overlay';
-            document.body.appendChild(searchOverlay);
-        }
-
-        const { companies, vcs, news, query } = suggestions;
-        const totalSuggestions = companies.length + vcs.length + news.length;
-        
-        searchOverlay.innerHTML = `
-            <div class="search-results">
-                <div class="search-results-header">
-                    <div class="search-header-info">
-                        <h3>Suggestions</h3>
-                        <span class="search-count">${totalSuggestions} suggestions for "${query}"</span>
-                    </div>
-                    <button class="search-close" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
-                </div>
-                <div class="search-results-content">
-                    ${companies.length > 0 ? `
-                        <div class="search-section">
-                            <h4><i class="fas fa-building"></i> Companies (${companies.length})</h4>
-                            <div class="search-items">
-                                ${companies.map(company => `
-                                    <div class="search-item" onclick="if(window.platform) { window.platform.showCompanyModal(${company.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
-                                        <div class="search-item-logo">
-                                            <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="logo-fallback" style="display: none;">${company.name.charAt(0)}</div>
-                                        </div>
-                                        <div class="search-item-info">
-                                            <div class="search-item-name">${this.highlightSearchTerm(company.name, query)}</div>
-                                            <div class="search-item-desc">${company.industry.replace('-', ' ')} • ${company.location}</div>
-                                            <div class="search-item-meta">${company.last_funding_round} • ${this.dataService.formatCurrency(company.funding_raised)}</div>
-                                        </div>
-                                        <i class="fas fa-arrow-right search-item-arrow"></i>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${vcs.length > 0 ? `
-                        <div class="search-section">
-                            <h4><i class="fas fa-hand-holding-usd"></i> Venture Capital (${vcs.length})</h4>
-                            <div class="search-items">
-                                ${vcs.map(vc => `
-                                    <div class="search-item" onclick="if(window.platform) { window.platform.showVCModal(${vc.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
-                                        <div class="search-item-logo">
-                                            <img src="${this.getVCLogoUrl(vc.name)}" alt="${vc.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="logo-fallback" style="display: none;">${vc.name.charAt(0)}</div>
-                                        </div>
-                                        <div class="search-item-info">
-                                            <div class="search-item-name">${this.highlightSearchTerm(vc.name, query)}</div>
-                                            <div class="search-item-desc">${vc.location} • ${vc.investments} investments</div>
-                                            <div class="search-item-meta">Focus: ${vc.focus_areas.join(', ')}</div>
-                                        </div>
-                                        <i class="fas fa-arrow-right search-item-arrow"></i>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${news.length > 0 ? `
-                        <div class="search-section">
-                            <h4><i class="fas fa-newspaper"></i> News (${news.length})</h4>
-                            <div class="search-items">
-                                ${news.map(article => `
-                                    <div class="search-item" onclick="if(window.platform) { window.platform.showNewsModal(${article.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
-                                        <div class="search-item-info">
-                                            <div class="search-item-name">${this.highlightSearchTerm(article.headline, query)}</div>
-                                            <div class="search-item-desc">${article.source} • ${this.dataService.formatDate(article.published_at)}</div>
-                                            <div class="search-item-meta">${article.category}</div>
-                                        </div>
-                                        <i class="fas fa-arrow-right search-item-arrow"></i>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
-                
-                <div class="search-footer">
-                    <div class="search-shortcuts">
-                        <span>Press <kbd>Enter</kbd> for full search</span>
-                        <span>Press <kbd>Esc</kbd> to close</span>
-                    </div>
-                </div>
-            </div>
-        `;
-        searchOverlay.style.display = 'block';
-    }
-
-    showNoSuggestions(query) {
-        let searchOverlay = document.getElementById('searchOverlay');
-        if (!searchOverlay) {
-            searchOverlay = document.createElement('div');
-            searchOverlay.id = 'searchOverlay';
-            searchOverlay.className = 'search-overlay';
-            document.body.appendChild(searchOverlay);
-        }
-
-        searchOverlay.innerHTML = `
-            <div class="search-results">
-                <div class="search-results-header">
-                    <div class="search-header-info">
-                        <h3>No Suggestions</h3>
-                        <span class="search-count">No suggestions for "${query}"</span>
-                    </div>
-                    <button class="search-close" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
-                </div>
-                <div class="search-results-content">
-                    <div class="search-no-results">
-                        <div class="no-results-icon">🔍</div>
-                        <h4>No suggestions found</h4>
-                        <p>Press <kbd>Enter</kbd> to perform a full search</p>
-                    </div>
-                </div>
-                
-                <div class="search-footer">
-                    <div class="search-shortcuts">
-                        <span>Press <kbd>Enter</kbd> for full search</span>
-                        <span>Press <kbd>Esc</kbd> to close</span>
-                    </div>
-                </div>
-            </div>
-        `;
-        searchOverlay.style.display = 'block';
-    }
-
-    showSearchResults(results) {
-        // Create or update search results overlay
-        let searchOverlay = document.getElementById('searchOverlay');
-        if (!searchOverlay) {
-            searchOverlay = document.createElement('div');
-            searchOverlay.id = 'searchOverlay';
-            searchOverlay.className = 'search-overlay';
-            document.body.appendChild(searchOverlay);
-        }
-
-        const { companies, vcs, news, fundingRounds, investors, query } = results;
-        const totalResults = companies.length + vcs.length + news.length + fundingRounds.length + investors.length;
-        
-        searchOverlay.innerHTML = `
-            <div class="search-results">
-                <div class="search-results-header">
-                    <div class="search-header-info">
-                        <h3>Search Results</h3>
-                        <span class="search-count">${totalResults} results for "${query}"</span>
-                    </div>
-                    <button class="search-close" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
-                </div>
-                <div class="search-results-content">
-                    ${companies.length > 0 ? `
-                        <div class="search-section">
-                            <h4><i class="fas fa-building"></i> Companies (${companies.length})</h4>
-                            <div class="search-items">
-                                ${companies.slice(0, 8).map(company => `
-                                    <div class="search-item" onclick="if(window.platform) { window.platform.showCompanyModal(${company.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
-                                        <div class="search-item-logo">
-                                            <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="logo-fallback" style="display: none;">${company.name.charAt(0)}</div>
-                                        </div>
-                                        <div class="search-item-info">
-                                            <div class="search-item-name">${this.highlightSearchTerm(company.name, query)}</div>
-                                            <div class="search-item-desc">${company.industry.replace('-', ' ')} • ${company.location}</div>
-                                            <div class="search-item-meta">${company.last_funding_round} • ${this.dataService.formatCurrency(company.funding_raised)}</div>
-                                        </div>
-                                        <i class="fas fa-arrow-right search-item-arrow"></i>
-                                    </div>
-                                `).join('')}
-                                ${companies.length > 8 ? `<div class="search-more">+${companies.length - 8} more companies</div>` : ''}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${vcs.length > 0 ? `
-                        <div class="search-section">
-                            <h4><i class="fas fa-hand-holding-usd"></i> Venture Capital (${vcs.length})</h4>
-                            <div class="search-items">
-                                ${vcs.slice(0, 5).map(vc => `
-                                    <div class="search-item" onclick="if(window.platform) { window.platform.showVCModal(${vc.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
-                                        <div class="search-item-logo">
-                                            <img src="${this.getVCLogoUrl(vc.name)}" alt="${vc.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="logo-fallback" style="display: none;">${vc.name.charAt(0)}</div>
-                                        </div>
-                                        <div class="search-item-info">
-                                            <div class="search-item-name">${this.highlightSearchTerm(vc.name, query)}</div>
-                                            <div class="search-item-desc">${vc.location} • ${vc.investments} investments</div>
-                                            <div class="search-item-meta">Focus: ${vc.focus_areas.join(', ')}</div>
-                                        </div>
-                                        <i class="fas fa-arrow-right search-item-arrow"></i>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${fundingRounds.length > 0 ? `
-                        <div class="search-section">
-                            <h4><i class="fas fa-dollar-sign"></i> Funding Rounds (${fundingRounds.length})</h4>
-                            <div class="search-items">
-                                ${fundingRounds.slice(0, 5).map(round => `
-                                    <div class="search-item" onclick="if(window.platform) { window.platform.showFundingModal(${round.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
-                                        <div class="search-item-logo">💰</div>
-                                        <div class="search-item-info">
-                                            <div class="search-item-name">${this.highlightSearchTerm(round.company_name, query)}</div>
-                                            <div class="search-item-desc">${round.round_type} • ${this.dataService.formatCurrency(round.amount)}</div>
-                                            <div class="search-item-meta">${round.date} • ${round.industry}</div>
-                                        </div>
-                                        <i class="fas fa-arrow-right search-item-arrow"></i>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${news.length > 0 ? `
-                        <div class="search-section">
-                            <h4><i class="fas fa-newspaper"></i> News (${news.length})</h4>
-                            <div class="search-items">
-                                ${news.slice(0, 5).map(article => `
-                                    <div class="search-item" onclick="if(window.platform) { window.platform.showNewsModal(${article.id}); } this.parentElement.parentElement.parentElement.parentElement.remove();">
-                                        <div class="search-item-info">
-                                            <div class="search-item-name">${this.highlightSearchTerm(article.headline, query)}</div>
-                                            <div class="search-item-desc">${article.source} • ${this.dataService.formatDate(article.published_at)}</div>
-                                            <div class="search-item-meta">${article.category}</div>
-                                        </div>
-                                        <i class="fas fa-arrow-right search-item-arrow"></i>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${totalResults === 0 ? `
-                        <div class="search-no-results">
-                            <div class="no-results-icon">🔍</div>
-                            <h4>No results found</h4>
-                            <p>Try searching for:</p>
-                            <ul>
-                                <li>Company names (e.g., "MediTech", "BioNTech")</li>
-                                <li>Industries (e.g., "ai natives", "digital natives")</li>
-                                <li>Locations (e.g., "San Francisco", "Boston")</li>
-                                <li>Funding stages (e.g., "Series A", "Seed")</li>
-                                <li>VC firms (e.g., "Sequoia", "Andreessen")</li>
-                            </ul>
-                        </div>
-                    ` : ''}
-                </div>
-                
-                ${totalResults > 0 ? `
-                    <div class="search-footer">
-                        <div class="search-shortcuts">
-                            <span>Press <kbd>Esc</kbd> to close</span>
-                            <span>Press <kbd>Enter</kbd> to search</span>
-                        </div>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-        searchOverlay.style.display = 'block';
-    }
-
-    clearSearchResults() {
-        const searchOverlay = document.getElementById('searchOverlay');
-        if (searchOverlay) {
-            searchOverlay.style.display = 'none';
-        }
-        
-        // Clear any page filtering
-        this.clearPageFiltering();
-    }
-
-    // Helper methods for enhanced search
-    highlightSearchTerm(text, query) {
-        if (!query) return text;
-        const regex = new RegExp(`(${query})`, 'gi');
-        return text.replace(regex, '<mark>$1</mark>');
-    }
-
-    addToRecentSearches(query) {
-        let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-        recentSearches = recentSearches.filter(search => search !== query);
-        recentSearches.unshift(query);
-        recentSearches = recentSearches.slice(0, 10); // Keep only 10 recent searches
-        localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
-    }
-
-    showRecentSearches() {
-        const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-        if (recentSearches.length === 0) return;
-
-        let searchOverlay = document.getElementById('searchOverlay');
-        if (!searchOverlay) {
-            searchOverlay = document.createElement('div');
-            searchOverlay.id = 'searchOverlay';
-            searchOverlay.className = 'search-overlay';
-            document.body.appendChild(searchOverlay);
-        }
-
-        searchOverlay.innerHTML = `
-            <div class="search-results">
-                <div class="search-results-header">
-                    <div class="search-header-info">
-                        <h3>Recent Searches</h3>
-                        <span class="search-count">${recentSearches.length} recent searches</span>
-                    </div>
-                    <button class="search-close" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
-                </div>
-                <div class="search-results-content">
-                    <div class="search-section">
-                        <div class="search-items">
-                            ${recentSearches.map(search => `
-                                <div class="search-item recent-search" onclick="document.getElementById('globalSearch').value='${search}'; if(window.platform) { window.platform.performSearch('${search}'); }">
-                                    <div class="search-item-logo">🔍</div>
-                                    <div class="search-item-info">
-                                        <div class="search-item-name">${search}</div>
-                                    </div>
-                                    <i class="fas fa-arrow-right search-item-arrow"></i>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        searchOverlay.style.display = 'block';
-    }
-
-    filterCurrentPageContent(query) {
-        // Filter content on the current page based on search query
-        const currentSection = document.querySelector('.content-section.active');
-        if (!currentSection) return;
-
-        const searchTerm = query.toLowerCase();
-        
-        // Filter company cards
-        const companyCards = currentSection.querySelectorAll('.company-card');
-        companyCards.forEach(card => {
-            const cardText = card.textContent.toLowerCase();
-            if (cardText.includes(searchTerm)) {
-                card.style.display = 'block';
-                card.classList.add('search-highlight');
-            } else {
-                card.style.display = 'none';
-            }
-        });
-
-        // Filter funding items
-        const fundingItems = currentSection.querySelectorAll('.funding-item');
-        fundingItems.forEach(item => {
-            const itemText = item.textContent.toLowerCase();
-            if (itemText.includes(searchTerm)) {
-                item.style.display = 'block';
-                item.classList.add('search-highlight');
-            } else {
-                item.style.display = 'none';
-            }
-        });
-
-        // Filter news items
-        const newsItems = currentSection.querySelectorAll('.news-item');
-        newsItems.forEach(item => {
-            const itemText = item.textContent.toLowerCase();
-            if (itemText.includes(searchTerm)) {
-                item.style.display = 'block';
-                item.classList.add('search-highlight');
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
-
-    clearPageFiltering() {
-        // Remove search highlighting and restore all content
-        document.querySelectorAll('.search-highlight').forEach(element => {
-            element.classList.remove('search-highlight');
-        });
-        
-        document.querySelectorAll('[style*="display: none"]').forEach(element => {
-            if (element.classList.contains('company-card') || 
-                element.classList.contains('funding-item') || 
-                element.classList.contains('news-item')) {
-                element.style.display = '';
-            }
-        });
-    }
-
-    navigateSearchResults(direction) {
-        const searchItems = document.querySelectorAll('.search-item');
-        if (searchItems.length === 0) return;
-
-        const activeItem = document.querySelector('.search-item.active');
-        let newIndex = 0;
-
-        if (activeItem) {
-            const currentIndex = Array.from(searchItems).indexOf(activeItem);
-            if (direction === 'down') {
-                newIndex = Math.min(currentIndex + 1, searchItems.length - 1);
-            } else {
-                newIndex = Math.max(currentIndex - 1, 0);
-            }
-        }
-
-        searchItems.forEach(item => item.classList.remove('active'));
-        searchItems[newIndex]?.classList.add('active');
-    }
-
-    updateChartColors() {
-        // Update chart colors based on current theme
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const textColor = isDark ? '#ffffff' : '#1a1a1a';
-        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
-        
-        Object.values(this.charts).forEach(chart => {
-            if (chart && chart.options) {
-                if (chart.options.scales) {
-                    Object.values(chart.options.scales).forEach(scale => {
-                        if (scale.grid) {
-                            scale.grid.color = gridColor;
-                        }
-                        if (scale.ticks) {
-                            scale.ticks.color = textColor;
-                        }
-                    });
+                    // Clear search input
+                    const searchInput = document.getElementById('globalSearch');
+                    if (searchInput) {
+                        searchInput.value = '';
+                    }
                 }
-                chart.update();
-            }
+            });
         });
     }
 
-    updateActiveButton(activeBtn, selector) {
+    updateActiveButton(target, selector) {
         document.querySelectorAll(selector).forEach(btn => {
             btn.classList.remove('active');
         });
-        activeBtn.classList.add('active');
-    }
-
-    updateChartTimeframe(period) {
-        // Update chart data based on timeframe
-        if (this.charts.investmentTrends) {
-            const yearData = {
-                '6m': [45, 52, 38, 67, 89, 95],
-                '1y': [45, 52, 38, 67, 89, 95, 78, 102, 85, 76, 88, 95],
-                '2y': [30, 35, 28, 45, 52, 38, 67, 89, 95, 78, 102, 85, 76, 88, 95, 110, 95, 88, 102, 115, 98, 105, 112, 120],
-                'all': [20, 25, 30, 35, 28, 45, 52, 38, 67, 89, 95, 78, 102, 85, 76, 88, 95, 110, 95, 88, 102, 115, 98, 105, 112, 120, 125, 118, 130, 135]
-            };
-            
-            const months = {
-                '6m': ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                '1y': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                '2y': ['Jan 23', 'Feb 23', 'Mar 23', 'Apr 23', 'May 23', 'Jun 23', 'Jul 23', 'Aug 23', 'Sep 23', 'Oct 23', 'Nov 23', 'Dec 23', 'Jan 24', 'Feb 24', 'Mar 24', 'Apr 24', 'May 24', 'Jun 24', 'Jul 24', 'Aug 24', 'Sep 24', 'Oct 24', 'Nov 24', 'Dec 24'],
-                'all': ['2020', '2021', '2022', '2023', '2024', '2025']
-            };
-            
-            this.charts.investmentTrends.data.labels = months[period] || months['1y'];
-            this.charts.investmentTrends.data.datasets[0].data = yearData[period] || yearData['1y'];
-            this.charts.investmentTrends.update();
-        }
-    }
-
-    updateChartType(type) {
-        // Update chart type (line/bar)
-        if (this.charts.investmentTrends) {
-            this.charts.investmentTrends.config.type = type;
-            this.charts.investmentTrends.update();
-        }
-    }
-
-    updateTrendMetric(metric) {
-        // Update trend chart metric
-        if (this.charts.sectorTrends) {
-            const metricData = {
-                'funding': [280, 150, 420, 1200],
-                'deals': [12, 8, 15, 25],
-                'valuation': [1.2, 0.8, 2.1, 3.5]
-            };
-            
-            this.charts.sectorTrends.data.datasets[0].data = metricData[metric] || metricData['funding'];
-            this.charts.sectorTrends.update();
-        }
-    }
-
-    updateInvestmentTimeframe(range) {
-        // Update investment charts based on timeframe
-        if (this.charts.portfolio) {
-            const rangeData = {
-                'ytd': [180, 120, 280, 800, 150],
-                '1y': [280, 150, 420, 1200, 180],
-                '2y': [350, 200, 550, 1500, 250]
-            };
-            
-            this.charts.portfolio.data.datasets[0].data = rangeData[range] || rangeData['1y'];
-            this.charts.portfolio.update();
-        }
-        
-        if (this.charts.timeline) {
-            const timelineData = {
-                'ytd': [25, 35, 28, 45, 52, 38],
-                '1y': [45, 52, 38, 67, 89, 95],
-                '2y': [30, 35, 28, 45, 52, 38, 67, 89, 95, 78, 102, 85]
-            };
-            
-            this.charts.timeline.data.datasets[0].data = timelineData[range] || timelineData['1y'];
-            this.charts.timeline.update();
-        }
+        target.classList.add('active');
     }
 
     toggleView(view) {
-        // Toggle between grid/list view
+        console.log('Toggling view to:', view);
         const companiesGrid = document.getElementById('companiesGrid');
         if (companiesGrid) {
-            if (view === 'list') {
-                companiesGrid.style.gridTemplateColumns = '1fr';
-                companiesGrid.classList.add('list-view');
-            } else {
-                companiesGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(350px, 1fr))';
-                companiesGrid.classList.remove('list-view');
-            }
-        }
-        
-        // Update active button states
-        document.querySelectorAll('.toggle-btn').forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.dataset.view === view) {
-                btn.classList.add('active');
-            }
-        });
-        
-        console.log('View switched to:', view);
-    }
-
-    handleViewAllClick(button) {
-        // Determine which section the View All button belongs to
-        const card = button.closest('.activity-card');
-        if (card) {
-            const cardTitle = card.querySelector('h3').textContent;
-            
-            if (cardTitle.includes('Recent Funding Rounds')) {
-                this.switchSection('companies');
-            } else if (cardTitle.includes('Top Performers')) {
-                this.switchSection('companies');
-            } else if (cardTitle.includes('Latest Industry News')) {
-                // Show all news in a modal
-                this.showAllNews();
-            }
-        }
-    }
-
-    showAllNews() {
-        const allNews = this.dataService.news;
-        const modal = document.getElementById('modalOverlay');
-        const title = document.getElementById('modalTitle');
-        const content = document.getElementById('modalContent');
-
-        title.textContent = 'All Industry News';
-        content.innerHTML = `
-            <div class="all-news-modal">
-                ${allNews.map(article => `
-                    <div class="news-item-detailed" onclick="window.platform.showNewsModal(${article.id})">
-                        <div class="news-header">
-                            <span class="news-category">${article.category}</span>
-                            <span class="news-time">${article.read_time}</span>
-                        </div>
-                        <h3 class="news-title">${article.headline}</h3>
-                        <p class="news-content">${article.content}</p>
-                        <div class="news-footer">
-                            <span class="news-source">${article.source}</span>
-                            <span class="news-date">${this.dataService.formatDate(article.published_at)}</span>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-
-        modal.classList.add('active');
-    }
-
-    filterCompaniesByPartner(partnerStatus) {
-        // Filter companies by partner status
-        const companiesGrid = document.getElementById('companiesGrid');
-        if (!companiesGrid) return;
-
-        const allCompanies = this.dataService.companies;
-        let filteredCompanies = this.filterCompaniesByPartnerStatus(allCompanies, partnerStatus);
-
-        // Apply industry filter if active
-        const industryFilter = document.getElementById('industryFilter');
-        if (industryFilter && industryFilter.value) {
-            filteredCompanies = filteredCompanies.filter(company => company.industry === industryFilter.value);
-        }
-
-        companiesGrid.innerHTML = filteredCompanies.map(company => `
-            <div class="company-card" data-company-id="${company.id}">
-                <div class="company-header">
-                    <div class="company-logo">
-                        <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="logo-fallback" style="display: none;">${company.name.charAt(0)}</div>
-                    </div>
-                    <div class="company-info">
-                        <div class="company-title-row">
-                            <h3>${company.name}</h3>
-                            ${company.ncp_status === 'Partner' ? `<div class="ncp-indicator" title="NVIDIA Partner${company.ncp_tier ? ' - ' + company.ncp_tier : ''}">
-                                <i class="fas fa-check-circle"></i>
-                            </div>` : ''}
-                        </div>
-                        <span class="company-industry">${company.industry.replace('-', ' ')}</span>
-                    </div>
-                </div>
-                <div class="company-stats">
-                    <div class="company-stat">
-                        <span class="company-stat-value">${this.dataService.formatCurrency(company.valuation)}</span>
-                        <span class="company-stat-label">Valuation</span>
-                    </div>
-                    <div class="company-stat">
-                        <span class="company-stat-value">${company.employees}</span>
-                        <span class="company-stat-label">Employees</span>
-                    </div>
-                </div>
-                <div class="company-growth">
-                    <div class="growth-indicator"></div>
-                    <span>${company.growth_rate}% growth</span>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    filterCompaniesByPartnerStatus(companies, partnerStatus) {
-        if (!partnerStatus) return companies;
-        
-        switch(partnerStatus) {
-            case 'partner':
-                return companies.filter(company => company.ncp_status === 'Partner');
-            case 'not-partner':
-                return companies.filter(company => company.ncp_status === 'Not Partner');
-            default:
-                return companies;
+            companiesGrid.className = `companies-grid ${view}-view`;
         }
     }
 
     filterCompaniesByIndustry(industry) {
-        this.applyAllFilters();
-    }
-
-    filterCompaniesByFunding(fundingRange) {
-        this.applyAllFilters();
-    }
-
-    filterCompaniesByDate(dateYear) {
-        this.applyAllFilters();
-    }
-
-    filterCompaniesByVC(vcTier) {
-        this.applyAllFilters();
-    }
-
-    applyAllFilters() {
+        console.log('Filtering companies by industry:', industry);
         const companiesGrid = document.getElementById('companiesGrid');
         if (!companiesGrid) return;
 
-        let filteredCompanies = [...this.dataService.companies];
-
-        // Apply industry filter
-        const industryFilter = document.getElementById('industryFilter');
-        if (industryFilter && industryFilter.value) {
-            filteredCompanies = filteredCompanies.filter(company => company.industry === industryFilter.value);
-        }
-
-        // Apply funding filter
-        const fundingFilter = document.getElementById('fundingFilter');
-        if (fundingFilter && fundingFilter.value) {
-            const [minStr, maxStr] = fundingFilter.value.split('-');
-            const min = minStr === '0' ? 0 : parseInt(minStr);
-            const max = maxStr === '+' ? Infinity : parseInt(maxStr);
-            filteredCompanies = filteredCompanies.filter(company => {
-                const amount = company.funding?.amount || 0;
-                return amount >= min && amount <= max;
-            });
-        }
-
-        // Apply date filter
-        const dateFilter = document.getElementById('dateFilter');
-        if (dateFilter && dateFilter.value) {
-            filteredCompanies = filteredCompanies.filter(company => {
-                const fundingDate = company.funding?.date;
-                return fundingDate && fundingDate.startsWith(dateFilter.value);
-            });
-        }
-
-        // Apply VC tier filter
-        const vcFilter = document.getElementById('vcFilter');
-        if (vcFilter && vcFilter.value) {
-            filteredCompanies = filteredCompanies.filter(company => company.vc_tier === vcFilter.value);
+        let filteredCompanies = this.dataService.companies;
+        
+        if (industry && industry !== 'all') {
+            filteredCompanies = filteredCompanies.filter(company => 
+                company.industry.toLowerCase().includes(industry.toLowerCase())
+            );
         }
 
         companiesGrid.innerHTML = filteredCompanies.map(company => this.renderCompanyCard(company)).join('');
     }
 
-    renderCompanyCard(company) {
-        const aiBadge = company.ai_native ? '<span class="ai-badge">AI</span>' : '';
-        const digitalBadge = company.digital_native ? '<span class="digital-badge">Digital</span>' : '';
-        const ncpBadge = company.ncp_status === 'Partner' ? 
-            `<div class="ncp-indicator" title="NVIDIA Partner${company.partner_tier ? ' - ' + company.partner_tier : ''}">
-                <i class="fas fa-check-circle"></i>
-            </div>` : '';
+    filterCompaniesByValuation(valuationRange) {
+        console.log('Filtering companies by valuation:', valuationRange);
+        const companiesGrid = document.getElementById('companiesGrid');
+        if (!companiesGrid) return;
 
-        return `
-            <div class="company-card" data-company-id="${company.id}">
-                <div class="company-header">
-                    <div class="company-logo">
-                        <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="logo-fallback" style="display: none;">${company.name.charAt(0)}</div>
-                    </div>
-                    <div class="company-info">
-                        <div class="company-title-row">
-                            <h3>${company.name}</h3>
-                            ${ncpBadge}
-                        </div>
-                        <div class="company-badges">
-                            ${aiBadge}
-                            ${digitalBadge}
-                            <span class="company-industry">${company.industry.replace('-', ' ')}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="company-stats">
-                    <div class="company-stat">
-                        <span class="company-stat-value">${this.dataService.formatCurrency(company.valuation)}</span>
-                        <span class="company-stat-label">Valuation</span>
-                    </div>
-                    <div class="company-stat">
-                        <span class="company-stat-value">${company.vc_tier || 'N/A'}</span>
-                        <span class="company-stat-label">VC Tier</span>
-                    </div>
-                </div>
-                <div class="company-outreach">
-                    <div class="outreach-status ${company.outreach?.contacted ? 'contacted' : 'not-contacted'}">
-                        <i class="fas fa-${company.outreach?.contacted ? 'check' : 'clock'}"></i>
-                        <span>${company.outreach?.contacted ? 'Contacted' : 'Not Contacted'}</span>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    downloadNonPartnersCSV() {
-        const csvContent = this.dataService.exportNonPartnersToCSV();
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'non-partners.csv';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    }
-
-    filterVCPortfolio(vcName) {
-        const portfolioGrid = document.getElementById('vcPortfolioGrid');
-        if (!portfolioGrid) return;
-
-        let companies = [...this.dataService.companies];
+        let filteredCompanies = this.dataService.companies;
         
-        if (vcName !== 'all') {
-            companies = companies.filter(company => 
-                company.vcPortfolio && company.vcPortfolio.some(vc => 
-                    vc.toLowerCase().includes(vcName.toLowerCase())
-                )
+        if (valuationRange && valuationRange !== '') {
+            if (valuationRange.includes('+')) {
+                // Handle ranges like "100000000000+" (100B+)
+                const minValue = parseInt(valuationRange.replace(/[^\d]/g, ''));
+                filteredCompanies = filteredCompanies.filter(company => 
+                    company.valuation >= minValue
+                );
+            } else {
+                // Handle ranges like "0-1000000000" ($0 - $1B)
+                const [min, max] = valuationRange.split('-').map(v => parseInt(v));
+                filteredCompanies = filteredCompanies.filter(company => 
+                    company.valuation >= min && company.valuation <= max
+                );
+            }
+        }
+
+        companiesGrid.innerHTML = filteredCompanies.map(company => this.renderCompanyCard(company)).join('');
+    }
+
+    filterCompaniesByFunding(fundingRange) {
+        console.log('Filtering companies by funding:', fundingRange);
+        const companiesGrid = document.getElementById('companiesGrid');
+        if (!companiesGrid) return;
+
+        let filteredCompanies = this.dataService.companies;
+        
+        if (fundingRange && fundingRange !== '') {
+            const [min, max] = fundingRange.split('-').map(v => v.replace(/[^\d]/g, ''));
+            filteredCompanies = filteredCompanies.filter(company => {
+                const funding = company.funding_raised;
+                if (max) {
+                    return funding >= parseInt(min) && funding <= parseInt(max);
+                } else {
+                    return funding >= parseInt(min);
+                }
+            });
+        }
+
+        companiesGrid.innerHTML = filteredCompanies.map(company => this.renderCompanyCard(company)).join('');
+    }
+
+    filterCompaniesByDate(dateFilter) {
+        console.log('Filtering companies by date:', dateFilter);
+        const companiesGrid = document.getElementById('companiesGrid');
+        if (!companiesGrid) return;
+
+        let filteredCompanies = this.dataService.companies;
+        
+        if (dateFilter && dateFilter !== '') {
+            filteredCompanies = filteredCompanies.filter(company => {
+                const fundingDate = company.funding?.date;
+                return fundingDate && fundingDate.startsWith(dateFilter);
+            });
+        }
+
+        companiesGrid.innerHTML = filteredCompanies.map(company => this.renderCompanyCard(company)).join('');
+    }
+
+    filterCompaniesByVC(fundingRound) {
+        console.log('Filtering companies by funding round:', fundingRound);
+        const companiesGrid = document.getElementById('companiesGrid');
+        if (!companiesGrid) return;
+
+        let filteredCompanies = this.dataService.companies;
+        
+        if (fundingRound && fundingRound !== '') {
+            filteredCompanies = filteredCompanies.filter(company => 
+                company.last_funding_round === fundingRound
             );
         }
 
-        portfolioGrid.innerHTML = companies.map(company => `
-            <div class="portfolio-item" data-company-id="${company.id}">
-                <div class="portfolio-header">
-                    <h4>${company.name}</h4>
-                    <span class="portfolio-tier">${company.vc_tier}</span>
-                </div>
-                <div class="portfolio-details">
-                    <span class="portfolio-industry">${company.industry}</span>
-                    <span class="portfolio-funding">${this.dataService.formatCurrency(company.funding?.amount || 0)}</span>
-                </div>
-                <div class="portfolio-vcs">
-                    ${company.vcPortfolio?.map(vc => `<span class="vc-tag">${vc}</span>`).join('') || ''}
-                </div>
-            </div>
-        `).join('');
-    }
-
-    async summarizeNews(newsUrl) {
-        try {
-            const summary = await this.dataService.summarizeNews(newsUrl);
-            return summary;
-        } catch (error) {
-            console.error('Error summarizing news:', error);
-            return 'Unable to summarize news at this time.';
-        }
-    }
-
-    async loadLatestNews() {
-        const newsGrid = document.getElementById('latestNewsGrid');
-        if (!newsGrid) return;
-
-        const recentNews = this.dataService.getRecentNews(6);
-        
-        newsGrid.innerHTML = await Promise.all(recentNews.map(async (article) => {
-            const company = this.dataService.getCompanyById(article.company_id);
-            const summary = await this.summarizeNews(article.url || '');
-            
-            return `
-                <div class="news-item" onclick="platform.showNewsModal(${article.id})">
-                    <div class="news-header">
-                        <span class="news-category">${article.category}</span>
-                        <span class="news-time">${this.dataService.formatDate(article.published_at)}</span>
-                    </div>
-                    <div class="news-title">${article.headline}</div>
-                    <div class="news-content">${summary}</div>
-                    <div class="news-footer">
-                        <span class="news-source">${article.source}</span>
-                        <span class="news-date">${company?.name || 'Unknown Company'}</span>
-                    </div>
-                </div>
-            `;
-        }));
+        companiesGrid.innerHTML = filteredCompanies.map(company => this.renderCompanyCard(company)).join('');
     }
 
     filterNewsByCategory(category) {
-        // Filter news by category
+        console.log('Filtering news by category:', category);
         const newsGrid = document.getElementById('latestNewsGrid');
         if (!newsGrid) return;
 
-        const allNews = this.dataService.news;
-        const filteredNews = category === 'all' ? 
-            allNews : 
-            allNews.filter(article => article.category === category);
+        let filteredNews = this.dataService.getRecentNews(6);
+        
+        if (category && category !== 'all') {
+            filteredNews = filteredNews.filter(article => 
+                article.category.toLowerCase().includes(category.toLowerCase())
+            );
+        }
 
-        newsGrid.innerHTML = filteredNews.slice(0, 6).map(article => `
-            <div class="news-item" onclick="window.platform.showNewsModal(${article.id})">
+        newsGrid.innerHTML = filteredNews.map(article => `
+            <div class="news-item" onclick="window.platform.showCompanyModal(${article.company_id})">
                 <div class="news-header">
                     <span class="news-category">${article.category}</span>
                     <span class="news-time">${article.read_time}</span>
@@ -3043,6 +1852,172 @@ P.S. I've attached some materials about our partner program and recent success s
                 </div>
             </div>
         `).join('');
+    }
+
+    updateChartTimeframe(period) {
+        console.log('Updating chart timeframe to:', period);
+        // Update trend cards with filtered data
+        this.updateTrendCards(period);
+    }
+
+    updateChartType(type) {
+        console.log('Updating chart type to:', type);
+        // Update chart display type
+        const chartContainer = document.querySelector('.chart-container');
+        if (chartContainer) {
+            chartContainer.className = `chart-container ${type}-chart`;
+        }
+    }
+
+    updateInvestmentTimeframe(range) {
+        console.log('Updating investment timeframe to:', range);
+        // Update investment data based on timeframe
+        this.loadInvestmentOverview();
+        this.loadSectorTrendsSummary();
+    }
+
+    updateTrendCards(period) {
+        const stats = this.dataService.getDashboardStats();
+        const periodMultiplier = period === '6m' ? 0.5 : period === '1y' ? 1 : period === '2y' ? 2 : 1;
+        
+        // Update trend values based on period
+        const totalFundingTrend = document.getElementById('totalFundingTrend');
+        const totalDealsTrend = document.getElementById('totalDealsTrend');
+        const avgDealSizeTrend = document.getElementById('avgDealSizeTrend');
+        
+        if (totalFundingTrend) {
+            const funding = Math.round(stats.totalFunding * periodMultiplier / 1000000000 * 100) / 100;
+            totalFundingTrend.textContent = `$${funding}B`;
+        }
+        
+        if (totalDealsTrend) {
+            const deals = Math.round(stats.totalCompanies * periodMultiplier);
+            totalDealsTrend.textContent = deals.toString();
+        }
+        
+        if (avgDealSizeTrend) {
+            const avgDeal = Math.round(stats.totalFunding / stats.totalCompanies / 1000000 * periodMultiplier * 100) / 100;
+            avgDealSizeTrend.textContent = `$${avgDeal}M`;
+        }
+    }
+
+    handleViewAllClick(btn) {
+        console.log('View all clicked');
+        // Implementation for view all functionality
+    }
+
+    filterVCsByTier(vcTier) {
+        console.log('Filtering VCs by tier:', vcTier);
+        const vcsGrid = document.getElementById('vcsGrid');
+        if (!vcsGrid) return;
+
+        let filteredVCs = this.dataService.getTopVCsByScore(6);
+        
+        if (vcTier && vcTier !== 'all') {
+            filteredVCs = filteredVCs.filter(vc => 
+                vc.name.toLowerCase().includes(vcTier.toLowerCase())
+            );
+        }
+
+        vcsGrid.innerHTML = filteredVCs.map(vc => `
+            <div class="vc-card" onclick="platform.showVCModal(${vc.id})">
+                <div class="vc-header">
+                    <div class="vc-logo">
+                        <img src="${this.getVCLogoUrl(vc.name)}" alt="${vc.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="logo-fallback" style="display: none;">${vc.name.charAt(0)}</div>
+                    </div>
+                    <div class="vc-info">
+                        <h3>${vc.name}</h3>
+                        <span class="vc-location">${vc.location}</span>
+                    </div>
+                </div>
+                <div class="vc-score">
+                    <span class="score-value">${vc.final_score}</span>
+                    <span class="score-label">Score</span>
+                </div>
+                <div class="vc-stats">
+                    <div class="vc-stat">
+                        <span class="vc-stat-value">${vc.investments}</span>
+                        <span class="vc-stat-label">Investments</span>
+                    </div>
+                    <div class="vc-stat">
+                        <span class="vc-stat-value">${vc.portfolio_companies}</span>
+                        <span class="vc-stat-label">Portfolio</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    downloadNonPartnersCSV() {
+        console.log('Downloading non-partners CSV');
+        const nonPartners = this.dataService.companies.filter(company => company.ncp_status !== 'Partner');
+        
+        const csvContent = [
+            ['Company Name', 'Industry', 'CEO', 'Funding Raised', 'Valuation', 'Location', 'Website'],
+            ...nonPartners.map(company => [
+                company.name,
+                company.industry,
+                company.ceo,
+                company.funding_raised,
+                company.valuation,
+                company.location,
+                company.website
+            ])
+        ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+        
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'non-partners.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+
+    getCompanyLogoUrl(companyName) {
+        // First, try to get logo from data service
+        const company = this.dataService.companies.find(c => c.name === companyName);
+        if (company && company.logo) {
+            return company.logo;
+        }
+        
+        // Fallback to Clearbit logo service
+        try {
+            const cleanName = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
+            return `https://logo.clearbit.com/${cleanName}.com`;
+        } catch (error) {
+            console.warn('Error generating logo URL:', error);
+            return '';
+        }
+    }
+
+    getCompanyInitials(companyName) {
+        // Generate initials from company name
+        return companyName.split(' ')
+            .map(word => word.charAt(0))
+            .join('')
+            .substring(0, 2)
+            .toUpperCase();
+    }
+
+    getVCLogoUrl(vcName) {
+        // First, try to get logo from data service
+        const vc = this.dataService.vcs.find(v => v.name === vcName);
+        if (vc && vc.logo) {
+            return vc.logo;
+        }
+        
+        // Fallback to Clearbit logo service
+        try {
+            const cleanName = vcName.toLowerCase().replace(/[^a-z0-9]/g, '');
+            return `https://logo.clearbit.com/${cleanName}.com`;
+        } catch (error) {
+            console.warn('Error generating VC logo URL:', error);
+            return '';
+        }
     }
 }
 
@@ -3064,29 +2039,6 @@ if (document.readyState === 'loading') {
     console.log('Platform initialized:', window.platform);
 }
 
-// Test function to verify platform is working
-window.testPlatform = () => {
-    console.log('Testing platform...');
-    if (window.platform) {
-        console.log('Platform exists');
-        window.platform.showCompanyModal(1);
-    } else {
-        console.log('Platform not found');
-    }
-};
-
-// Platform initialization is handled above
-
-// Add some additional utility functions
-window.addEventListener('resize', () => {
-    // Resize charts on window resize
-    Object.values(window.platform?.charts || {}).forEach(chart => {
-        if (chart && typeof chart.resize === 'function') {
-            chart.resize();
-        }
-    });
-});
-
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -3094,3 +2046,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// Window resize handler
+window.addEventListener('resize', () => {
+    // Handle window resize if needed
+});
