@@ -2,7 +2,11 @@
 
 A modern, action-first dashboard for tracking NVIDIA Partner Program (NCP) progress, managing outreach, and monitoring AI/Digital Native companies.
 
-## Features
+## 🚀 Quick Start
+
+The dashboard is live at: [https://nvoydia.vercel.app](https://nvoydia.vercel.app)
+
+## 📋 Features
 
 - 🎯 **NCP Progress Tracking** - Monitor partner status, tiers, and completion metrics
 - 🤖 **AI/Digital Native Focus** - Track AI-native and digital-native companies with specialized badges
@@ -17,22 +21,29 @@ A modern, action-first dashboard for tracking NVIDIA Partner Program (NCP) progr
 - 📧 **Email Templates** - Pre-built templates for partnership outreach
 - 🔗 **LinkedIn Integration** - Direct links to company executives
 
-## Live Demo
-
-Visit the live dashboard: [https://nvoydia.vercel.app](https://nvoydia.vercel.app)
-
-## Technology Stack
+## 🛠 Technology Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Backend**: FastAPI with SQLite database
 - **Styling**: Custom CSS with CSS Variables
 - **Icons**: Font Awesome
 - **Fonts**: Inter (Google Fonts)
+- **Charts**: Chart.js
 - **Deployment**: Vercel
 
-## Getting Started
+## 📁 Project Structure
 
-### Local Development
+```
+nvoydia-2/
+├── index.html              # Main HTML file
+├── modern-styles.css       # Enhanced responsive styles
+├── modern-script.js        # Main JavaScript functionality
+├── data-service.js         # Data management
+├── vercel.json            # Vercel deployment config
+├── package.json           # Project configuration
+└── README.md              # This file
+```
+
+## 🔧 Local Development
 
 1. Clone the repository:
 ```bash
@@ -40,52 +51,32 @@ git clone https://github.com/LeoSoffiatti/nvoydia.git
 cd nvoydia/nvoydia-2
 ```
 
-2. Start the backend server:
+2. Start a local server:
 ```bash
-cd ../dashboard/backend
-pip install -r requirements.txt
-python main.py
-```
-
-3. Start the frontend server:
-```bash
-cd ../../nvoydia-2
 python -m http.server 9000
+# or
+npx serve .
 ```
 
-4. Open your browser and visit: `http://localhost:9000`
+3. Open your browser and visit: `http://localhost:9000`
 
-### Deployment
+## 🚀 Deployment
 
 This project is automatically deployed to Vercel. Any changes pushed to the main branch will trigger a new deployment.
 
-## Project Structure
+### Manual Deployment
 
-```
-nvoydia-2/
-├── index.html              # Main HTML file with reordered sections
-├── modern-styles.css       # Enhanced responsive styles with NCP badges
-├── modern-script.js        # Main JavaScript functionality with filters
-├── data-service.js         # Data management with NCP fields
-├── package.json            # Project configuration
-├── vercel.json             # Vercel deployment config
-└── README.md               # This file
+1. Install Vercel CLI:
+```bash
+npm i -g vercel
 ```
 
-## Data Fields
+2. Deploy:
+```bash
+vercel --prod
+```
 
-The dashboard now includes comprehensive company data:
-
-- **NCP Status**: Partner/Not Partner with tier information
-- **Partner Tier**: Gold, Silver, Bronze classification
-- **VC Tier**: Tier 1, Tier 2, Tier 3 classification
-- **AI/Digital Native**: Boolean flags for company type
-- **Funding Details**: Round type, amount, and date
-- **Outreach Tracking**: Contacted status and last message date
-- **News Articles**: Company-specific news with summaries
-- **VC Portfolio**: List of associated venture capital firms
-
-## Features Overview
+## 📊 Dashboard Sections
 
 ### Dashboard
 - NCP progress metrics and completion tracking
@@ -106,42 +97,38 @@ The dashboard now includes comprehensive company data:
 - Portfolio company analysis
 - Funding timeline visualization
 
-### Company Modals
-- NCP status prominently displayed at the top
-- Recent news with AI-powered summaries
-- Contact actions (LinkedIn/Email templates)
-- Detailed company information and stats
+## 🎨 Customization
 
-### News Modals
-- Full article content with related company info
-- AI summarization capabilities
-- Direct links to company details
-- Source and publication date tracking
+The dashboard uses CSS custom properties for easy theming. Key variables in `modern-styles.css`:
 
-### VC Modals
-- Comprehensive VC information and stats
-- Portfolio company listings
-- Contact information and website links
-- Executive and email template access
+```css
+:root {
+    --primary-color: #1a1a1a;
+    --secondary-color: #ffffff;
+    --accent-color: #0066cc;
+    --success-color: #00a86b;
+    /* ... more variables */
+}
+```
 
-## Browser Support
+## 📱 Browser Support
 
 - Chrome (recommended)
 - Firefox
 - Safari
 - Edge
 
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Submit a pull request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License.
 
-## Contact
+## 📞 Contact
 
 For questions or support, please contact the NVoydia team.
