@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Execution Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { padding: 10px; margin: 5px 0; border-radius: 4px; }
+        .pass { background-color: #d4edda; color: #155724; }
+        .fail { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>JavaScript Execution Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        function addTest(message, passed) {
+            const div = document.createElement('div');
+            div.className = 'test ' + (passed ? 'pass' : 'fail');
+            div.textContent = (passed ? '✅ ' : '❌ ') + message;
+            document.getElementById('results').appendChild(div);
+        }
+        
+        // Test basic JavaScript execution
+        addTest('Basic JavaScript execution', true);
+        
+        // Test console availability
+        addTest('Console object available', typeof console !== 'undefined');
+        
+        // Test document object
+        addTest('Document object available', typeof document !== 'undefined');
+        
+        // Test window object
+        addTest('Window object available', typeof window !== 'undefined');
+        
+        // Test setTimeout
+        try {
+            setTimeout(() => {}, 0);
+            addTest('setTimeout function works', true);
+        } catch (e) {
+            addTest('setTimeout function failed', false);
+        }
+        
+        // Test JSON
+        try {
+            JSON.stringify({test: 1});
+            addTest('JSON object works', true);
+        } catch (e) {
+            addTest('JSON object failed', false);
+        }
+        
+        // Test fetch (if available)
+        addTest('Fetch API available', typeof fetch !== 'undefined');
+        
+        // Test Promise
+        addTest('Promise available', typeof Promise !== 'undefined');
+        
+        console.log('JavaScript execution test completed');
+    </script>
+</body>
+</html>

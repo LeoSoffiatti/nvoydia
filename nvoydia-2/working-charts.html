@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working Charts Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>NCP Dashboard - Investment Charts</h1>
+            <div id="status" class="status info">Initializing charts...</div>
+        </div>
+        
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title">Investment Trends Year-over-Year</div>
+                <div class="chart-container">
+                    <canvas id="yoyChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-title">Investments by Category</div>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + type;
+        }
+
+        function createCharts() {
+            console.log('=== CREATING CHARTS ===');
+            
+            // Check Chart.js availability
+            if (typeof Chart === 'undefined') {
+                updateStatus('❌ Chart.js not loaded!', 'error');
+                return;
+            }
+            
+            updateStatus('✅ Chart.js loaded, creating charts...', 'success');
+            
+            // Mock data
+            const yoyData = {
+                years: ['2020', '2021', '2022', '2023', '2024'],
+                funding: [1.2, 1.8, 2.1, 2.4, 2.8],
+                deals: [85, 120, 140, 156, 180]
+            };
+            
+            const categoryData = [
+                { name: 'Software', value: 4.2, color: '#F97316' },
+                { name: 'Energy/Climate', value: 3.2, color: '#10B981' },
+                { name: 'Auto', value: 2.8, color: '#3B82F6' },
+                { name: 'Networking', value: 2.6, color: '#06B6D4' },
+                { name: 'HCLS', value: 2.2, color: '#EF4444' },
+                { name: 'Robotics', value: 1.9, color: '#84CC16' },
+                { name: 'Fintech', value: 1.8, color: '#F59E0B' },
+                { name: 'Media', value: 1.5, color: '#8B5CF6' }
+            ];
+            
+            // Create Year-over-Year Chart
+            try {
+                const yoyCanvas = document.getElementById('yoyChart');
+                const yoyCtx = yoyCanvas.getContext('2d');
+                
+                new Chart(yoyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: yoyData.years,
+                        datasets: [{
+                            label: 'Funding ($B)',
+                            data: yoyData.funding,
+                            borderColor: '#0066cc',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#0066cc',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }, {
+                            label: 'Deals',
+                            data: yoyData.deals,
+                            borderColor: '#00a86b',
+                            backgroundColor: 'rgba(0, 168, 107, 0.1)',
+                            borderWidth: 3,
+                            fill: false,
+                            tension: 0.4,
+                            pointBackgroundColor: '#00a86b',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20,
+                                    font: { size: 12, weight: '500' }
+                                }
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#ffffff',
+                                borderColor: '#0066cc',
+                                borderWidth: 1,
+                                cornerRadius: 8
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Year',
+                                    font: { size: 12, weight: '600' }
+                                },
+                                grid: { display: true, color: 'rgba(0, 0, 0, 0.1)' }
+                            },
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Funding ($B)',
+                                    font: { size: 12, weight: '600' }
+                                },
+                                grid: { display: true, color: 'rgba(0, 0, 0, 0.1)' }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Number of Deals',
+                                    font: { size: 12, weight: '600' }
+                                },
+                                grid: { drawOnChartArea: false }
+                            }
+                        },
+                        interaction: {
+                            mode: 'nearest',
+                            axis: 'x',
+                            intersect: false
+                        }
+                    }
+                });
+                
+                console.log('✅ Year-over-year chart created');
+                
+            } catch (error) {
+                console.error('❌ Error creating YOY chart:', error);
+            }
+            
+            // Create Category Chart
+            try {
+                const categoryCanvas = document.getElementById('categoryChart');
+                const categoryCtx = categoryCanvas.getContext('2d');
+                
+                new Chart(categoryCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: categoryData.map(cat => cat.name),
+                        datasets: [{
+                            data: categoryData.map(cat => cat.value),
+                            backgroundColor: categoryData.map(cat => cat.color),
+                            borderColor: '#ffffff',
+                            borderWidth: 2,
+                            hoverBorderWidth: 3,
+                            hoverBorderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'right',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 15,
+                                    font: { size: 11, weight: '500' },
+                                    generateLabels: function(chart) {
+                                        const data = chart.data;
+                                        if (data.labels.length && data.datasets.length) {
+                                            return data.labels.map((label, i) => {
+                                                const value = data.datasets[0].data[i];
+                                                return {
+                                                    text: `${label}: $${value.toFixed(1)}B`,
+                                                    fillStyle: data.datasets[0].backgroundColor[i],
+                                                    strokeStyle: data.datasets[0].borderColor,
+                                                    lineWidth: data.datasets[0].borderWidth,
+                                                    pointStyle: 'circle',
+                                                    hidden: false,
+                                                    index: i
+                                                };
+                                            });
+                                        }
+                                        return [];
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed;
+                                        return `${label}: $${value.toFixed(1)}B`;
+                                    }
+                                },
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#ffffff',
+                                borderColor: '#0066cc',
+                                borderWidth: 1,
+                                cornerRadius: 8
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Category chart created');
+                updateStatus('✅ Both charts created successfully!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Error creating category chart:', error);
+                updateStatus('❌ Error creating charts: ' + error.message, 'error');
+            }
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            console.log('Page loaded, initializing charts...');
+            setTimeout(createCharts, 100);
+        });
+        
+        // Fallback initialization
+        setTimeout(function() {
+            if (document.getElementById('status').textContent.includes('Initializing')) {
+                console.log('Fallback: retrying chart creation...');
+                createCharts();
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

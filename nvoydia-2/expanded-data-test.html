@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expanded Data Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .status { font-weight: bold; }
+        .success { color: green; }
+        .error { color: red; }
+        .company-card { border: 1px solid #ddd; padding: 10px; margin: 5px; display: inline-block; width: 200px; }
+        .vc-card { border: 1px solid #ddd; padding: 10px; margin: 5px; display: inline-block; width: 200px; }
+    </style>
+</head>
+<body>
+    <h1>Expanded Data Test</h1>
+    
+    <div class="test-section">
+        <h2>Data Status</h2>
+        <div id="data-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Companies by Sector</h2>
+        <div id="sector-breakdown"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Sample Companies</h2>
+        <div id="sample-companies"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Sample VCs</h2>
+        <div id="sample-vcs"></div>
+    </div>
+    
+    <script src="data-service.js"></script>
+    <script>
+        console.log('=== Testing Expanded Data ===');
+        
+        // Create data service
+        const dataService = new DataService();
+        
+        // Listen for data-ready event
+        window.addEventListener('data-ready', (event) => {
+            console.log('🎉 Data ready event received!');
+            
+            const statusDiv = document.getElementById('data-status');
+            const sectorDiv = document.getElementById('sector-breakdown');
+            const companiesDiv = document.getElementById('sample-companies');
+            const vcsDiv = document.getElementById('sample-vcs');
+            
+            // Status
+            statusDiv.innerHTML = `
+                <p class="status success">✅ Data loaded successfully!</p>
+                <p>Companies: ${dataService.companies.length}</p>
+                <p>VCs: ${dataService.vcs.length}</p>
+            `;
+            
+            // Sector breakdown
+            const sectors = {};
+            dataService.companies.forEach(company => {
+                sectors[company.sector] = (sectors[company.sector] || 0) + 1;
+            });
+            
+            sectorDiv.innerHTML = Object.entries(sectors).map(([sector, count]) => 
+                `<p><strong>${sector}:</strong> ${count} companies</p>`
+            ).join('');
+            
+            // Sample companies
+            companiesDiv.innerHTML = dataService.companies.slice(0, 5).map(company => `
+                <div class="company-card">
+                    <h4>${company.name}</h4>
+                    <p>Sector: ${company.sector}</p>
+                    <p>Valuation: ${dataService.formatCurrency(company.valuation)}</p>
+                    <p>Employees: ${company.employees.toLocaleString()}</p>
+                </div>
+            `).join('');
+            
+            // Sample VCs
+            vcsDiv.innerHTML = dataService.vcs.slice(0, 5).map(vc => `
+                <div class="vc-card">
+                    <h4>${vc.name}</h4>
+                    <p>AUM: ${dataService.formatCurrency(vc.aum)}</p>
+                    <p>Portfolio: ${vc.portfolio_size} companies</p>
+                    <p>Founded: ${vc.founded_year}</p>
+                </div>
+            `).join('');
+            
+            console.log(`✅ Expanded data test complete: ${dataService.companies.length} companies, ${dataService.vcs.length} VCs`);
+        });
+        
+        // Set timeout to show if data doesn't load
+        setTimeout(() => {
+            if (dataService.companies.length === 0) {
+                document.getElementById('data-status').innerHTML = '<p class="error">❌ Data not loaded after 3 seconds</p>';
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

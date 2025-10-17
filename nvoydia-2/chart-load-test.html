@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chart Test with Load Check</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px 0; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>Chart Test with Load Check</h1>
+    
+    <div id="status" class="status info">Checking Chart.js...</div>
+    
+    <canvas id="testChart" width="400" height="200"></canvas>
+    
+    <script>
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + type;
+        }
+        
+        function createChart() {
+            console.log('=== CHART TEST WITH LOAD CHECK ===');
+            
+            if (typeof Chart === 'undefined') {
+                updateStatus('❌ Chart.js not loaded!', 'error');
+                console.error('Chart.js not available');
+                return;
+            }
+            
+            updateStatus('✅ Chart.js loaded successfully!', 'success');
+            console.log('Chart.js version:', Chart.version);
+            
+            const canvas = document.getElementById('testChart');
+            if (!canvas) {
+                updateStatus('❌ Canvas element not found!', 'error');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                updateStatus('❌ Canvas context not available!', 'error');
+                return;
+            }
+            
+            try {
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Software', 'Energy', 'Auto', 'Fintech'],
+                        datasets: [{
+                            label: 'Investment ($B)',
+                            data: [4.2, 3.2, 2.8, 1.8],
+                            backgroundColor: [
+                                '#F97316',
+                                '#10B981', 
+                                '#3B82F6',
+                                '#F59E0B'
+                            ],
+                            borderColor: '#ffffff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Investment by Category'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Amount ($B)'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                updateStatus('✅ Chart created successfully!', 'success');
+                console.log('Chart created:', chart);
+                
+            } catch (error) {
+                updateStatus('❌ Chart creation failed: ' + error.message, 'error');
+                console.error('Chart creation error:', error);
+            }
+        }
+        
+        // Wait for page to load completely
+        window.addEventListener('load', function() {
+            console.log('Page loaded, checking Chart.js...');
+            
+            // Give Chart.js a moment to load
+            setTimeout(createChart, 100);
+        });
+        
+        // Fallback: try again after a longer delay
+        setTimeout(function() {
+            if (document.getElementById('status').textContent.includes('Checking')) {
+                console.log('Retrying chart creation...');
+                createChart();
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

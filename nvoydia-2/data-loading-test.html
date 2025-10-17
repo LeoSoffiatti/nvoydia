@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Loading Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .status { font-weight: bold; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Data Loading Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>Console Logs</h2>
+        <div id="console-logs"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Data Status</h2>
+        <div id="data-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Companies Grid Test</h2>
+        <div id="companiesGrid" style="border: 2px solid red; min-height: 100px; padding: 10px;">
+            <!-- This should be populated -->
+        </div>
+    </div>
+    
+    <script src="data-service.js"></script>
+    <script>
+        console.log('=== Starting Data Loading Test ===');
+        
+        // Override console.log to capture logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const logsDiv = document.getElementById('console-logs');
+        
+        function addLog(message, type = 'info') {
+            const logEntry = document.createElement('div');
+            logEntry.className = `status ${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logsDiv.appendChild(logEntry);
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog(args.join(' '), 'info');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog(args.join(' '), 'error');
+        };
+        
+        // Create data service
+        console.log('Creating DataService...');
+        const dataService = new DataService();
+        
+        // Display initial status
+        const statusDiv = document.getElementById('data-status');
+        function updateStatus() {
+            statusDiv.innerHTML = `
+                <p class="status">Current Status:</p>
+                <p>Companies: ${dataService.companies.length}</p>
+                <p>VCs: ${dataService.vcs.length}</p>
+                <p>News: ${dataService.news.length}</p>
+            `;
+        }
+        
+        updateStatus();
+        
+        // Listen for data-ready event
+        window.addEventListener('data-ready', (event) => {
+            console.log('🎉 DATA-READY EVENT RECEIVED!', event.detail);
+            updateStatus();
+            
+            // Test companies grid population
+            const companiesGrid = document.getElementById('companiesGrid');
+            if (dataService.companies.length > 0) {
+                console.log('✅ Companies available, populating grid...');
+                companiesGrid.innerHTML = dataService.companies.map(company => `
+                    <div style="border: 1px solid #ddd; padding: 10px; margin: 5px; display: inline-block; width: 200px;">
+                        <h4>${company.name}</h4>
+                        <p>Sector: ${company.sector}</p>
+                        <p>Valuation: $${(company.valuation / 1000000000).toFixed(1)}B</p>
+                    </div>
+                `).join('');
+                console.log(`✅ Grid populated with ${dataService.companies.length} companies`);
+            } else {
+                console.log('❌ No companies available');
+                companiesGrid.innerHTML = '<p class="error">No companies loaded</p>';
+            }
+        });
+        
+        // Check status every second
+        let checkCount = 0;
+        const statusCheck = setInterval(() => {
+            checkCount++;
+            console.log(`Status check #${checkCount}: Companies=${dataService.companies.length}, VCs=${dataService.vcs.length}`);
+            updateStatus();
+            
+            if (checkCount >= 10) {
+                clearInterval(statusCheck);
+                console.log('Status checking stopped after 10 attempts');
+            }
+        }, 1000);
+        
+        // Manual test button
+        const testButton = document.createElement('button');
+        testButton.textContent = 'Manual Test Companies Grid';
+        testButton.onclick = () => {
+            console.log('Manual test triggered');
+            const companiesGrid = document.getElementById('companiesGrid');
+            companiesGrid.innerHTML = `
+                <p>Manual test - Companies: ${dataService.companies.length}</p>
+                ${dataService.companies.length > 0 ? 
+                    dataService.companies.slice(0, 3).map(company => `
+                        <div style="border: 1px solid green; padding: 10px; margin: 5px;">
+                            <strong>${company.name}</strong> - ${company.sector}
+                        </div>
+                    `).join('') : 
+                    '<p class="error">No companies available</p>'
+                }
+            `;
+        };
+        document.body.appendChild(testButton);
+    </script>
+</body>
+</html>

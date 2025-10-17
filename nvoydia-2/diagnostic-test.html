@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chart.js Diagnostic Test</title>
+    <script src="chart.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { padding: 10px; margin: 5px 0; border-radius: 4px; }
+        .pass { background-color: #d4edda; color: #155724; }
+        .fail { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        canvas { border: 1px solid #ccc; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Chart.js Diagnostic Test</h1>
+    <div id="results"></div>
+    <canvas id="testChart" width="400" height="200"></canvas>
+    
+    <script>
+        function addResult(message, type) {
+            const div = document.createElement('div');
+            div.className = 'test-result ' + type;
+            div.textContent = message;
+            document.getElementById('results').appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function runDiagnostics() {
+            addResult('=== CHART.JS DIAGNOSTIC TEST ===', 'info');
+            
+            // Test 1: Check if Chart.js script loaded
+            addResult('Test 1: Checking Chart.js script loading...', 'info');
+            if (typeof Chart !== 'undefined') {
+                addResult('✅ Chart.js script loaded successfully', 'pass');
+                addResult(`Chart.js version: ${Chart.version}`, 'info');
+            } else {
+                addResult('❌ Chart.js script failed to load', 'fail');
+                return;
+            }
+            
+            // Test 2: Check Chart constructor
+            addResult('Test 2: Checking Chart constructor...', 'info');
+            if (typeof Chart === 'function') {
+                addResult('✅ Chart constructor is available', 'pass');
+            } else {
+                addResult('❌ Chart constructor not available', 'fail');
+                return;
+            }
+            
+            // Test 3: Check canvas element
+            addResult('Test 3: Checking canvas element...', 'info');
+            const canvas = document.getElementById('testChart');
+            if (canvas) {
+                addResult('✅ Canvas element found', 'pass');
+            } else {
+                addResult('❌ Canvas element not found', 'fail');
+                return;
+            }
+            
+            // Test 4: Check canvas context
+            addResult('Test 4: Checking canvas context...', 'info');
+            try {
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    addResult('✅ Canvas 2D context available', 'pass');
+                } else {
+                    addResult('❌ Canvas 2D context not available', 'fail');
+                    return;
+                }
+            } catch (error) {
+                addResult(`❌ Canvas context error: ${error.message}`, 'fail');
+                return;
+            }
+            
+            // Test 5: Try to create a simple chart
+            addResult('Test 5: Attempting to create chart...', 'info');
+            try {
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['A', 'B', 'C'],
+                        datasets: [{
+                            label: 'Test Data',
+                            data: [1, 2, 3],
+                            backgroundColor: ['red', 'green', 'blue']
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Diagnostic Test Chart'
+                            }
+                        }
+                    }
+                });
+                
+                addResult('✅ Chart created successfully!', 'pass');
+                addResult(`Chart instance: ${chart.constructor.name}`, 'info');
+                
+            } catch (error) {
+                addResult(`❌ Chart creation failed: ${error.message}`, 'fail');
+                addResult(`Error stack: ${error.stack}`, 'fail');
+            }
+            
+            // Test 6: Check for JavaScript errors
+            addResult('Test 6: Checking for JavaScript errors...', 'info');
+            window.addEventListener('error', function(e) {
+                addResult(`❌ JavaScript error: ${e.message} at ${e.filename}:${e.lineno}`, 'fail');
+            });
+            
+            addResult('=== DIAGNOSTIC COMPLETE ===', 'info');
+        }
+        
+        // Run diagnostics when page loads
+        window.addEventListener('load', function() {
+            setTimeout(runDiagnostics, 100);
+        });
+        
+        // Also run immediately
+        runDiagnostics();
+    </script>
+</body>
+</html>

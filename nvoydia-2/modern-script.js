@@ -60,16 +60,47 @@ class ModernDigitalNativesPlatform {
         this.setupThemeToggle();
         this.setupSearch();
         
+        // Initialize charts immediately
+        this.initializeCharts();
+        
         // Listen for data-ready event
         window.addEventListener('data-ready', (event) => {
             console.log('Data ready event received:', event.detail);
-            // Reload NCP progress when data is ready
+            // Reload data when it's ready
             setTimeout(() => {
                 this.loadNCPProgressOverview();
+                // Reload companies and VCs if we're on those sections
+                if (this.currentSection === 'companies') {
+                    this.loadCompaniesData();
+                }
+                if (this.currentSection === 'investments') {
+                    this.loadInvestmentsData();
+                }
             }, 100);
         });
         
         console.log('Platform initialization complete');
+    }
+
+    initializeCharts() {
+        console.log('Initializing charts...');
+        
+        // Wait for Chart.js to be available
+        const checkChartJS = () => {
+            if (typeof Chart !== 'undefined') {
+                console.log('Chart.js is available, creating charts...');
+                setTimeout(() => {
+                    this.createYearOverYearChart();
+                    this.createCategoryChart();
+                    this.setupChartControls();
+                }, 500);
+            } else {
+                console.log('Chart.js not yet available, retrying...');
+                setTimeout(checkChartJS, 100);
+            }
+        };
+        
+        checkChartJS();
     }
 
     setupEventListeners() {
@@ -224,6 +255,14 @@ class ModernDigitalNativesPlatform {
         });
         }
 
+        // Sector filter
+        const sectorFilter = document.getElementById('sectorFilter');
+        if (sectorFilter) {
+            sectorFilter.addEventListener('change', (e) => {
+            this.filterCompaniesBySector(e.target.value);
+        });
+        }
+
         // Download non-partners button
         const downloadBtn = document.getElementById('downloadNonPartners');
         if (downloadBtn) {
@@ -286,11 +325,32 @@ class ModernDigitalNativesPlatform {
 
     loadInvestmentsData() {
         console.log('Loading investments data...');
+        console.log('VCs available:', this.dataService.vcs.length);
+        
+        // If no VCs are loaded yet, wait for data-ready event
+        if (this.dataService.vcs.length === 0) {
+            console.log('No VCs loaded yet, waiting for data...');
+            // Set up a one-time listener for data-ready
+            const dataReadyHandler = () => {
+                console.log('Data ready, loading investments...');
+                this.loadVCsGrid();
+                this.loadVCPortfolio();
+                this.loadInvestmentOverview();
+                this.loadSectorTrendsSummary();
+                this.setupVCFilters();
+                this.loadInvestmentCharts();
+                window.removeEventListener('data-ready', dataReadyHandler);
+            };
+            window.addEventListener('data-ready', dataReadyHandler);
+            return;
+        }
+        
         this.loadVCsGrid();
         this.loadVCPortfolio();
         this.loadInvestmentOverview();
         this.loadSectorTrendsSummary();
         this.setupVCFilters();
+        this.loadInvestmentCharts();
     }
 
     loadLatestNews(filterCategory = 'all') {
@@ -598,6 +658,344 @@ class ModernDigitalNativesPlatform {
         console.log('VC filter event listeners attached successfully');
     }
 
+    loadInvestmentCharts() {
+        console.log('Loading investment charts...');
+        
+        // Check if Chart.js is loaded
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js is not loaded!');
+            return;
+        }
+        
+        console.log('Chart.js is available:', Chart);
+        
+        // Wait a bit for the DOM to be ready
+        setTimeout(() => {
+            console.log('Creating charts...');
+            this.createYearOverYearChart();
+            this.createCategoryChart();
+            this.setupChartControls();
+        }, 1000);
+    }
+
+    createYearOverYearChart() {
+        console.log('Creating year-over-year chart...');
+        const canvas = document.getElementById('yoyTrendsChart');
+        if (!canvas) {
+            console.error('yoyTrendsChart canvas not found');
+            return;
+        }
+
+        console.log('Canvas found:', canvas);
+        const ctx = canvas.getContext('2d');
+        
+        // Use mock data directly for now
+        const mockData = {
+            years: ['2020', '2021', '2022', '2023', '2024'],
+            funding: [1.2, 1.8, 2.1, 2.4, 2.8], // in billions
+            deals: [85, 120, 140, 156, 180]
+        };
+        
+        console.log('Using mock data:', mockData);
+        
+        // Destroy existing chart if it exists
+        if (this.charts.yoyTrends) {
+            this.charts.yoyTrends.destroy();
+        }
+
+        try {
+            this.charts.yoyTrends = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: mockData.years,
+                    datasets: [{
+                        label: 'Funding ($B)',
+                        data: mockData.funding,
+                        borderColor: '#0066cc',
+                        backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#0066cc',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }, {
+                        label: 'Deals',
+                        data: mockData.deals,
+                        borderColor: '#00a86b',
+                        backgroundColor: 'rgba(0, 168, 107, 0.1)',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.4,
+                        pointBackgroundColor: '#00a86b',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 12,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#0066cc',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Year',
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Funding ($B)',
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Number of Deals',
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+            console.log('Year-over-year chart created successfully:', this.charts.yoyTrends);
+        } catch (error) {
+            console.error('Error creating year-over-year chart:', error);
+        }
+    }
+
+    createCategoryChart() {
+        console.log('Creating category chart...');
+        const canvas = document.getElementById('categoryChart');
+        if (!canvas) {
+            console.error('categoryChart canvas not found');
+            return;
+        }
+
+        console.log('Category canvas found:', canvas);
+        const ctx = canvas.getContext('2d');
+        
+        // Use mock data directly for now
+        const mockCategoryData = [
+            { name: 'Software', value: 4.2, color: '#F97316' },
+            { name: 'Energy/Climate', value: 3.2, color: '#10B981' },
+            { name: 'Auto', value: 2.8, color: '#3B82F6' },
+            { name: 'Networking', value: 2.6, color: '#06B6D4' },
+            { name: 'HCLS', value: 2.2, color: '#EF4444' },
+            { name: 'Robotics', value: 1.9, color: '#84CC16' },
+            { name: 'Fintech', value: 1.8, color: '#F59E0B' },
+            { name: 'Media', value: 1.5, color: '#8B5CF6' }
+        ];
+        
+        console.log('Using mock category data:', mockCategoryData);
+        
+        // Destroy existing chart if it exists
+        if (this.charts.category) {
+            this.charts.category.destroy();
+        }
+
+        try {
+            this.charts.category = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: mockCategoryData.map(cat => cat.name),
+                    datasets: [{
+                        data: mockCategoryData.map(cat => cat.value),
+                        backgroundColor: mockCategoryData.map(cat => cat.color),
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        hoverBorderWidth: 3,
+                        hoverBorderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                },
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        return data.labels.map((label, i) => {
+                                            const value = data.datasets[0].data[i];
+                                            return {
+                                                text: `${label}: $${value.toFixed(1)}B`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                strokeStyle: data.datasets[0].borderColor,
+                                                lineWidth: data.datasets[0].borderWidth,
+                                                pointStyle: 'circle',
+                                                hidden: false,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    return `${label}: $${value.toFixed(1)}B`;
+                                }
+                            },
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#0066cc',
+                            borderWidth: 1,
+                            cornerRadius: 8
+                        }
+                    }
+                }
+            });
+            console.log('Category chart created successfully:', this.charts.category);
+        } catch (error) {
+            console.error('Error creating category chart:', error);
+        }
+    }
+
+    setupChartControls() {
+        // Year-over-year chart controls
+        const yoyChartCard = document.querySelector('#yoyTrendsChart')?.closest('.chart-card');
+        const yoyButtons = yoyChartCard?.querySelectorAll('.chart-btn');
+        if (yoyButtons && yoyButtons.length > 0) {
+            yoyButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const chartType = e.target.dataset.chart;
+                    this.switchYearOverYearChart(chartType);
+                    
+                    // Update active button
+                    yoyButtons.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                });
+            });
+        }
+
+        // Category chart controls
+        const categoryChartCard = document.querySelector('#categoryChart')?.closest('.chart-card');
+        const categoryButtons = categoryChartCard?.querySelectorAll('.chart-btn');
+        if (categoryButtons && categoryButtons.length > 0) {
+            categoryButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const chartType = e.target.dataset.chart;
+                    this.switchCategoryChart(chartType);
+                    
+                    // Update active button
+                    categoryButtons.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                });
+            });
+        }
+    }
+
+    switchYearOverYearChart(type) {
+        if (!this.charts.yoyTrends) return;
+        
+        const trendsData = this.dataService.getYearOverYearTrends();
+        
+        if (type === 'funding') {
+            this.charts.yoyTrends.data.datasets[0].hidden = false;
+            this.charts.yoyTrends.data.datasets[1].hidden = true;
+        } else if (type === 'deals') {
+            this.charts.yoyTrends.data.datasets[0].hidden = true;
+            this.charts.yoyTrends.data.datasets[1].hidden = false;
+        }
+        
+        this.charts.yoyTrends.update();
+    }
+
+    switchCategoryChart(type) {
+        if (!this.charts.category) return;
+        
+        const categoryData = this.dataService.getInvestmentsByCategory();
+        
+        if (type === 'pie') {
+            this.charts.category.config.type = 'pie';
+        } else if (type === 'bar') {
+            this.charts.category.config.type = 'bar';
+            this.charts.category.data.datasets[0].data = categoryData.map(cat => cat.value / 1000000000);
+            this.charts.category.options.plugins.legend.position = 'top';
+        }
+        
+        this.charts.category.update();
+    }
+
     filterCompaniesByVCCompany(vcName) {
         console.log('=== FILTERING COMPANIES BY VC COMPANY:', vcName, '===');
         const portfolioGrid = document.getElementById('vcPortfolioGrid');
@@ -675,6 +1073,24 @@ class ModernDigitalNativesPlatform {
     }
 
     loadCompaniesData() {
+        console.log('=== LOADING COMPANIES DATA ===');
+        console.log('Loading companies data...');
+        console.log('Companies available:', this.dataService.companies.length);
+        
+        // If no companies are loaded yet, wait for data-ready event
+        if (this.dataService.companies.length === 0) {
+            console.log('⚠️ No companies loaded yet, waiting for data...');
+            // Set up a one-time listener for data-ready
+            const dataReadyHandler = () => {
+                console.log('🎉 Data ready, loading companies grid...');
+                this.loadCompaniesGrid();
+                window.removeEventListener('data-ready', dataReadyHandler);
+            };
+            window.addEventListener('data-ready', dataReadyHandler);
+            return;
+        }
+        
+        console.log('✅ Companies available, loading grid immediately');
         this.loadCompaniesGrid();
     }
 
@@ -851,11 +1267,36 @@ class ModernDigitalNativesPlatform {
 
 
     loadCompaniesGrid() {
+        console.log('=== LOADING COMPANIES GRID ===');
         const container = document.getElementById('companiesGrid');
-        if (!container) return;
+        if (!container) {
+            console.error('❌ Companies grid container not found!');
+            return;
+        }
+        console.log('✅ Companies grid container found');
 
         const companies = this.dataService.companies;
+        console.log(`📊 Companies available: ${companies.length}`);
+        
+        if (companies.length === 0) {
+            console.log('⚠️ No companies available, showing empty message');
+            container.innerHTML = '<p style="text-align: center; padding: 20px; color: #666;">No companies loaded yet...</p>';
+            return;
+        }
+        
+        console.log('🎨 Rendering company cards...');
         container.innerHTML = companies.map(company => this.renderCompanyCard(company)).join('');
+        console.log(`✅ Rendered ${companies.length} company cards`);
+    }
+
+    getCompanyLogoUrl(companyName) {
+        // Use Clearbit logo service
+        return `https://logo.clearbit.com/${companyName.toLowerCase().replace(/\s+/g, '')}.com`;
+    }
+
+    getVCLogoUrl(vcName) {
+        // Use Clearbit logo service
+        return `https://logo.clearbit.com/${vcName.toLowerCase().replace(/\s+/g, '')}.com`;
     }
 
     renderCompanyCard(company) {
@@ -2114,6 +2555,22 @@ NVIDIA Business Development`;
         if (fundingRound && fundingRound !== '') {
             filteredCompanies = filteredCompanies.filter(company => 
                 company.last_funding_round === fundingRound
+            );
+        }
+
+        companiesGrid.innerHTML = filteredCompanies.map(company => this.renderCompanyCard(company)).join('');
+    }
+
+    filterCompaniesBySector(sector) {
+        console.log('Filtering companies by sector:', sector);
+        const companiesGrid = document.getElementById('companiesGrid');
+        if (!companiesGrid) return;
+
+        let filteredCompanies = this.dataService.companies;
+        
+        if (sector && sector !== '') {
+            filteredCompanies = filteredCompanies.filter(company => 
+                company.sector === sector
             );
         }
 

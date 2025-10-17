@@ -29,8 +29,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <!-- Charts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/3.0.0/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="chart.min.js"></script>
     
     <!-- Styles -->
     <link rel="stylesheet" href="modern-styles.css?v=104">
@@ -293,6 +292,19 @@
                         <option value="IPO">IPO</option>
                     </select>
                 </div>
+                <div class="filter-dropdown">
+                    <select id="sectorFilter">
+                        <option value="">All Sectors</option>
+                        <option value="Auto">Auto</option>
+                        <option value="Energy/Climate">Energy/Climate</option>
+                        <option value="FinTech">FinTech</option>
+                        <option value="HCLS">HCLS</option>
+                        <option value="Media">Media</option>
+                        <option value="Networking">Networking</option>
+                        <option value="Robotics">Robotics</option>
+                        <option value="Software">Software</option>
+                    </select>
+                </div>
                 <button class="download-btn" id="downloadNonPartners">
                     <i class="fas fa-download"></i>
                     Download Non-Partners
@@ -399,6 +411,39 @@
                         <div class="stat-item">
                             <div class="stat-number">9</div>
                             <div class="stat-label">New exits</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investment Trends Charts -->
+            <div class="charts-section">
+                <div class="charts-grid">
+                    <!-- Year-over-Year Investment Trends -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Investment Trends Year-over-Year</h3>
+                            <div class="chart-controls">
+                                <button class="chart-btn active" data-chart="funding">Funding</button>
+                                <button class="chart-btn" data-chart="deals">Deals</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="yoyTrendsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Investments by Category -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Investments by Category</h3>
+                            <div class="chart-controls">
+                                <button class="chart-btn active" data-chart="pie">Pie Chart</button>
+                                <button class="chart-btn" data-chart="bar">Bar Chart</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="categoryChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -518,5 +563,57 @@
     <!-- Scripts -->
     <script src="data-service.js?v=104"></script>
     <script src="modern-script.js?v=104"></script>
+    
+    <!-- Debug Script -->
+    <script>
+        // Debug script to check chart loading
+        window.addEventListener('load', function() {
+            console.log('=== DEBUG INFO ===');
+            console.log('Chart.js available:', typeof Chart !== 'undefined');
+            console.log('DataService available:', typeof DataService !== 'undefined');
+            console.log('Platform available:', typeof window.platform !== 'undefined');
+            
+            if (window.platform && window.platform.dataService) {
+                console.log('DataService instance:', window.platform.dataService);
+                console.log('Year-over-year data:', window.platform.dataService.getYearOverYearTrends());
+                console.log('Category data:', window.platform.dataService.getInvestmentsByCategory());
+            }
+            
+            // Check if canvas elements exist
+            const yoyCanvas = document.getElementById('yoyTrendsChart');
+            const categoryCanvas = document.getElementById('categoryChart');
+            console.log('YOY Canvas:', yoyCanvas);
+            console.log('Category Canvas:', categoryCanvas);
+            
+            // Try to create a simple chart manually
+            if (typeof Chart !== 'undefined' && yoyCanvas) {
+                console.log('Attempting to create manual chart...');
+                try {
+                    const ctx = yoyCanvas.getContext('2d');
+                    const testChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['2020', '2021', '2022', '2023', '2024'],
+                            datasets: [{
+                                label: 'Test',
+                                data: [1, 2, 3, 4, 5],
+                                borderColor: '#0066cc',
+                                backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                                borderWidth: 2,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                    console.log('Manual chart created successfully:', testChart);
+                } catch (error) {
+                    console.error('Error creating manual chart:', error);
+                }
+            }
+        });
+    </script>
 </body>
 </html>

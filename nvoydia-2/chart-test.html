@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .chart-container { width: 400px; height: 300px; margin: 20px 0; }
+        canvas { border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Chart Test Page</h1>
+    
+    <div class="chart-container">
+        <h3>Test Line Chart</h3>
+        <canvas id="testChart"></canvas>
+    </div>
+
+    <script>
+        console.log('Chart.js available:', typeof Chart !== 'undefined');
+        
+        if (typeof Chart !== 'undefined') {
+            const ctx = document.getElementById('testChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024'],
+                    datasets: [{
+                        label: 'Test Data',
+                        data: [1, 2, 3, 4, 5],
+                        borderColor: '#0066cc',
+                        backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            console.log('Test chart created:', chart);
+        } else {
+            console.error('Chart.js not loaded!');
+        }
+    </script>
+</body>
+</html>

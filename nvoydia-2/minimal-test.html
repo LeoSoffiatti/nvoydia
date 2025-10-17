@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimal Chart Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+</head>
+<body>
+    <h1>Minimal Chart Test</h1>
+    <canvas id="testChart" width="400" height="200"></canvas>
+    
+    <script>
+        console.log('=== MINIMAL CHART TEST ===');
+        console.log('Chart.js loaded:', typeof Chart !== 'undefined');
+        
+        if (typeof Chart !== 'undefined') {
+            console.log('Creating chart...');
+            const ctx = document.getElementById('testChart').getContext('2d');
+            
+            try {
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['A', 'B', 'C'],
+                        datasets: [{
+                            label: 'Test Data',
+                            data: [1, 2, 3],
+                            backgroundColor: ['red', 'green', 'blue']
+                        }]
+                    },
+                    options: {
+                        responsive: false
+                    }
+                });
+                console.log('Chart created successfully:', chart);
+            } catch (error) {
+                console.error('Chart creation failed:', error);
+            }
+        } else {
+            console.error('Chart.js not loaded!');
+        }
+    </script>
+</body>
+</html>

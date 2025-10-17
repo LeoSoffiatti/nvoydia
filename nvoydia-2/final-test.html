@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chart.js Test</title>
+    <script src="chart.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px 0; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Chart.js Test</h1>
+    <div id="status" class="status">Testing...</div>
+    <canvas id="testChart" width="400" height="200"></canvas>
+    
+    <script>
+        function updateStatus(message, type) {
+            document.getElementById('status').textContent = message;
+            document.getElementById('status').className = 'status ' + type;
+        }
+        
+        console.log('=== CHART.JS TEST ===');
+        console.log('Chart object:', typeof Chart);
+        console.log('Chart version:', Chart ? Chart.version : 'undefined');
+        
+        if (typeof Chart !== 'undefined') {
+            updateStatus('✅ Chart.js loaded successfully! Version: ' + Chart.version, 'success');
+            
+            try {
+                const ctx = document.getElementById('testChart').getContext('2d');
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Software', 'Energy', 'Auto', 'Fintech'],
+                        datasets: [{
+                            label: 'Investment ($B)',
+                            data: [4.2, 3.2, 2.8, 1.8],
+                            backgroundColor: ['#F97316', '#10B981', '#3B82F6', '#F59E0B']
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Investment by Category'
+                            }
+                        }
+                    }
+                });
+                
+                updateStatus('✅ Chart created successfully!', 'success');
+                console.log('Chart created:', chart);
+                
+            } catch (error) {
+                updateStatus('❌ Chart creation failed: ' + error.message, 'error');
+                console.error('Chart creation error:', error);
+            }
+        } else {
+            updateStatus('❌ Chart.js not loaded!', 'error');
+        }
+    </script>
+</body>
+</html>

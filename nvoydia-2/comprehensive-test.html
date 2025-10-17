@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company & VC Loading Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .company-card { border: 1px solid #ddd; padding: 10px; margin: 5px; display: inline-block; width: 200px; }
+        .vc-card { border: 1px solid #ddd; padding: 10px; margin: 5px; display: inline-block; width: 200px; }
+        .status { font-weight: bold; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Company & VC Loading Test</h1>
+    
+    <div class="test-section">
+        <h2>Data Service Status</h2>
+        <div id="data-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Companies Test</h2>
+        <div id="companies-test"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>VCs Test</h2>
+        <div id="vcs-test"></div>
+    </div>
+    
+    <script src="data-service.js"></script>
+    <script>
+        console.log('Starting comprehensive test...');
+        
+        // Create data service
+        const dataService = new DataService();
+        
+        // Display initial status
+        const statusDiv = document.getElementById('data-status');
+        statusDiv.innerHTML = `
+            <p class="status">Initial Status:</p>
+            <p>Companies: ${dataService.companies.length}</p>
+            <p>VCs: ${dataService.vcs.length}</p>
+        `;
+        
+        // Listen for data-ready event
+        window.addEventListener('data-ready', (event) => {
+            console.log('Data ready event received:', event.detail);
+            
+            // Update status
+            statusDiv.innerHTML += `
+                <p class="status success">✅ Data Ready!</p>
+                <p>Companies: ${dataService.companies.length}</p>
+                <p>VCs: ${dataService.vcs.length}</p>
+            `;
+            
+            // Test companies
+            const companiesDiv = document.getElementById('companies-test');
+            if (dataService.companies.length > 0) {
+                companiesDiv.innerHTML = `
+                    <p class="status success">✅ Companies loaded: ${dataService.companies.length}</p>
+                    <div style="display: flex; flex-wrap: wrap;">
+                        ${dataService.companies.slice(0, 5).map(company => `
+                            <div class="company-card">
+                                <h4>${company.name}</h4>
+                                <p>Sector: ${company.sector}</p>
+                                <p>Industry: ${company.industry}</p>
+                                <p>Valuation: $${(company.valuation / 1000000000).toFixed(1)}B</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                companiesDiv.innerHTML = '<p class="status error">❌ No companies loaded</p>';
+            }
+            
+            // Test VCs
+            const vcsDiv = document.getElementById('vcs-test');
+            if (dataService.vcs.length > 0) {
+                const topVCs = dataService.getTopVCsByScore(3);
+                vcsDiv.innerHTML = `
+                    <p class="status success">✅ VCs loaded: ${dataService.vcs.length}</p>
+                    <div style="display: flex; flex-wrap: wrap;">
+                        ${topVCs.map(vc => `
+                            <div class="vc-card">
+                                <h4>${vc.name}</h4>
+                                <p>AUM: $${(vc.aum / 1000000000).toFixed(1)}B</p>
+                                <p>Portfolio: ${vc.portfolio_size}</p>
+                                <p>Score: ${vc.final_score}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                vcsDiv.innerHTML = '<p class="status error">❌ No VCs loaded</p>';
+            }
+        });
+        
+        // Set a timeout to show if data doesn't load
+        setTimeout(() => {
+            if (dataService.companies.length === 0) {
+                statusDiv.innerHTML += '<p class="status error">❌ Data not loaded after 3 seconds</p>';
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
