@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .test-result { margin: 10px 0; padding: 10px; background: #f5f5f5; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        .company-card { 
+            display: inline-block; 
+            margin: 10px; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            cursor: pointer;
+            background: #f9f9f9;
+        }
+        .company-card:hover { background: #e9e9e9; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Comprehensive Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Data Service Loading Test</h2>
+        <div id="data-test-result" class="test-result">Testing...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Company Data Test</h2>
+        <div id="company-test-result" class="test-result">Testing...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Modal HTML Test</h2>
+        <div id="modal-test-result" class="test-result">Testing...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Click Event Test</h2>
+        <div id="click-test-result" class="test-result">Testing...</div>
+        <div id="test-companies"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>5. Platform Object Test</h2>
+        <div id="platform-test-result" class="test-result">Testing...</div>
+    </div>
+
+    <!-- Include the actual files -->
+    <script src="data-service.js"></script>
+    <script src="modern-script.js"></script>
+    
+    <script>
+        console.log('=== COMPREHENSIVE DEBUG TEST START ===');
+        
+        // Test 1: Data Service Loading
+        function testDataService() {
+            const result = document.getElementById('data-test-result');
+            try {
+                if (typeof DataService !== 'undefined') {
+                    const dataService = new DataService();
+                    result.innerHTML = '<div class="success">✅ DataService loaded successfully</div>';
+                    result.innerHTML += `<div>Companies: ${dataService.companies.length}</div>`;
+                    result.innerHTML += `<div>VCs: ${dataService.vcs.length}</div>`;
+                    return dataService;
+                } else {
+                    result.innerHTML = '<div class="error">❌ DataService not found</div>';
+                    return null;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ DataService error: ${error.message}</div>`;
+                return null;
+            }
+        }
+        
+        // Test 2: Company Data
+        function testCompanyData(dataService) {
+            const result = document.getElementById('company-test-result');
+            if (!dataService) {
+                result.innerHTML = '<div class="error">❌ No data service</div>';
+                return;
+            }
+            
+            try {
+                const companies = dataService.companies;
+                result.innerHTML = `<div class="success">✅ Found ${companies.length} companies</div>`;
+                
+                companies.forEach(company => {
+                    result.innerHTML += `<div>ID ${company.id}: ${company.name}</div>`;
+                });
+                
+                // Test getCompanyById
+                const testCompany = dataService.getCompanyById(1);
+                if (testCompany) {
+                    result.innerHTML += `<div class="success">✅ getCompanyById(1) works: ${testCompany.name}</div>`;
+                } else {
+                    result.innerHTML += '<div class="error">❌ getCompanyById(1) failed</div>';
+                }
+                
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Company data error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test 3: Modal HTML
+        function testModalHTML() {
+            const result = document.getElementById('modal-test-result');
+            try {
+                const modalOverlay = document.getElementById('modalOverlay');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalContent = document.getElementById('modalContent');
+                
+                if (modalOverlay && modalTitle && modalContent) {
+                    result.innerHTML = '<div class="success">✅ Modal HTML elements found</div>';
+                } else {
+                    result.innerHTML = '<div class="error">❌ Modal HTML elements missing</div>';
+                    result.innerHTML += `<div>Overlay: ${!!modalOverlay}, Title: ${!!modalTitle}, Content: ${!!modalContent}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Modal HTML error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test 4: Click Events
+        function testClickEvents(dataService) {
+            const result = document.getElementById('click-test-result');
+            const container = document.getElementById('test-companies');
+            
+            if (!dataService) {
+                result.innerHTML = '<div class="error">❌ No data service for click test</div>';
+                return;
+            }
+            
+            try {
+                // Create test company cards
+                const companies = dataService.companies.slice(0, 3);
+                companies.forEach(company => {
+                    const card = document.createElement('div');
+                    card.className = 'company-card';
+                    card.setAttribute('data-company-id', company.id);
+                    card.innerHTML = `
+                        <strong>${company.name}</strong><br>
+                        <small>ID: ${company.id}</small>
+                    `;
+                    container.appendChild(card);
+                });
+                
+                // Add click listeners
+                container.addEventListener('click', function(e) {
+                    const card = e.target.closest('.company-card');
+                    if (card) {
+                        const companyId = parseInt(card.getAttribute('data-company-id'));
+                        console.log('Clicked company ID:', companyId);
+                        
+                        if (window.platform && window.platform.showCompanyModal) {
+                            result.innerHTML += `<div>🔄 Attempting to show modal for company ID: ${companyId}</div>`;
+                            try {
+                                window.platform.showCompanyModal(companyId);
+                                result.innerHTML += `<div class="success">✅ Modal call successful for ${companyId}</div>`;
+                            } catch (error) {
+                                result.innerHTML += `<div class="error">❌ Modal call failed for ${companyId}: ${error.message}</div>`;
+                            }
+                        } else {
+                            result.innerHTML += '<div class="error">❌ window.platform.showCompanyModal not found</div>';
+                        }
+                    }
+                });
+                
+                result.innerHTML += '<div class="success">✅ Click event listeners added</div>';
+                
+            } catch (error) {
+                result.innerHTML += `<div class="error">❌ Click test error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test 5: Platform Object
+        function testPlatformObject() {
+            const result = document.getElementById('platform-test-result');
+            try {
+                if (window.platform) {
+                    result.innerHTML = '<div class="success">✅ window.platform exists</div>';
+                    result.innerHTML += `<div>Methods: ${Object.keys(window.platform).join(', ')}</div>`;
+                    
+                    if (window.platform.showCompanyModal) {
+                        result.innerHTML += '<div class="success">✅ showCompanyModal method exists</div>';
+                    } else {
+                        result.innerHTML += '<div class="error">❌ showCompanyModal method missing</div>';
+                    }
+                } else {
+                    result.innerHTML = '<div class="error">❌ window.platform not found</div>';
+                }
+            } catch (error) {
+                result.innerHTML += `<div class="error">❌ Platform test error: ${error.message}</div>`;
+            }
+        }
+        
+        // Run all tests
+        function runAllTests() {
+            console.log('Running all tests...');
+            
+            const dataService = testDataService();
+            testCompanyData(dataService);
+            testModalHTML();
+            testClickEvents(dataService);
+            testPlatformObject();
+            
+            console.log('All tests completed');
+        }
+        
+        // Run tests when page loads
+        window.addEventListener('load', function() {
+            setTimeout(runAllTests, 1000); // Wait for scripts to load
+        });
+        
+        // Manual test button
+        function manualTest() {
+            console.log('=== MANUAL TEST ===');
+            if (window.platform) {
+                console.log('Testing showCompanyModal(1)...');
+                try {
+                    window.platform.showCompanyModal(1);
+                    console.log('Manual test successful');
+                } catch (error) {
+                    console.error('Manual test failed:', error);
+                }
+            } else {
+                console.error('window.platform not found');
+            }
+        }
+        
+        // Add manual test button
+        document.addEventListener('DOMContentLoaded', function() {
+            const button = document.createElement('button');
+            button.textContent = 'Manual Test (Company ID 1)';
+            button.onclick = manualTest;
+            document.body.appendChild(button);
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCP Intelligence Dashboard</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Charts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/3.0.0/chartjs-adapter-date-fns.bundle.min.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="modern-styles.css?v=4">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="brand-text">NCP Dashboard</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#companies" class="nav-link" data-section="companies">
+                    <i class="fas fa-building"></i>
+                    <span>Companies</span>
+                </a>
+                <a href="#investments" class="nav-link" data-section="investments">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Investments</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search digital natives, VCs, news..." id="globalSearch">
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <span>AS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+            <!-- Hero Stats -->
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalCompanies">12</div>
+                        <div class="stat-label">Total Companies</div>
+                        <div class="stat-change positive">+2 this quarter</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="ncpProgress">67%</div>
+                        <div class="stat-label">NCP Progress</div>
+                        <div class="stat-change positive">8 partners</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalFunding">$2.1B</div>
+                        <div class="stat-label">Total Funding</div>
+                        <div class="stat-change positive">+28% YoY</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="aiNatives">4</div>
+                        <div class="stat-label">AI Natives</div>
+                        <div class="stat-change positive">33% of portfolio</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investment Trends Chart -->
+            <div class="chart-section">
+                <div class="section-header">
+                    <h2>Investment Trends</h2>
+                    <div class="chart-controls">
+                        <div class="time-filter">
+                            <button class="filter-btn active" data-period="6m">6M</button>
+                            <button class="filter-btn" data-period="1y">1Y</button>
+                            <button class="filter-btn" data-period="2y">2Y</button>
+                            <button class="filter-btn" data-period="all">All</button>
+                        </div>
+                        <div class="chart-type">
+                            <button class="type-btn active" data-type="line">Line</button>
+                            <button class="type-btn" data-type="bar">Bar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="investmentTrendsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- NCP Progress Section -->
+            <div class="ncp-progress-section">
+                <div class="section-header">
+                    <h2>NCP Progress Overview</h2>
+                    <div class="progress-stats">
+                        <span class="progress-stat">8 Partners</span>
+                        <span class="progress-stat">4 Non-Partners</span>
+                        <span class="progress-stat">67% Complete</span>
+                    </div>
+                </div>
+                <div class="progress-grid">
+                    <div class="progress-card">
+                        <div class="progress-header">
+                            <h3>Partner Status</h3>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 67%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-details">
+                            <div class="progress-item">
+                                <span class="progress-label">Premier Partners</span>
+                                <span class="progress-value">4</span>
+                            </div>
+                            <div class="progress-item">
+                                <span class="progress-label">Standard Partners</span>
+                                <span class="progress-value">4</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-card">
+                        <div class="progress-header">
+                            <h3>Outreach Status</h3>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-details">
+                            <div class="progress-item">
+                                <span class="progress-label">Contacted</span>
+                                <span class="progress-value">9</span>
+                            </div>
+                            <div class="progress-item">
+                                <span class="progress-label">Not Contacted</span>
+                                <span class="progress-value">3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Grid -->
+            <div class="activity-grid">
+                <!-- Latest News -->
+                <div class="activity-card full-width">
+                    <div class="card-header">
+                        <h3>Latest Company News</h3>
+                        <div class="news-filters">
+                            <button class="filter-btn active" data-category="all">All</button>
+                            <button class="filter-btn" data-category="funding">Funding</button>
+                            <button class="filter-btn" data-category="product">Product</button>
+                            <button class="filter-btn" data-category="partnership">Partnership</button>
+                        </div>
+                    </div>
+                    <div class="news-grid" id="latestNewsGrid">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+
+                <!-- Recent Funding -->
+                <div class="activity-card">
+                    <div class="card-header">
+                        <h3>Recent Funding Rounds</h3>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="funding-list" id="recentFundingList">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+
+                <!-- Top Performers -->
+                <div class="activity-card">
+                    <div class="card-header">
+                        <h3>Top Performers</h3>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="performers-list" id="topPerformersList">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Companies Section -->
+        <section id="companies" class="content-section">
+            <div class="section-header">
+                <h1>Company Portfolio</h1>
+                <div class="section-controls">
+                    <div class="view-toggle">
+                        <button class="toggle-btn active" data-view="grid">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button class="toggle-btn" data-view="list">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="industryFilter">
+                            <option value="">All Industries</option>
+                            <option value="ai-natives">AI Natives</option>
+                            <option value="digital-natives">Digital Natives</option>
+                            <option value="fintech">Fintech</option>
+                            <option value="social-media">Social Media</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="fundingFilter">
+                            <option value="">All Funding</option>
+                            <option value="0-1000000">$0 - $1M</option>
+                            <option value="1000000-10000000">$1M - $10M</option>
+                            <option value="10000000-100000000">$10M - $100M</option>
+                            <option value="100000000-1000000000">$100M - $1B</option>
+                            <option value="1000000000+">$1B+</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="dateFilter">
+                            <option value="">All Dates</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="vcFilter">
+                            <option value="">All VC Tiers</option>
+                            <option value="Tier 1">Tier 1</option>
+                            <option value="Tier 2">Tier 2</option>
+                            <option value="Tier 3">Tier 3</option>
+                        </select>
+                    </div>
+                    <button class="download-btn" id="downloadNonPartners">
+                        <i class="fas fa-download"></i>
+                        Download Non-Partners
+                    </button>
+                </div>
+            </div>
+
+            <!-- Industry Overview -->
+            <div class="industry-overview">
+                <div class="industry-card" data-industry="ai-natives">
+                    <div class="industry-header">
+                        <h3>AI Natives</h3>
+                        <span class="company-count">8 companies</span>
+                    </div>
+                    <div class="industry-stats">
+                        <div class="stat">
+                            <span class="stat-value">$45.2B</span>
+                            <span class="stat-label">Total Valuation</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">85%</span>
+                            <span class="stat-label">Tech Employees</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="industry-card" data-industry="digital-natives">
+                    <div class="industry-header">
+                        <h3>Digital Natives</h3>
+                        <span class="company-count">12 companies</span>
+                    </div>
+                    <div class="industry-stats">
+                        <div class="stat">
+                            <span class="stat-value">$120.5B</span>
+                            <span class="stat-label">Total Valuation</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">70%</span>
+                            <span class="stat-label">Tech Employees</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="industry-card" data-industry="fintech">
+                    <div class="industry-header">
+                        <h3>Fintech</h3>
+                        <span class="company-count">4 companies</span>
+                    </div>
+                    <div class="industry-stats">
+                        <div class="stat">
+                            <span class="stat-value">$18.7B</span>
+                            <span class="stat-label">Total Valuation</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">75%</span>
+                            <span class="stat-label">Tech Employees</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Companies Grid -->
+            <div class="companies-grid" id="companiesGrid">
+                <!-- Dynamic content -->
+            </div>
+        </section>
+
+        <!-- Investments Section -->
+        <section id="investments" class="content-section">
+            <div class="section-header">
+                <h1>Investment Analytics</h1>
+                <div class="section-controls">
+                    <div class="time-range">
+                        <button class="range-btn active" data-range="ytd">YTD</button>
+                        <button class="range-btn" data-range="1y">1Y</button>
+                        <button class="range-btn" data-range="2y">2Y</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investment Overview -->
+            <div class="investment-overview">
+                <div class="overview-card">
+                    <h3>Portfolio Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="portfolioChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="overview-card">
+                    <h3>Investment Timeline</h3>
+                    <div class="chart-container">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top VCs -->
+            <div class="vcs-section">
+                <div class="section-header">
+                    <h2>Top Venture Capital Firms</h2>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+                <div class="vcs-grid" id="vcsGrid">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+            <!-- VC Portfolio Highlights -->
+            <div class="vc-portfolio-section">
+                <div class="section-header">
+                    <h2>VC Portfolio Highlights</h2>
+                    <div class="portfolio-filters">
+                        <button class="filter-btn active" data-vc="all">All VCs</button>
+                        <button class="filter-btn" data-vc="sequoia">Sequoia Capital</button>
+                        <button class="filter-btn" data-vc="a16z">Andreessen Horowitz</button>
+                        <button class="filter-btn" data-vc="index">Index Ventures</button>
+                    </div>
+                </div>
+                <div class="portfolio-grid" id="vcPortfolioGrid">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+            <!-- Investment Trends -->
+            <div class="trends-section">
+                <div class="trends-header">
+                    <h2>Investment Trends by Sector</h2>
+                    <div class="trend-controls">
+                        <button class="trend-btn active" data-metric="funding">Funding</button>
+                        <button class="trend-btn" data-metric="deals">Deals</button>
+                        <button class="trend-btn" data-metric="valuation">Valuation</button>
+                    </div>
+                </div>
+                <div class="trends-chart">
+                    <canvas id="sectorTrendsChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="companyModal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Company Details</h2>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="modalContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Executives Modal -->
+    <div class="modal-overlay" id="executivesModalOverlay">
+        <div class="modal" id="executivesModal">
+            <div class="modal-header">
+                <h2 id="executivesModalTitle">Executives & Outreach</h2>
+                <button class="modal-close" id="executivesModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="executivesModalContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="data-service.js"></script>
+    <script src="modern-script.js?v=8"></script>
+</body>
+</html>
