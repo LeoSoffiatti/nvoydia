@@ -18,7 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/3.0.0/chartjs-adapter-date-fns.bundle.min.js"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="/static/modern-styles.css?v=62">
+    <link rel="stylesheet" href="/static/modern-styles.css?v=104">
 </head>
 <body>
     <!-- Navigation -->
@@ -74,9 +74,10 @@
                 <div class="section-header">
                     <h2>NCP Progress Overview</h2>
                     <div class="progress-stats">
-                        <span class="progress-stat">8 Partners</span>
-                        <span class="progress-stat">4 Non-Partners</span>
-                        <span class="progress-stat">67% Complete</span>
+                        <span class="progress-stat">52 Partners</span>
+                        <span class="progress-stat">38 Non-Partners</span>
+                        <span class="progress-stat">58% Complete</span>
+                        <span class="progress-stat">52/90 on NCP</span>
                     </div>
                 </div>
                 <div class="progress-grid">
@@ -84,17 +85,17 @@
                         <div class="progress-header">
                             <h3>Partner Status</h3>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 67%"></div>
+                                <div class="progress-fill" style="width: 58%"></div>
                             </div>
                         </div>
                         <div class="progress-details">
                             <div class="progress-item">
-                                <span class="progress-label">Premier Partners</span>
-                                <span class="progress-value">4</span>
+                                <span class="progress-label">Partners</span>
+                                <span class="progress-value">52</span>
                             </div>
                             <div class="progress-item">
-                                <span class="progress-label">Standard Partners</span>
-                                <span class="progress-value">4</span>
+                                <span class="progress-label">Total Companies</span>
+                                <span class="progress-value">90</span>
                             </div>
                         </div>
                     </div>
@@ -103,17 +104,17 @@
                         <div class="progress-header">
                             <h3>Outreach Status</h3>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 75%"></div>
+                                <div class="progress-fill" style="width: 0%"></div>
                             </div>
                         </div>
                         <div class="progress-details">
                             <div class="progress-item">
                                 <span class="progress-label">Contacted</span>
-                                <span class="progress-value">9</span>
+                                <span class="progress-value">0</span>
                             </div>
                             <div class="progress-item">
-                                <span class="progress-label">Not Contacted</span>
-                                <span class="progress-value">3</span>
+                                <span class="progress-label">Non-Partners</span>
+                                <span class="progress-value">38</span>
                             </div>
                         </div>
                     </div>
@@ -182,22 +183,62 @@
                     <!-- Dynamic content -->
                 </div>
             </div>
+
+            <!-- Salesforce Integration -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <h3>Salesforce</h3>
+                </div>
+                <div class="card-content">
+                    <div class="integration-section">
+                        <h4>Backend Data and Reporting</h4>
+                        <div class="integration-content">
+                            <p>Integration with Salesforce CRM for comprehensive data analysis and reporting capabilities.</p>
+                            <div class="integration-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value">1,247</span>
+                                    <span class="stat-label">Records Synced</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">98.5%</span>
+                                    <span class="stat-label">Sync Success</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slack Integration -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <h3>Slack</h3>
+                </div>
+                <div class="card-content">
+                    <div class="integration-section">
+                        <h4>Insight</h4>
+                        <div class="integration-content">
+                            <p>Real-time insights and notifications delivered through Slack channels for enhanced team collaboration.</p>
+                            <div class="integration-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value">342</span>
+                                    <span class="stat-label">Messages Sent</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">15</span>
+                                    <span class="stat-label">Active Channels</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Companies Section -->
         <section id="companies" class="content-section">
             <div class="section-header">
                 <h1>Company Portfolio</h1>
-                <div class="section-controls">
-                    <div class="view-toggle">
-                        <button class="toggle-btn active" data-view="grid">
-                            <i class="fas fa-th"></i>
-                        </button>
-                        <button class="toggle-btn" data-view="list">
-                            <i class="fas fa-list"></i>
-                        </button>
-                    </div>
-                </div>
             </div>
             
             <!-- Filter Controls - Single Row -->
@@ -307,13 +348,6 @@
         <section id="investments" class="content-section">
             <div class="section-header">
                 <h1>Investment Analytics</h1>
-                <div class="section-controls">
-                    <div class="time-range">
-                        <button class="range-btn active" data-range="ytd">YTD</button>
-                        <button class="range-btn" data-range="1y">1Y</button>
-                        <button class="range-btn" data-range="2y">2Y</button>
-                    </div>
-                </div>
             </div>
 
             <!-- Investment Overview -->
@@ -322,16 +356,16 @@
                     <h3>Portfolio Summary</h3>
                     <div class="portfolio-stats">
                         <div class="stat-item">
-                            <div class="stat-number">$850M</div>
-                            <div class="stat-label">Total Portfolio Value</div>
+                            <div class="stat-number">$610.3B</div>
+                            <div class="stat-label">Total portfolio value</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number">24</div>
-                            <div class="stat-label">Active Companies</div>
+                            <div class="stat-number">90</div>
+                            <div class="stat-label">Active companies</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number">3.2x</div>
-                            <div class="stat-label">Avg ROI</div>
+                            <div class="stat-number">157.61%</div>
+                            <div class="stat-label">Avg growth rate</div>
                         </div>
                     </div>
                 </div>
@@ -340,16 +374,16 @@
                     <h3>Recent Activity</h3>
                     <div class="activity-stats">
                         <div class="stat-item">
-                            <div class="stat-number">12</div>
-                            <div class="stat-label">Deals This Quarter</div>
+                            <div class="stat-number">27</div>
+                            <div class="stat-label">Deals this quarter</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number">$180M</div>
-                            <div class="stat-label">Q3 Investment</div>
+                            <div class="stat-number">$10.8B</div>
+                            <div class="stat-label">Q3 investment</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number">2</div>
-                            <div class="stat-label">New Exits</div>
+                            <div class="stat-number">9</div>
+                            <div class="stat-label">New exits</div>
                         </div>
                     </div>
                 </div>
@@ -394,26 +428,34 @@
                 </div>
                 <div class="sector-trends-summary">
                     <div class="sector-trend-card">
-                        <div class="sector-name">Digital Health</div>
+                        <div class="sector-name">AI Natives</div>
                         <div class="sector-stats">
-                            <span class="funding">$450M</span>
-                            <span class="deals">45 deals</span>
-                            <span class="growth">+25%</span>
+                            <span class="funding">$2.8B</span>
+                            <span class="deals">127 deals</span>
+                            <span class="growth">+45%</span>
                         </div>
                     </div>
                     <div class="sector-trend-card">
-                        <div class="sector-name">Biotech</div>
+                        <div class="sector-name">Digital Natives</div>
                         <div class="sector-stats">
-                            <span class="funding">$380M</span>
-                            <span class="deals">32 deals</span>
-                            <span class="growth">+18%</span>
+                            <span class="funding">$1.9B</span>
+                            <span class="deals">89 deals</span>
+                            <span class="growth">+32%</span>
                         </div>
                     </div>
                     <div class="sector-trend-card">
-                        <div class="sector-name">Medical Devices</div>
+                        <div class="sector-name">Fintech</div>
                         <div class="sector-stats">
-                            <span class="funding">$290M</span>
-                            <span class="deals">28 deals</span>
+                            <span class="funding">$1.2B</span>
+                            <span class="deals">67 deals</span>
+                            <span class="growth">+28%</span>
+                        </div>
+                    </div>
+                    <div class="sector-trend-card">
+                        <div class="sector-name">Healthtech</div>
+                        <div class="sector-stats">
+                            <span class="funding">$950M</span>
+                            <span class="deals">54 deals</span>
                             <span class="growth">+22%</span>
                         </div>
                     </div>
@@ -459,7 +501,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/static/data-service.js?v=62"></script>
-    <script src="/static/modern-script.js?v=62"></script>
+    <script src="/static/data-service.js?v=104"></script>
+    <script src="/static/modern-script.js?v=104"></script>
 </body>
 </html>

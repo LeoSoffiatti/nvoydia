@@ -782,6 +782,7 @@ body {
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--radius-sm);
     width: fit-content;
+    transition: var(--transition-normal);
 }
 
 .outreach-status.contacted {
@@ -792,6 +793,16 @@ body {
 .outreach-status.not-contacted {
     background-color: rgba(245, 158, 11, 0.1);
     color: #f59e0b;
+}
+
+.outreach-status:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+    opacity: 0.9;
+}
+
+.outreach-status:active {
+    transform: translateY(0);
 }
 
 .chart-container {
@@ -815,6 +826,7 @@ body {
     box-shadow: var(--shadow-md);
     border: 1px solid var(--gray-200);
     transition: var(--transition-normal);
+    margin-bottom: var(--spacing-xl);
 }
 
 .activity-card:hover {
@@ -837,6 +849,66 @@ body {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary-color);
+}
+
+/* Integration Section Styles */
+.integration-section {
+    padding: var(--spacing-lg);
+}
+
+.integration-section h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0 0 var(--spacing-md) 0;
+    border-bottom: 2px solid var(--primary-light);
+    padding-bottom: var(--spacing-sm);
+}
+
+.integration-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.integration-content p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.integration-stats {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-md);
+    background: var(--gray-50);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200);
+    min-width: 100px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .view-all {
@@ -1150,11 +1222,12 @@ body {
 .vc-card {
     background-color: var(--secondary-color);
     border-radius: var(--radius-xl);
-    padding: var(--spacing-xl);
+    padding: var(--spacing-md);
     box-shadow: var(--shadow-md);
     border: 1px solid var(--gray-200);
     cursor: pointer;
     transition: var(--transition-normal);
+    text-align: center;
 }
 
 .vc-card:hover {
@@ -1165,9 +1238,10 @@ body {
 
 .vc-header {
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
 }
 
 .vc-logo {
@@ -1188,6 +1262,8 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
+    transform: scale(1.2);
     border-radius: var(--radius-lg);
     background-color: white;
 }
@@ -1211,6 +1287,8 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
+    transform: scale(1.2);
     border-radius: var(--radius-xl);
     background-color: white;
 }
@@ -1556,25 +1634,13 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
+    transform: scale(1.2);
     border-radius: var(--radius-md);
     background-color: white;
 }
 
-.logo-fallback {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    color: var(--accent-color);
-    font-weight: 600;
-    font-size: 1.2rem;
-    border: 2px solid var(--accent-color);
-}
+/* Removed problematic logo-fallback rule that was covering content */
 
 .company-info h4 {
     font-size: 1rem;
@@ -2709,6 +2775,8 @@ mark {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
+    transform: scale(1.2);
     border-radius: var(--radius-lg);
     background-color: white;
 }
@@ -3781,9 +3849,11 @@ mark {
     padding: var(--spacing-xl);
     box-shadow: var(--shadow-md);
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: var(--spacing-lg);
     transition: all 0.3s ease;
+    text-align: center;
 }
 
 .trend-card:hover {
@@ -3839,20 +3909,38 @@ mark {
 .stat-item {
     text-align: center;
     padding: var(--spacing-lg);
-    background: var(--gray-50);
+    background: #f8f9fa;
     border-radius: var(--radius-md);
+    border: 1px solid #e9ecef;
 }
 
 .stat-number {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--text-primary);
     margin-bottom: var(--spacing-xs);
 }
 
 .stat-label {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     color: var(--gray-600);
+    font-weight: 500;
+    text-transform: none;
+    line-height: 1.2;
+}
+
+/* Dark mode styling for stat items */
+[data-theme="dark"] .stat-item {
+    background: transparent !important;
+    border-color: var(--gray-600) !important;
+}
+
+[data-theme="dark"] .stat-number {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .stat-label {
+    color: var(--gray-300) !important;
 }
 
 .sector-trends-summary {
@@ -3913,30 +4001,39 @@ mark {
 .vc-modal .vc-header {
     display: flex;
     align-items: flex-start;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
     margin-bottom: var(--spacing-xl);
     padding-bottom: var(--spacing-lg);
     border-bottom: 1px solid var(--gray-200);
+    width: 100%;
 }
 
 .vc-modal .vc-logo-large {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: var(--radius-lg);
     background-color: var(--gray-100);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: var(--accent-color);
     flex-shrink: 0;
+    margin-right: var(--spacing-md);
 }
 
 .vc-modal .vc-logo-large img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.1);
     border-radius: var(--radius-lg);
+}
+
+.vc-modal .vc-details {
+    flex: 1;
+    min-width: 0;
 }
 
 .vc-modal .vc-details h2 {
@@ -4005,17 +4102,16 @@ mark {
     background-color: var(--gray-50);
     border-radius: var(--radius-md);
     cursor: pointer;
-    transition: var(--transition-fast);
+    /* Removed transition to prevent any animation effects */
 }
 
 .vc-modal .portfolio-company:hover {
-    background-color: var(--gray-100);
-    transform: translateY(-1px);
+    /* Completely disabled hover effects */
 }
 
 .vc-modal .company-logo-small {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: var(--radius-sm);
     background-color: var(--gray-200);
     display: flex;
@@ -4029,7 +4125,9 @@ mark {
 .vc-modal .company-logo-small img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.2);
     border-radius: var(--radius-sm);
 }
 
@@ -4051,11 +4149,149 @@ mark {
     flex-wrap: wrap;
 }
 
-/* Portfolio Companies Grid */
-.portfolio-companies {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+/* Additional VC Modal Styles */
+.vc-modal .focus-areas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.vc-modal .focus-tag {
+    background: var(--accent-color);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.vc-modal .company-status {
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.vc-modal .company-status.partner {
+    background: var(--success-light);
+    color: var(--success-color);
+}
+
+.vc-modal .company-status.prospect {
+    background: var(--warning-light);
+    color: var(--warning-color);
+}
+
+.vc-modal .company-metrics {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+}
+
+.vc-modal .valuation {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.vc-modal .funding-round {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: var(--gray-100);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+}
+
+.vc-modal .view-more {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-md);
+    font-style: italic;
+}
+
+.vc-modal .recent-activity {
+    display: flex;
+    flex-direction: column;
     gap: var(--spacing-md);
+}
+
+.vc-modal .activity-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--gray-50);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+}
+
+.vc-modal .activity-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.vc-modal .activity-content {
+    flex: 1;
+}
+
+.vc-modal .activity-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: var(--spacing-xs);
+}
+
+.vc-modal .activity-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.vc-modal .partnership-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.vc-modal .partnership-metric {
+    text-align: center;
+    padding: var(--spacing-lg);
+    background: var(--gray-50);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+}
+
+.vc-modal .metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: var(--spacing-xs);
+}
+
+.vc-modal .metric-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Remove transitions only from elements that cause hover issues */
+.vc-modal .stat-card,
+.vc-modal .partnership-metric,
+.vc-modal .activity-item,
+.vc-modal .portfolio-company {
+    transition: none !important;
 }
 
 .portfolio-company {
@@ -4092,8 +4328,8 @@ mark {
 }
 
 .company-logo-small {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: var(--radius-sm);
     background-color: var(--gray-200);
     display: flex;
@@ -4107,7 +4343,9 @@ mark {
 .company-logo-small img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.2);
     border-radius: var(--radius-sm);
 }
 
@@ -4318,8 +4556,8 @@ mark {
 }
 
 .company-logo {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 8px;
     overflow: hidden;
     flex-shrink: 0;
@@ -4333,8 +4571,10 @@ mark {
 .company-logo img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
+    transform: scale(1.2);
+    border-radius: var(--radius-md);
 }
 
 .logo-fallback {
@@ -4481,18 +4721,19 @@ mark {
 /* Filter Controls - Single Row Layout */
 .filter-controls {
     margin-top: var(--spacing-lg);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-lg) var(--spacing-sm);
     background-color: var(--gray-50);
     border-radius: var(--radius-lg);
     border: 1px solid var(--gray-200);
     display: flex;
+    justify-content: space-between;
     gap: var(--spacing-md);
     align-items: center;
     flex-wrap: wrap;
 }
 
 .filter-dropdown {
-    flex: 1;
+    flex: 0 0 auto;
     min-width: 150px;
 }
 
@@ -4525,10 +4766,12 @@ mark {
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: var(--spacing-md);
     transition: var(--transition-fast);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    text-align: center;
 }
 
 .trend-card:hover {
@@ -4625,8 +4868,9 @@ mark {
 .vc-logo img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
+    transform: scale(1.2);
 }
 
 .vc-info {
@@ -4841,6 +5085,30 @@ mark {
 }
 
 .news-summary p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--gray-700);
+    margin: 0;
+}
+
+.news-what-means {
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, rgba(0, 102, 204, 0.05), var(--gray-50));
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+    border-left: 4px solid var(--accent-color);
+    width: 100%;
+}
+
+.news-what-means h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent-color);
+    margin: 0 0 12px 0;
+}
+
+.news-what-means p {
     font-size: 1rem;
     line-height: 1.6;
     color: var(--gray-700);

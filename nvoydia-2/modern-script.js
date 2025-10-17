@@ -14,7 +14,7 @@ class ModernDigitalNativesPlatform {
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
         } else {
-            this.init();
+        this.init();
         }
     }
 
@@ -59,6 +59,16 @@ class ModernDigitalNativesPlatform {
         this.loadDashboardData();
         this.setupThemeToggle();
         this.setupSearch();
+        
+        // Listen for data-ready event
+        window.addEventListener('data-ready', (event) => {
+            console.log('Data ready event received:', event.detail);
+            // Reload NCP progress when data is ready
+            setTimeout(() => {
+                this.loadNCPProgressOverview();
+            }, 100);
+        });
+        
         console.log('Platform initialization complete');
     }
 
@@ -66,93 +76,93 @@ class ModernDigitalNativesPlatform {
         console.log('Setting up event listeners...');
         
         try {
-            // Navigation
+        // Navigation
             const navLinks = document.querySelectorAll('.nav-link');
             console.log('Found nav links:', navLinks.length);
             navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const section = link.dataset.section;
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.dataset.section;
                     console.log('Nav clicked:', section);
-                    this.switchSection(section);
-                });
+                this.switchSection(section);
             });
+        });
 
-            // Modal controls
-            const modalOverlay = document.getElementById('modalOverlay');
-            const modalClose = document.getElementById('modalClose');
-            
+        // Modal controls
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalClose = document.getElementById('modalClose');
+        
             if (modalClose) {
                 modalClose.addEventListener('click', () => {
                     console.log('Modal close clicked');
-                    this.closeModal();
-                });
+            this.closeModal();
+        });
             }
-            
+        
             if (modalOverlay) {
                 modalOverlay.addEventListener('click', (e) => {
-                    if (e.target === modalOverlay) {
+            if (e.target === modalOverlay) {
                         console.log('Modal overlay clicked');
-                        this.closeModal();
-                    }
-
-
-
-                });
+                this.closeModal();
             }
 
-            // Chart controls
-            this.setupChartControls();
-            
-            // View toggles
+        
+        
+        });
+            }
+
+        // Chart controls
+        this.setupChartControls();
+        
+        // View toggles
             const toggleBtns = document.querySelectorAll('.toggle-btn');
             console.log('Found toggle buttons:', toggleBtns.length);
             toggleBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const view = btn.dataset.view;
+            btn.addEventListener('click', (e) => {
+                const view = btn.dataset.view;
                     console.log('Toggle clicked:', view);
-                    this.toggleView(view);
-                    this.updateActiveButton(e.target, '.toggle-btn');
-                });
+                this.toggleView(view);
+                this.updateActiveButton(e.target, '.toggle-btn');
             });
+        });
 
-            // Filter controls
+        // Filter controls
 
-            this.setupFilterControls();
+        this.setupFilterControls();
 
-            // View All buttons
+        // View All buttons
             const viewAllBtns = document.querySelectorAll('.view-all');
             console.log('Found view all buttons:', viewAllBtns.length);
             viewAllBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
                     console.log('View all clicked');
-                    this.handleViewAllClick(btn);
-                });
+                this.handleViewAllClick(btn);
             });
+        });
 
-            // Range buttons (YTD, 1Y, 2Y)
+        // Range buttons (YTD, 1Y, 2Y)
             const rangeBtns = document.querySelectorAll('.range-btn');
             console.log('Found range buttons:', rangeBtns.length);
             rangeBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const range = btn.dataset.range;
+            btn.addEventListener('click', (e) => {
+                const range = btn.dataset.range;
                     console.log('Range clicked:', range);
-                    this.updateInvestmentTimeframe(range);
-                    this.updateActiveButton(e.target, '.range-btn');
-                });
+                this.updateInvestmentTimeframe(range);
+                this.updateActiveButton(e.target, '.range-btn');
             });
-            
-            // Event delegation for company cards
-            document.addEventListener('click', (e) => {
-                const companyCard = e.target.closest('.company-card');
-                if (companyCard) {
-                    const companyId = companyCard.dataset.companyId;
-                    if (companyId) {
+        });
+        
+        // Event delegation for company cards
+        document.addEventListener('click', (e) => {
+            const companyCard = e.target.closest('.company-card');
+            if (companyCard) {
+                const companyId = companyCard.dataset.companyId;
+                if (companyId) {
                         console.log('Company card clicked:', companyId);
-                        this.showCompanyModal(parseInt(companyId));
-                    }
+                    this.showCompanyModal(parseInt(companyId));
                 }
+            }
             });
             
             console.log('Event listeners setup complete');
@@ -186,8 +196,8 @@ class ModernDigitalNativesPlatform {
         const industryFilter = document.getElementById('industryFilter');
         if (industryFilter) {
             industryFilter.addEventListener('change', (e) => {
-                this.filterCompaniesByIndustry(e.target.value);
-            });
+            this.filterCompaniesByIndustry(e.target.value);
+        });
         }
 
         // Valuation filter
@@ -202,24 +212,24 @@ class ModernDigitalNativesPlatform {
         const dateFilter = document.getElementById('dateFilter');
         if (dateFilter) {
             dateFilter.addEventListener('change', (e) => {
-                this.filterCompaniesByDate(e.target.value);
-            });
+            this.filterCompaniesByDate(e.target.value);
+        });
         }
 
         // VC filter
         const vcFilter = document.getElementById('vcFilter');
         if (vcFilter) {
             vcFilter.addEventListener('change', (e) => {
-                this.filterCompaniesByVC(e.target.value);
-            });
+            this.filterCompaniesByVC(e.target.value);
+        });
         }
 
         // Download non-partners button
         const downloadBtn = document.getElementById('downloadNonPartners');
         if (downloadBtn) {
             downloadBtn.addEventListener('click', () => {
-                this.downloadNonPartnersCSV();
-            });
+            this.downloadNonPartnersCSV();
+        });
         }
 
         // News category filters
@@ -293,7 +303,7 @@ class ModernDigitalNativesPlatform {
             console.error('latestNewsGrid element not found');
             return;
         }
-
+        
         // Hardcoded news data to ensure it displays
         const allNews = [
             {
@@ -389,11 +399,85 @@ class ModernDigitalNativesPlatform {
     loadDashboardData() {
         try {
             console.log('loadDashboardData called');
+            this.loadNCPProgressOverview();
             this.loadLatestNews();
             this.setupNewsFilters();
+            this.setupSectorTrends();
         } catch (error) {
             console.error('Error in loadDashboardData:', error);
         }
+    }
+
+    setupSectorTrends() {
+        console.log('setupSectorTrends called');
+        const trendButtons = document.querySelectorAll('.trend-btn');
+        console.log('Found trend buttons:', trendButtons.length);
+        
+        trendButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Remove active class from all buttons
+                trendButtons.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                e.target.classList.add('active');
+                
+                // Update sector data based on selected metric
+                const metric = e.target.dataset.metric;
+                this.updateSectorTrends(metric);
+            });
+        });
+        
+        // Initialize with funding data after a short delay to ensure DOM is ready
+        setTimeout(() => {
+            console.log('Initializing with funding data...');
+            this.updateSectorTrends('funding');
+        }, 100);
+    }
+
+    updateSectorTrends(metric) {
+        console.log('updateSectorTrends called with metric:', metric);
+        const sectorCards = document.querySelectorAll('.sector-trend-card');
+        console.log('Found sector cards:', sectorCards.length);
+        
+        // Define comprehensive data for each metric
+        const sectorData = {
+            funding: {
+                'AI Natives': { main: '$2.8B', deals: '127 deals', growth: '+45%' },
+                'Digital Natives': { main: '$1.9B', deals: '89 deals', growth: '+32%' },
+                'Fintech': { main: '$1.2B', deals: '67 deals', growth: '+28%' },
+                'Healthtech': { main: '$950M', deals: '54 deals', growth: '+22%' }
+            },
+            deals: {
+                'AI Natives': { main: '127 deals', deals: '127 deals', growth: '+45%' },
+                'Digital Natives': { main: '89 deals', deals: '89 deals', growth: '+32%' },
+                'Fintech': { main: '67 deals', deals: '67 deals', growth: '+28%' },
+                'Healthtech': { main: '54 deals', deals: '54 deals', growth: '+22%' }
+            },
+            valuation: {
+                'AI Natives': { main: '$18.5B', deals: '127 deals', growth: '+45%' },
+                'Digital Natives': { main: '$12.3B', deals: '89 deals', growth: '+32%' },
+                'Fintech': { main: '$8.7B', deals: '67 deals', growth: '+28%' },
+                'Healthtech': { main: '$6.2B', deals: '54 deals', growth: '+22%' }
+            }
+        };
+
+        sectorCards.forEach((card, index) => {
+            const sectorName = card.querySelector('.sector-name').textContent;
+            console.log(`Card ${index}: sector name = "${sectorName}"`);
+            const statsContainer = card.querySelector('.sector-stats');
+            
+            if (sectorData[metric] && sectorData[metric][sectorName]) {
+                const data = sectorData[metric][sectorName];
+                console.log(`Updating ${sectorName} with data:`, data);
+                const spans = statsContainer.querySelectorAll('span');
+                
+                // Update all three spans
+                if (spans[0]) spans[0].textContent = data.main;
+                if (spans[1]) spans[1].textContent = data.deals;
+                if (spans[2]) spans[2].textContent = data.growth;
+            } else {
+                console.log(`No data found for ${sectorName} in metric ${metric}`);
+            }
+        });
     }
 
     setupNewsFilters() {
@@ -449,7 +533,7 @@ class ModernDigitalNativesPlatform {
             console.error('vcPortfolioGrid element not found');
             return;
         }
-
+        
         // Get companies that have investors data (which indicates VC backing)
         const allCompanies = this.dataService.companies.filter(company => 
             company.investors && company.investors.length > 0
@@ -539,7 +623,7 @@ class ModernDigitalNativesPlatform {
                 company.investors && company.investors.length > 0
             );
             console.log('All VCs filter - showing companies with any investors:', filteredCompanies.length);
-        } else {
+                                } else {
             const fullVCName = vcNameMap[vcName] || vcName;
             console.log('Looking for VC:', fullVCName);
             
@@ -607,6 +691,84 @@ class ModernDigitalNativesPlatform {
         if (ncpProgressEl) ncpProgressEl.textContent = `${ncpProgress.partnerPercentage}%`;
         if (totalFundingEl) totalFundingEl.textContent = this.dataService.formatCurrency(stats.totalFunding);
         if (aiNativesEl) aiNativesEl.textContent = ncpProgress.aiNatives;
+    }
+
+    loadNCPProgressOverview() {
+        console.log('loadNCPProgressOverview called');
+        console.log('Data service companies length:', this.dataService.companies.length);
+        
+        // Wait for data to be ready
+        if (this.dataService.companies.length === 0) {
+            console.log('No companies data yet, retrying in 500ms...');
+            setTimeout(() => {
+                this.loadNCPProgressOverview();
+            }, 500);
+            return;
+        }
+        
+        const ncpData = this.dataService.getNCPProgress();
+        console.log('NCP Data:', ncpData);
+        
+        // Update the progress stats
+        const progressStats = document.querySelector('.progress-stats');
+        if (progressStats) {
+            progressStats.innerHTML = `
+                <span class="progress-stat">${ncpData.partnerCompanies} Partners</span>
+                <span class="progress-stat">${ncpData.nonPartners} Non-Partners</span>
+                <span class="progress-stat">${ncpData.partnerPercentage}% Complete</span>
+                <span class="progress-stat">${ncpData.partnerCompanies}/${ncpData.totalCompanies} on NCP</span>
+            `;
+        }
+        
+        // Update Partner Status card
+        const partnerProgressFill = document.querySelector('.progress-card:first-child .progress-fill');
+        if (partnerProgressFill) {
+            partnerProgressFill.style.width = `${ncpData.partnerPercentage}%`;
+        }
+        
+        const partnerDetails = document.querySelector('.progress-card:first-child .progress-details');
+        if (partnerDetails) {
+            partnerDetails.innerHTML = `
+                <div class="progress-item">
+                    <span class="progress-label">Partners</span>
+                    <span class="progress-value">${ncpData.partnerCompanies}</span>
+                </div>
+                <div class="progress-item">
+                    <span class="progress-label">Total Companies</span>
+                    <span class="progress-value">${ncpData.totalCompanies}</span>
+                </div>
+            `;
+        }
+        
+        // Update Outreach Status card
+        const outreachProgressFill = document.querySelector('.progress-card:last-child .progress-fill');
+        if (outreachProgressFill) {
+            // Calculate contacted vs non-contacted for non-partners
+            const nonPartnerCompanies = this.dataService.companies.filter(company => company.ncp_status !== 'Partner');
+            const contactedCount = nonPartnerCompanies.filter(company => company.outreach?.contacted).length;
+            const contactedPercentage = nonPartnerCompanies.length > 0 ? Math.round((contactedCount / nonPartnerCompanies.length) * 100) : 0;
+            
+            outreachProgressFill.style.width = `${contactedPercentage}%`;
+        }
+        
+        const outreachDetails = document.querySelector('.progress-card:last-child .progress-details');
+        if (outreachDetails) {
+            // Calculate actual contacted vs non-contacted numbers
+            const nonPartnerCompanies = this.dataService.companies.filter(company => company.ncp_status !== 'Partner');
+            const contactedCount = nonPartnerCompanies.filter(company => company.outreach?.contacted).length;
+            const notContactedCount = nonPartnerCompanies.length - contactedCount;
+            
+            outreachDetails.innerHTML = `
+                <div class="progress-item">
+                    <span class="progress-label">Contacted</span>
+                    <span class="progress-value">${contactedCount}</span>
+                </div>
+                <div class="progress-item">
+                    <span class="progress-label">Not Contacted</span>
+                    <span class="progress-value">${notContactedCount}</span>
+                </div>
+            `;
+        }
     }
 
     updateNCPProgress() {
@@ -733,10 +895,14 @@ class ModernDigitalNativesPlatform {
                     </div>
                 </div>
                 <div class="company-outreach">
-                    <div class="outreach-status ${company.outreach?.contacted ? 'contacted' : 'not-contacted'}">
+                    ${company.ncp_status !== 'Partner' ? `
+                    <div class="outreach-status ${company.outreach?.contacted ? 'contacted' : 'not-contacted'}" 
+                         onclick="window.platform.toggleOutreachStatus(${company.id}, event)" 
+                         style="cursor: pointer;">
                         <i class="fas fa-${company.outreach?.contacted ? 'check' : 'clock'}"></i>
                         <span>${company.outreach?.contacted ? 'Contacted' : 'Not Contacted'}</span>
                     </div>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -905,7 +1071,7 @@ class ModernDigitalNativesPlatform {
                     </div>
                 </div>
             `;
-            
+
             // Stats grid
             modalContent += `
                 <div class="company-stats-grid">
@@ -995,20 +1161,20 @@ class ModernDigitalNativesPlatform {
             
             // Investors section
             if (company.investors && company.investors.length > 0) {
-                modalContent += `
-                    <div class="company-section">
-                        <h3>Key Investors</h3>
-                        <div class="investors-list">
-                `;
-                
-                company.investors.forEach(investor => {
+            modalContent += `
+                <div class="company-section">
+                    <h3>Key Investors</h3>
+                    <div class="investors-list">
+            `;
+            
+            company.investors.forEach(investor => {
                     modalContent += `<span class="investor-tag">${investor}</span>`;
-                });
-                
-                modalContent += `
-                        </div>
+            });
+            
+            modalContent += `
                     </div>
-                `;
+                </div>
+            `;
             }
             
             // NCP Status section
@@ -1067,77 +1233,8 @@ class ModernDigitalNativesPlatform {
     showNewsModal(newsId) {
         console.log('Showing news modal for ID:', newsId);
         
-        // Find the news item from hardcoded data
-        const newsItems = [
-            {
-                id: 1,
-                company_id: 1,
-                company_name: "OpenAI",
-                headline: "OpenAI announces major funding round of $13B",
-                category: "funding",
-                date: "2024-01-15",
-                summary: "OpenAI has secured a massive $13 billion funding round led by Microsoft, bringing their total valuation to over $29 billion. This funding will accelerate development of GPT-5 and expand their AI infrastructure capabilities.",
-                articleUrl: "https://openai.com/blog/funding-announcement",
-                source: "OpenAI Blog"
-            },
-            {
-                id: 2,
-                company_id: 2,
-                company_name: "Anthropic",
-                headline: "Anthropic launches new AI product Claude 3.5",
-                category: "product",
-                date: "2024-01-12",
-                summary: "Anthropic has released Claude 3.5 Sonnet, their most advanced AI model yet. The new model shows significant improvements in reasoning, coding, and multimodal capabilities, outperforming previous versions across multiple benchmarks.",
-                articleUrl: "https://anthropic.com/news/claude-3-5-sonnet",
-                source: "Anthropic News"
-            },
-            {
-                id: 3,
-                company_id: 3,
-                company_name: "Inflection AI",
-                headline: "Inflection AI partners with Microsoft for AI integration",
-                category: "partnership",
-                date: "2024-01-10",
-                summary: "Inflection AI has announced a strategic partnership with Microsoft to integrate their conversational AI technology into Microsoft's enterprise products. This collaboration will bring advanced AI assistants to millions of business users.",
-                articleUrl: "https://inflection.ai/news/microsoft-partnership",
-                source: "Inflection AI"
-            },
-            {
-                id: 4,
-                company_id: 4,
-                company_name: "Adept",
-                headline: "Adept expands to new markets in Europe",
-                category: "product",
-                date: "2024-01-08",
-                summary: "Adept is expanding its AI agent platform to European markets, starting with Germany and France. The expansion includes localized language models and compliance with EU AI regulations, targeting enterprise automation use cases.",
-                articleUrl: "https://adept.ai/blog/europe-expansion",
-                source: "Adept Blog"
-            },
-            {
-                id: 5,
-                company_id: 5,
-                company_name: "Perplexity",
-                headline: "Perplexity achieves key milestone of 10M users",
-                category: "funding",
-                date: "2024-01-05",
-                summary: "Perplexity AI has reached 10 million monthly active users, marking a significant milestone for the AI-powered search engine. The platform's unique approach to providing cited answers has driven rapid user growth and engagement.",
-                articleUrl: "https://perplexity.ai/news/10m-users",
-                source: "Perplexity News"
-            },
-            {
-                id: 6,
-                company_id: 6,
-                company_name: "Sierra",
-                headline: "Sierra releases latest innovation in conversational AI",
-                category: "product",
-                date: "2024-01-03",
-                summary: "Sierra has unveiled their latest conversational AI platform featuring advanced context understanding and multi-turn dialogue capabilities. The new system is designed specifically for enterprise customer service applications.",
-                articleUrl: "https://sierra.ai/news/conversational-ai-platform",
-                source: "Sierra AI"
-            }
-        ];
-        
-        const news = newsItems.find(n => n.id === newsId);
+        // Find the news item from data service
+        const news = this.dataService.news.find(n => n.id === newsId);
         if (!news) {
             console.error('News article not found:', newsId);
             return;
@@ -1160,20 +1257,27 @@ class ModernDigitalNativesPlatform {
             <div class="news-modal-content">
                 <div class="news-modal-header">
                     <div class="news-meta">
-                        <span class="news-category ${news.category}">${news.category}</span>
-                        <span class="news-date">${new Date(news.date).toLocaleDateString()}</span>
+                        <span class="news-category ${news.category.toLowerCase()}">${news.category}</span>
+                        <span class="news-date">${new Date(news.published_at).toLocaleDateString()}</span>
                         <span class="news-source">${news.source}</span>
                     </div>
-                    <div class="news-company">${news.company_name}</div>
+                    <div class="news-read-time">${news.read_time}</div>
                 </div>
                 
                 <div class="news-summary">
                     <h4>Summary</h4>
-                    <p>${news.summary}</p>
+                    <p>${news.content}</p>
                 </div>
                 
+                ${news.what_this_means ? `
+                <div class="news-what-means">
+                    <h4>What This Means</h4>
+                    <p>${news.what_this_means}</p>
+                </div>
+                ` : ''}
+                
                 <div class="news-actions">
-                    <a href="${news.articleUrl}" target="_blank" class="btn btn-primary">
+                    <a href="${news.url}" target="_blank" class="btn btn-primary">
                         <i class="fas fa-external-link-alt"></i>
                         Read Full Article
                     </a>
@@ -1183,8 +1287,8 @@ class ModernDigitalNativesPlatform {
                     </button>
                 </div>
             </div>
-        `;
-
+            `;
+            
         modal.style.display = 'flex';
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
@@ -1211,11 +1315,16 @@ class ModernDigitalNativesPlatform {
     }
 
     showVCModal(vcId) {
-        console.log('Showing VC modal for:', vcId);
+        console.log('=== VC MODAL DEBUG START ===');
+        console.log('Showing VC modal for ID:', vcId);
+        console.log('Available VCs:', this.dataService.vcs);
+        
         try {
             const vc = this.dataService.vcs.find(v => v.id === vcId);
+            console.log('Found VC:', vc);
+            
             if (!vc) {
-                console.error('VC not found:', vcId);
+                console.error('VC not found for ID:', vcId);
                 return;
             }
 
@@ -1223,16 +1332,20 @@ class ModernDigitalNativesPlatform {
             const title = document.getElementById('modalTitle');
             const content = document.getElementById('modalContent');
             
+            console.log('Modal elements:', { modal, title, content });
+            
             if (!modal || !title || !content) {
                 console.error('Modal elements not found');
                 return;
             }
 
             title.textContent = vc.name;
+            console.log('Set title to:', vc.name);
             
             let modalContent = '<div class="vc-modal">';
+            console.log('Starting modal content generation...');
             
-            // VC header
+            // VC header with logo and basic info
             modalContent += `
                 <div class="vc-header">
                     <div class="vc-logo-large">
@@ -1249,46 +1362,69 @@ class ModernDigitalNativesPlatform {
                             </span>
                             <span class="meta-item">
                                 <i class="fas fa-chart-line"></i>
-                                ${vc.investment_stage}
+                                ${vc.investment_stage.replace('-', ' ').toUpperCase()}
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-star"></i>
+                                Score: ${vc.final_score}/100
                             </span>
                         </div>
                     </div>
                 </div>
             `;
+            console.log('Added VC header');
             
-            // VC stats
+            // Key metrics grid
             modalContent += `
                 <div class="vc-stats-grid">
                     <div class="stat-card">
-                        <div class="stat-value">${vc.final_score}</div>
-                        <div class="stat-label">Overall Score</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${vc.investments}</div>
-                        <div class="stat-label">Total Investments</div>
+                        <div class="stat-value">${this.dataService.formatCurrency(vc.total_aum)}</div>
+                        <div class="stat-label">Assets Under Management</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value">${vc.portfolio_companies}</div>
                         <div class="stat-label">Portfolio Companies</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value">${this.dataService.formatCurrency(vc.total_aum)}</div>
-                        <div class="stat-label">Total AUM</div>
+                        <div class="stat-value">${vc.investments}</div>
+                        <div class="stat-label">Active Investments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${vc.final_score}</div>
+                        <div class="stat-label">NVIDIA Partnership Score</div>
                     </div>
                 </div>
             `;
+            console.log('Added stats grid');
             
-            // Portfolio companies
+            // Focus areas
+            if (vc.focus_areas && vc.focus_areas.length > 0) {
+                modalContent += `
+                    <div class="vc-section">
+                        <h3><i class="fas fa-bullseye"></i> Investment Focus Areas</h3>
+                        <div class="focus-areas">
+                            ${vc.focus_areas.map(area => `
+                                <span class="focus-tag">${area}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                console.log('Added focus areas');
+            }
+            
+            // Portfolio companies with more details
             const portfolioCompanies = this.dataService.companies.filter(c => 
                 c.investors && c.investors.some(investor => 
                     investor.toLowerCase().includes(vc.name.toLowerCase())
                 )
-            ).slice(0, 6);
+            ).slice(0, 8);
+            
+            console.log('Found portfolio companies:', portfolioCompanies.length);
             
             if (portfolioCompanies.length > 0) {
                 modalContent += `
                     <div class="vc-section">
-                        <h3>Portfolio Companies</h3>
+                        <h3><i class="fas fa-building"></i> Portfolio Companies</h3>
                         <div class="portfolio-companies">
                             ${portfolioCompanies.map(company => `
                                 <div class="portfolio-company" onclick="window.platform.showCompanyModal(${company.id})">
@@ -1299,35 +1435,104 @@ class ModernDigitalNativesPlatform {
                                     <div class="company-info-small">
                                         <h4>${company.name}</h4>
                                         <span class="company-industry">${company.industry.replace('-', ' ')}</span>
+                                        <span class="company-status ${company.ncp_status?.toLowerCase()}">${company.ncp_status || 'Prospect'}</span>
+                                    </div>
+                                    <div class="company-metrics">
+                                        <span class="valuation">${this.dataService.formatCurrency(company.valuation)}</span>
+                                        <span class="funding-round">${company.last_funding_round}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${portfolioCompanies.length >= 8 ? '<p class="view-more">Click on companies to view details</p>' : ''}
+                    </div>
+                `;
+                console.log('Added portfolio companies');
+            }
+            
+            // Recent activity or notable investments
+            const recentCompanies = portfolioCompanies.filter(c => c.last_funding_round).slice(0, 3);
+            if (recentCompanies.length > 0) {
+                modalContent += `
+                    <div class="vc-section">
+                        <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                        <div class="recent-activity">
+                            ${recentCompanies.map(company => `
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <span class="activity-title">${company.name} raised ${company.last_funding_round}</span>
+                                        <span class="activity-date">${company.founded_year ? `Founded ${company.founded_year}` : 'Recent funding'}</span>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
                     </div>
                 `;
+                console.log('Added recent activity');
             }
             
-            // Actions
+            // Contact and partnership information
+            modalContent += `
+                <div class="vc-section">
+                    <h3><i class="fas fa-handshake"></i> Partnership Opportunities</h3>
+                    <div class="partnership-info">
+                        <div class="partnership-metric">
+                            <span class="metric-value">${vc.final_score >= 90 ? 'High' : vc.final_score >= 80 ? 'Medium' : 'Low'}</span>
+                            <span class="metric-label">Partnership Priority</span>
+                        </div>
+                        <div class="partnership-metric">
+                            <span class="metric-value">${portfolioCompanies.filter(c => c.ncp_status === 'Partner').length}</span>
+                            <span class="metric-label">Current NCP Partners</span>
+                        </div>
+                        <div class="partnership-metric">
+                            <span class="metric-value">${portfolioCompanies.filter(c => c.ai_native).length}</span>
+                            <span class="metric-label">AI Native Companies</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            console.log('Added partnership info');
+            
+            // Action buttons
             modalContent += `
                 <div class="vc-actions">
                     <a href="${vc.website || '#'}" target="_blank" class="modal-btn primary">
                         <i class="fas fa-external-link-alt"></i>
                         Visit Website
                     </a>
+                    <button class="modal-btn secondary" onclick="window.platform.copyEmailTemplate('partnership', null, '${vc.name}')">
+                        <i class="fas fa-envelope"></i>
+                        Partnership Email Template
+                    </button>
                     <button class="modal-btn secondary" onclick="window.platform.showExecutivesModal(${vc.id})">
                         <i class="fas fa-users"></i>
-                        View Executives & Email Templates
+                        Contact Information
                     </button>
                 </div>
             `;
+            console.log('Added action buttons');
             
             modalContent += '</div>';
             
+            console.log('Final modal content length:', modalContent.length);
+            console.log('Modal content preview:', modalContent.substring(0, 200) + '...');
+            
             content.innerHTML = modalContent;
-            modal.classList.add('active');
+            console.log('Set content.innerHTML');
+            
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            
+            console.log('Modal should be visible now');
+            console.log('=== VC MODAL DEBUG END ===');
             
         } catch (error) {
             console.error('Error showing VC modal:', error);
+            console.error('Error stack:', error.stack);
         }
     }
 
@@ -1350,23 +1555,23 @@ class ModernDigitalNativesPlatform {
             }
 
             title.textContent = `${company.name} - Executives & Contact Info`;
-            
+
             let modalContent = '<div class="executives-modal">';
             
             // Company header
             modalContent += `
-                <div class="company-header">
-                    <div class="company-logo-large">
-                        <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="logo-fallback" style="display: flex;">${this.getCompanyInitials(company.name)}</div>
-                    </div>
-                    <div class="company-details">
-                        <h2>${company.name}</h2>
-                        <p class="company-description">${company.description}</p>
-                    </div>
+            <div class="company-header">
+                <div class="company-logo-large">
+                    <img src="${this.getCompanyLogoUrl(company.name)}" alt="${company.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-fallback" style="display: flex;">${this.getCompanyInitials(company.name)}</div>
                 </div>
-            `;
-            
+                <div class="company-details">
+                    <h2>${company.name}</h2>
+                    <p class="company-description">${company.description}</p>
+                </div>
+            </div>
+        `;
+
             // Leadership section with enhanced contact matching
             modalContent += `
                 <div class="executives-section">
@@ -1391,11 +1596,11 @@ class ModernDigitalNativesPlatform {
                                     Integration Email
                                 </button>
                                 <a href="https://linkedin.com/in/${company.ceo.toLowerCase().replace(/\s+/g, '-')}" target="_blank" class="modal-btn secondary">
-                                    <i class="fab fa-linkedin"></i>
-                                    LinkedIn
-                                </a>
-                            </div>
-                        </div>
+                                            <i class="fab fa-linkedin"></i>
+                                            LinkedIn
+                                        </a>
+                                    </div>
+                                    </div>
                         
                         <!-- Additional executives if available -->
                         <div class="executive-item">
@@ -1410,13 +1615,13 @@ class ModernDigitalNativesPlatform {
                                 <button class="modal-btn primary" onclick="window.platform.copyEmailTemplate('partnership', ${company.id}, 'BD Team')">
                                     <i class="fas fa-copy"></i>
                                     Partnership Email
-                                </button>
+                                        </button>
                                 <button class="modal-btn secondary" onclick="window.platform.copyEmailTemplate('introduction', ${company.id}, 'BD Team')">
                                     <i class="fas fa-copy"></i>
                                     Introduction Email
-                                </button>
-                            </div>
-                        </div>
+                                        </button>
+                                    </div>
+                                </div>
                         
                         <div class="executive-item">
                             <div class="executive-info">
@@ -1424,8 +1629,8 @@ class ModernDigitalNativesPlatform {
                                 <p>Engineering & Product Integration</p>
                                 <div class="contact-details">
                                     <span class="contact-email">tech@${company.name.toLowerCase().replace(/\s+/g, '')}.com</span>
-                                </div>
                             </div>
+                    </div>
                             <div class="executive-actions">
                                 <button class="modal-btn primary" onclick="window.platform.copyEmailTemplate('integration', ${company.id}, 'Tech Team')">
                                     <i class="fas fa-copy"></i>
@@ -1435,14 +1640,14 @@ class ModernDigitalNativesPlatform {
                                     <i class="fas fa-copy"></i>
                                     Introduction Email
                                 </button>
-                            </div>
-                        </div>
+                </div>
+                    </div>
                     </div>
                 </div>
             `;
-            
+
             // Email templates
-            modalContent += `
+        modalContent += `
                 <div class="email-templates-section">
                     <h3>Email Templates</h3>
                     <div class="template-list">
@@ -1468,16 +1673,16 @@ class ModernDigitalNativesPlatform {
                             <button class="template-btn" onclick="window.platform.copyEmailTemplate('introduction', ${company.id})">
                                 <i class="fas fa-copy"></i>
                                 Copy Template
-                            </button>
-                        </div>
+                        </button>
                     </div>
                 </div>
-            `;
+            </div>
+        `;
+
+        modalContent += '</div>';
             
-            modalContent += '</div>';
-            
-            content.innerHTML = modalContent;
-            modal.classList.add('active');
+        content.innerHTML = modalContent;
+        modal.classList.add('active');
             
         } catch (error) {
             console.error('Error showing executives modal:', error);
@@ -1554,6 +1759,51 @@ NVIDIA Business Development`;
             document.body.removeChild(textArea);
             alert('Email template copied to clipboard!');
         });
+    }
+
+    toggleOutreachStatus(companyId, event) {
+        // Prevent event bubbling to avoid opening company popup
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        
+        console.log('Toggling outreach status for company:', companyId);
+        
+        const company = this.dataService.companies.find(c => c.id === companyId);
+        if (!company) {
+            console.error('Company not found:', companyId);
+            return;
+        }
+        
+        // Skip if company is already an NCP partner
+        if (company.ncp_status === 'Partner') {
+            console.log('Company is already an NCP partner, skipping outreach toggle');
+            return;
+        }
+        
+        // Initialize outreach object if it doesn't exist
+        if (!company.outreach) {
+            company.outreach = {};
+        }
+        
+        // Toggle the contacted status
+        company.outreach.contacted = !company.outreach.contacted;
+        
+        console.log(`Company ${company.name} outreach status changed to: ${company.outreach.contacted ? 'Contacted' : 'Not Contacted'}`);
+        
+        // Update the NCP progress overview
+        this.loadNCPProgressOverview();
+        
+        // Refresh the current page if we're on the companies page
+        if (document.getElementById('companiesGrid')) {
+            this.loadCompaniesGrid();
+        }
+        
+        // Refresh the dashboard if we're on the dashboard
+        if (document.getElementById('latestNewsGrid')) {
+            this.loadDashboardData();
+        }
     }
 
     setupThemeToggle() {
@@ -1639,36 +1889,59 @@ NVIDIA Business Development`;
             this.hideSearchDropdown();
             return;
         }
-        
-        // Search companies
+
+        // Search companies and VC firms
         const companies = this.dataService.searchCompanies(query);
-        console.log('Found companies:', companies.length);
+        const vcs = this.dataService.searchVCs(query);
+        console.log('Found companies:', companies.length, 'Found VCs:', vcs.length);
         
-        // Limit results to first 8 for better UX
-        const limitedCompanies = companies.slice(0, 8);
+        // Combine results and limit to first 8 for better UX
+        const allResults = [
+            ...companies.map(company => ({ ...company, type: 'company' })),
+            ...vcs.map(vc => ({ ...vc, type: 'vc' }))
+        ];
         
-        if (limitedCompanies.length === 0) {
+        const limitedResults = allResults.slice(0, 8);
+        
+        if (limitedResults.length === 0) {
             searchResults.innerHTML = `
                 <div class="search-result-item">
                     <div class="search-result-info">
-                        <div class="search-result-name">No companies found</div>
+                        <div class="search-result-name">No results found</div>
                         <div class="search-result-details">Try a different search term</div>
                     </div>
                 </div>
             `;
         } else {
-            searchResults.innerHTML = limitedCompanies.map(company => `
-                <div class="search-result-item" data-company-id="${company.id}">
-                    <img src="${company.logo || 'https://via.placeholder.com/32x32?text=' + company.name.charAt(0)}" 
-                         alt="${company.name}" 
-                         class="search-result-logo"
-                         onerror="this.src='https://via.placeholder.com/32x32?text=${company.name.charAt(0)}'">
-                    <div class="search-result-info">
-                        <div class="search-result-name">${company.name}</div>
-                        <div class="search-result-details">${company.industry}</div>
-                    </div>
-                </div>
-            `).join('');
+            searchResults.innerHTML = limitedResults.map(result => {
+                if (result.type === 'company') {
+                    return `
+                        <div class="search-result-item" data-company-id="${result.id}">
+                            <img src="${result.logo || 'https://via.placeholder.com/32x32?text=' + result.name.charAt(0)}" 
+                                 alt="${result.name}" 
+                                 class="search-result-logo"
+                                 onerror="this.src='https://via.placeholder.com/32x32?text=${result.name.charAt(0)}'">
+                            <div class="search-result-info">
+                                <div class="search-result-name">${result.name}</div>
+                                <div class="search-result-details">${result.industry}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="search-result-item" data-vc-id="${result.id}">
+                            <img src="${this.getVCLogoUrl(result.name)}" 
+                                 alt="${result.name}" 
+                                 class="search-result-logo"
+                                 onerror="this.src='https://via.placeholder.com/32x32?text=${result.name.charAt(0)}'">
+                            <div class="search-result-info">
+                                <div class="search-result-name">${result.name}</div>
+                                <div class="search-result-details">${result.description || 'Venture Capital Firm'}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
             
             // Add click handlers to search results
             this.setupSearchResultClickHandlers();
@@ -1692,8 +1965,9 @@ NVIDIA Business Development`;
     }
     
     setupSearchResultClickHandlers() {
-        const searchResultItems = document.querySelectorAll('.search-result-item[data-company-id]');
-        searchResultItems.forEach(item => {
+        // Handle company clicks
+        const companyResultItems = document.querySelectorAll('.search-result-item[data-company-id]');
+        companyResultItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 const companyId = parseInt(e.currentTarget.dataset.companyId);
                 const company = this.dataService.companies.find(c => c.id === companyId);
@@ -1701,6 +1975,27 @@ NVIDIA Business Development`;
                 if (company) {
                     console.log('Opening company modal for:', company.name);
                     this.showCompanyModal(company.id);
+                    this.hideSearchDropdown();
+                    
+                    // Clear search input
+                    const searchInput = document.getElementById('globalSearch');
+                    if (searchInput) {
+                        searchInput.value = '';
+                    }
+                }
+            });
+        });
+        
+        // Handle VC clicks
+        const vcResultItems = document.querySelectorAll('.search-result-item[data-vc-id]');
+        vcResultItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const vcId = parseInt(e.currentTarget.dataset.vcId);
+                const vc = this.dataService.vcs.find(v => v.id === vcId);
+                
+                if (vc) {
+                    console.log('Opening VC modal for:', vc.name);
+                    this.showVCModal(vc.id);
                     this.hideSearchDropdown();
                     
                     // Clear search input
@@ -1840,15 +2135,15 @@ NVIDIA Business Development`;
 
         newsGrid.innerHTML = filteredNews.map(article => `
             <div class="news-item" onclick="window.platform.showCompanyModal(${article.company_id})">
-                <div class="news-header">
-                    <span class="news-category">${article.category}</span>
-                    <span class="news-time">${article.read_time}</span>
-                </div>
-                <h3 class="news-title">${article.headline}</h3>
-                <p class="news-content">${article.content}</p>
-                <div class="news-footer">
-                    <span class="news-source">${article.source}</span>
-                    <span class="news-date">${this.dataService.formatDate(article.published_at)}</span>
+                        <div class="news-header">
+                            <span class="news-category">${article.category}</span>
+                            <span class="news-time">${article.read_time}</span>
+                        </div>
+                        <h3 class="news-title">${article.headline}</h3>
+                        <p class="news-content">${article.content}</p>
+                        <div class="news-footer">
+                            <span class="news-source">${article.source}</span>
+                            <span class="news-date">${this.dataService.formatDate(article.published_at)}</span>
                 </div>
             </div>
         `).join('');
@@ -1929,23 +2224,23 @@ NVIDIA Business Development`;
                     <div class="vc-info">
                         <h3>${vc.name}</h3>
                         <span class="vc-location">${vc.location}</span>
-                    </div>
-                </div>
+                        </div>
+                        </div>
                 <div class="vc-score">
                     <span class="score-value">${vc.final_score}</span>
                     <span class="score-label">Score</span>
-                </div>
+                    </div>
                 <div class="vc-stats">
                     <div class="vc-stat">
                         <span class="vc-stat-value">${vc.investments}</span>
                         <span class="vc-stat-label">Investments</span>
-                    </div>
+                </div>
                     <div class="vc-stat">
                         <span class="vc-stat-value">${vc.portfolio_companies}</span>
                         <span class="vc-stat-label">Portfolio</span>
                     </div>
+                    </div>
                 </div>
-            </div>
         `).join('');
     }
 

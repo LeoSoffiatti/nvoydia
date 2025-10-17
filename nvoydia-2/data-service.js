@@ -6,7 +6,7 @@ class DataService {
         this.news = [];
         // Try backend first; fall back to sample data on failure
         this.loadBackendData().catch(() => {
-            this.loadSampleData();
+        this.loadSampleData();
             window.dispatchEvent(new CustomEvent('data-ready', { detail: { source: 'sample' } }));
         });
     }
@@ -3455,6 +3455,7 @@ class DataService {
                 id: 1,
                 headline: "OpenAI Raises $13B Series E Led by Microsoft to Scale AI Infrastructure",
                 content: "OpenAI has secured a massive $13 billion Series E funding round led by Microsoft, marking one of the largest AI investments in history. The funding will be used to accelerate the development of artificial general intelligence and expand infrastructure capabilities.",
+                what_this_means: "This massive funding round signals OpenAI's continued dominance in AI infrastructure, creating significant opportunities for NVIDIA's GPU ecosystem. As OpenAI scales their compute requirements, NVIDIA stands to benefit from increased demand for H100 and future GPU architectures. For NCP partners, this represents a validation of the AI market's growth trajectory and potential for increased enterprise AI adoption requiring NVIDIA's hardware and software solutions.",
                 url: "https://techcrunch.com/openai-series-e-funding",
                 source: "TechCrunch",
                 published_at: "2024-09-20T10:00:00Z",
@@ -3466,6 +3467,7 @@ class DataService {
                 id: 2,
                 headline: "Anthropic Secures $8B Series C to Advance AI Safety Research",
                 content: "Anthropic has raised $8 billion in Series C funding to accelerate AI safety research and development. The company plans to use the funds to expand its AI safety team and develop more robust AI systems.",
+                what_this_means: "Anthropic's focus on AI safety research aligns perfectly with NVIDIA's enterprise AI strategy, emphasizing responsible AI deployment. This funding validates the importance of AI safety in enterprise environments, creating opportunities for NVIDIA's AI safety tools and frameworks. NCP partners can leverage this trend to position NVIDIA's solutions as enterprise-ready and safety-compliant, differentiating from competitors in the responsible AI space.",
                 url: "https://techcrunch.com/anthropic-series-c-funding",
                 source: "TechCrunch",
                 published_at: "2024-05-27T14:30:00Z",
@@ -3477,6 +3479,7 @@ class DataService {
                 id: 3,
                 headline: "NVIDIA Partners with Leading AI Companies for CUDA-X Platform",
                 content: "NVIDIA has announced strategic partnerships with major AI companies to expand its CUDA-X platform ecosystem, providing developers with enhanced tools for GPU-accelerated AI development.",
+                what_this_means: "This partnership expansion directly strengthens NVIDIA's ecosystem dominance and creates more opportunities for NCP partners to integrate with leading AI companies. The CUDA-X platform's growth validates NVIDIA's developer-first approach, making it easier for NCP partners to build solutions on NVIDIA's infrastructure. This ecosystem expansion increases the value proposition for customers choosing NVIDIA over competitors.",
                 url: "https://techcrunch.com/nvidia-cuda-x-partnerships",
                 source: "TechCrunch",
                 published_at: "2024-10-15T09:15:00Z",
@@ -3488,6 +3491,7 @@ class DataService {
                 id: 4,
                 headline: "DataBricks Raises $3.5B Series I to Scale Unified Analytics Platform",
                 content: "DataBricks has secured $3.5 billion in Series I funding to expand its unified analytics platform for big data and AI. The company plans to invest heavily in AI and machine learning capabilities.",
+                what_this_means: "DataBricks' massive funding validates the enterprise demand for unified AI/ML platforms, creating significant opportunities for NVIDIA's data center GPUs and AI infrastructure. As DataBricks scales their platform, they'll require more NVIDIA hardware for training and inference. NCP partners can leverage this trend to position NVIDIA's solutions as essential infrastructure for enterprise AI transformation.",
                 url: "https://techcrunch.com/databricks-series-i-funding",
                 source: "TechCrunch",
                 published_at: "2024-09-15T11:45:00Z",
@@ -3499,6 +3503,7 @@ class DataService {
                 id: 5,
                 headline: "Hugging Face Launches Enterprise AI Platform with $235M Series D",
                 content: "Hugging Face has raised $235 million in Series D funding to launch its enterprise AI platform, enabling companies to deploy and manage AI models at scale with enhanced security and compliance features.",
+                what_this_means: "Hugging Face's enterprise focus creates opportunities for NVIDIA's enterprise AI solutions and security frameworks. As enterprises adopt AI platforms, they'll need NVIDIA's enterprise-grade hardware and software for secure AI deployment. NCP partners can position NVIDIA's solutions as the secure foundation for enterprise AI platforms, competing against cloud-only solutions.",
                 url: "https://techcrunch.com/hugging-face-series-d-enterprise",
                 source: "TechCrunch",
                 published_at: "2024-08-15T16:20:00Z",
@@ -3632,7 +3637,7 @@ class DataService {
     // Summarize news (placeholder implementation)
     async summarizeNews(newsUrl) {
         try {
-            // Placeholder implementation - in a real app, this would call an AI service
+        // Placeholder implementation - in a real app, this would call an AI service
             // For now, return a generic summary based on the URL
             const urlParts = newsUrl.split('/');
             const domain = urlParts[2] || 'news source';
