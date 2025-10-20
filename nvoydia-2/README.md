@@ -2,7 +2,7 @@
 
 A modern, comprehensive intelligence platform for tracking NVIDIA Partner Program (NCP) progress, managing outreach campaigns, and monitoring AI/Digital Native companies in the biotech and healthtech sectors.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Live Demo
 The dashboard is live at: [https://nvoydia.vercel.app](https://nvoydia.vercel.app)
@@ -18,22 +18,22 @@ python -m http.server 8080
 # Open your browser to http://localhost:8080
 ```
 
-## 📋 Features
+## Features
 
-- 🎯 **NCP Progress Tracking** - Monitor partner status, tiers, and completion metrics
-- 🤖 **AI/Digital Native Focus** - Track AI-native and digital-native companies with specialized badges
-- 📊 **Advanced Filtering** - Filter by industry, funding amount, date range, and VC tier
-- 📈 **Outreach Management** - Track contact status and last message dates
-- 📰 **News Summarization** - AI-powered news summaries for company updates
-- 💼 **VC Portfolio Analysis** - View companies by venture capital firm portfolios
-- 📥 **CSV Export** - Download non-partner companies for outreach campaigns
-- 🎮 **Gamification** - Progress bars and completion metrics for engagement
-- 📱 **Responsive Design** - Works perfectly on desktop and mobile
-- 🌙 **Dark/Light Theme** - Toggle between themes
-- 📧 **Email Templates** - Pre-built templates for partnership outreach
-- 🔗 **LinkedIn Integration** - Direct links to company executives
+- **NCP Progress Tracking** - Monitor partner status, tiers, and completion metrics
+- **AI/Digital Native Focus** - Track AI-native and digital-native companies with specialized badges
+- **Advanced Filtering** - Filter by industry, funding amount, date range, and VC tier
+- **Outreach Management** - Track contact status and last message dates
+- **News Summarization** - AI-powered news summaries for company updates
+- **VC Portfolio Analysis** - View companies by venture capital firm portfolios
+- **CSV Export** - Download non-partner companies for outreach campaigns
+- **Gamification** - Progress bars and completion metrics for engagement
+- **Responsive Design** - Works perfectly on desktop and mobile
+- **Dark/Light Theme** - Toggle between themes
+- **Email Templates** - Pre-built templates for partnership outreach
+- **LinkedIn Integration** - Direct links to company executives
 
-## 🛠 Technology Stack
+## Technology Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Styling**: Custom CSS with CSS Variables
@@ -42,7 +42,7 @@ python -m http.server 8080
 - **Charts**: Chart.js
 - **Deployment**: Vercel
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 nvoydia-2/
@@ -65,7 +65,7 @@ nvoydia-2/
 - **`data-service.js`**: Data management layer handling API calls and data processing
 - **`chart.min.js`**: Chart.js library for creating interactive charts and visualizations
 
-## 🔧 Local Development
+## Local Development
 
 1. Clone the repository:
 ```bash
@@ -82,7 +82,7 @@ npx serve .
 
 3. Open your browser and visit: `http://localhost:9000`
 
-## 🚀 Deployment
+## Deployment
 
 This project is automatically deployed to Vercel. Any changes pushed to the main branch will trigger a new deployment.
 
@@ -98,16 +98,16 @@ npm i -g vercel
 vercel --prod
 ```
 
-## 📊 Dashboard Sections
+## Dashboard Sections
 
-### 🏠 Dashboard Overview
+### Dashboard Overview
 - **NCP Progress Metrics**: Real-time tracking of partner program completion
 - **Gamification Elements**: Progress bars, completion badges, and achievement tracking
 - **Recent News Feed**: AI-powered news summaries with company relevance scoring
 - **Performance Analytics**: Funding trends, growth metrics, and market insights
 - **Quick Actions**: One-click access to common tasks and reports
 
-### 🏢 Companies Management
+### Companies Management
 - **Advanced Filtering**: Multi-criteria filtering by industry, funding amount, date range, and VC tier
 - **AI/Digital Native Badges**: Visual indicators for AI-native and digital-native companies
 - **Outreach Status Tracking**: Contact management with last interaction dates
@@ -115,20 +115,20 @@ vercel --prod
 - **Interactive Modals**: Detailed company profiles with funding history and news
 - **Search Functionality**: Real-time search across company names, industries, and descriptions
 
-### 💰 Investments & VC Analysis
+### Investments & VC Analysis
 - **VC Portfolio Highlights**: Top-performing venture capital firms and their investments
 - **Investment Trends**: Sector-wise funding analysis with interactive charts
 - **Portfolio Company Analysis**: Detailed breakdown of VC investment patterns
 - **Funding Timeline Visualization**: Historical funding data with trend analysis
 - **Performance Metrics**: ROI tracking and success rate analysis
 
-### 📰 News & Intelligence
+### News & Intelligence
 - **AI-Powered Summaries**: Automated news summarization for company updates
 - **Industry Monitoring**: Sector-specific news aggregation and analysis
 - **Trend Detection**: Identification of emerging trends and market shifts
 - **Custom Alerts**: Configurable notifications for specific companies or sectors
 
-## 🎨 Customization
+## Customization
 
 The dashboard uses CSS custom properties for easy theming. Key variables in `modern-styles.css`:
 
@@ -142,25 +142,25 @@ The dashboard uses CSS custom properties for easy theming. Key variables in `mod
 }
 ```
 
-## 📱 Browser Support
+## Browser Support
 
 - Chrome (recommended)
 - Firefox
 - Safari
 - Edge
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
-## 🔌 API Integration
+## API Integration
 
 The dashboard integrates with multiple data sources and APIs:
 
@@ -177,7 +177,7 @@ The dashboard can connect to the FastAPI backend (see `../dashboard/backend/`) f
 - Investment tracking
 - VC scoring algorithms
 
-## 📊 Data Management
+## Data Management
 
 ### Sample Data
 The dashboard includes comprehensive sample data for demonstration:
@@ -191,7 +191,7 @@ The dashboard includes comprehensive sample data for demonstration:
 - **Scheduled**: Company and VC data refreshed daily
 - **Manual**: Admin interface for data corrections and additions
 
-## 🛠 Development & Testing
+## Development & Testing
 
 ### Test Files
 The project includes various test files for development:
@@ -207,7 +207,7 @@ The project includes various test files for development:
 - **Edge**: Full support
 - **Mobile**: Responsive design for all screen sizes
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -234,7 +234,7 @@ The project includes various test files for development:
 ### Debug Mode
 Enable debug mode by adding `?debug=true` to the URL for additional console logging.
 
-## 📈 Performance
+## Performance
 
 ### Optimization Features
 - **Lazy Loading**: Data loaded on demand
@@ -247,7 +247,7 @@ Enable debug mode by adding `?debug=true` to the URL for additional console logg
 - **Responsiveness**: < 100ms for user interactions
 - **Memory Usage**: Optimized for long-running sessions
 
-## 🔒 Security
+## Security
 
 ### Data Protection
 - **No Sensitive Data**: All data is publicly available business information
@@ -259,7 +259,7 @@ Enable debug mode by adding `?debug=true` to the URL for additional console logg
 - **Local Storage**: Minimal use of browser storage
 - **Data Retention**: No personal data stored
 
-## 📞 Support & Contact
+## Support & Contact
 
 ### Getting Help
 - **Documentation**: Check this README and inline code comments
@@ -271,11 +271,11 @@ For questions or support, please contact the NVoydia development team.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Chart.js**: For excellent charting capabilities
 - **Font Awesome**: For comprehensive icon library

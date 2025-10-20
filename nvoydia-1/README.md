@@ -1,10 +1,10 @@
 # NVoydia v1 - Legacy Components (OLD SCOPE)
 
-⚠️ **IMPORTANT**: This folder contains the **OLD SCOPE** and legacy components from the early development of NVoydia. These components are **NO LONGER ACTIVE** and have been superseded by the current dashboard in `nvoydia-2/`.
+**IMPORTANT**: This folder contains the **OLD SCOPE** and legacy components from the early development of NVoydia. These components are **NO LONGER ACTIVE** and have been superseded by the current dashboard in `nvoydia-2/`.
 
 **Current active development is in `nvoydia-2/` - this folder is for reference only.**
 
-## 📁 Contents
+## Contents
 
 ### `/api_integration_tests/` (OLD SCOPE)
 - **Legacy** API testing and integration work
@@ -49,23 +49,23 @@
 - `pitchbook_*` files - **Legacy** PitchBook scraped data
 - `requirements-vercel.txt` - **Legacy** Vercel deployment requirements
 
-## 🔧 Technology Stack
+## Technology Stack
 
 - **Python**: Various scraping and data processing scripts
 - **HTML/CSS/JavaScript**: Frontend dashboard implementations
 - **SQLite**: Local data storage
 - **APIs**: Integration with external data sources
 
-## 📝 Notes
+## Notes
 
 - These components represent the early development phase
 - Some may be outdated or experimental
 - Refer to individual README files in subdirectories for specific usage instructions
 - Main development has moved to `nvoydia-2/` and `dashboard/`
 
-## 🚀 Current Active Development
+## Current Active Development
 
-**⚠️ THIS FOLDER IS LEGACY - DO NOT USE FOR ACTIVE DEVELOPMENT**
+**THIS FOLDER IS LEGACY - DO NOT USE FOR ACTIVE DEVELOPMENT**
 
 For the latest features and active development, see:
 - **`../nvoydia-2/`** - **CURRENT** main dashboard application

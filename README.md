@@ -2,7 +2,7 @@
 
 A comprehensive intelligence platform for tracking NVIDIA Partner Program (NCP) progress, managing outreach campaigns, and monitoring AI/Digital Native companies in the biotech and healthtech sectors.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Live Dashboard
 Visit the live dashboard: [https://nvoydia.vercel.app](https://nvoydia.vercel.app)
@@ -20,7 +20,7 @@ python main.py
 # API docs at http://localhost:8000/docs
 ```
 
-## 📋 Project Overview
+## Project Overview
 
 NVoydia is a modern intelligence platform that combines:
 - **NVIDIA Partner Program Tracking** - Monitor NCP progress and partner status
@@ -29,23 +29,23 @@ NVoydia is a modern intelligence platform that combines:
 - **News & Market Intelligence** - AI-powered news aggregation and summarization
 - **Outreach Management** - Contact tracking and campaign management
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 nvoydia/
-├── nvoydia-2/                     # 🎯 Main Dashboard Application
+├── nvoydia-2/                     # Main Dashboard Application
 │   ├── index.html                 # Main dashboard interface
 │   ├── modern-styles.css          # Responsive styling with CSS variables
 │   ├── modern-script.js           # Core JavaScript functionality
 │   ├── data-service.js            # Data management and API integration
 │   ├── chart.min.js               # Chart.js library for visualizations
 │   └── README.md                  # Comprehensive dashboard documentation
-├── dashboard/                     # 🔧 FastAPI Backend
+├── dashboard/                     # FastAPI Backend
 │   └── backend/                   # API server and database
 │       ├── main.py                # FastAPI application with endpoints
 │       ├── requirements.txt       # Python dependencies
 │       └── README.md              # API documentation
-├── nvoydia-1/                     # 📦 Legacy Components (OLD SCOPE - Archived)
+├── nvoydia-1/                     # Legacy Components (OLD SCOPE - Archived)
 │   ├── api_integration_tests/     # Legacy API testing and integration work
 │   ├── ass/                       # Legacy assignment files and documentation
 │   ├── biotech-dashboard/         # Legacy alternative dashboard implementation
@@ -59,25 +59,25 @@ nvoydia/
 └── README.md                      # This file - Project overview
 ```
 
-### 🎯 Active Development
+### Active Development
 - **`nvoydia-2/`** - Main dashboard application (HTML/CSS/JS)
 - **`dashboard/backend/`** - FastAPI backend with database
 
-### 📦 Archived Components (OLD SCOPE)
+### Archived Components (OLD SCOPE)
 - **`nvoydia-1/`** - **LEGACY** components and experimental features from old scope
 
-## 🎯 Key Features
+## Key Features
 
 ### Dashboard Capabilities
-- **🎯 NCP Progress Tracking** - Monitor NVIDIA Partner Program status and completion
-- **🤖 AI/Digital Native Focus** - Track AI-native and digital-native companies
-- **📊 Advanced Filtering** - Filter by industry, funding, date range, and VC tier
-- **📈 Outreach Management** - Track contact status and campaign progress
-- **📰 News Intelligence** - AI-powered news summaries and trend analysis
-- **💼 VC Portfolio Analysis** - Venture capital firm scoring and portfolio insights
-- **📥 Data Export** - CSV export for outreach campaigns and analysis
-- **📱 Responsive Design** - Works on desktop and mobile devices
-- **🌙 Theme Support** - Dark and light mode options
+- **NCP Progress Tracking** - Monitor NVIDIA Partner Program status and completion
+- **AI/Digital Native Focus** - Track AI-native and digital-native companies
+- **Advanced Filtering** - Filter by industry, funding, date range, and VC tier
+- **Outreach Management** - Track contact status and campaign progress
+- **News Intelligence** - AI-powered news summaries and trend analysis
+- **VC Portfolio Analysis** - Venture capital firm scoring and portfolio insights
+- **Data Export** - CSV export for outreach campaigns and analysis
+- **Responsive Design** - Works on desktop and mobile devices
+- **Theme Support** - Dark and light mode options
 
 ### Data Sources
 - **Piloterr Crunchbase API** - Company information and funding data
@@ -85,7 +85,7 @@ nvoydia/
 - **VC Databases** - Venture capital firm information and portfolios
 - **NVIDIA Partner Data** - NCP program status and partner information
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Python 3.8+ (for local development)
@@ -114,7 +114,7 @@ nvoydia/
    python piloterr_crunchbase_test.py
    ```
 
-## 📊 Data Structure
+## Data Structure
 
 ### Current Dashboard Data (nvoydia-2/)
 **All current dashboard data is contained within `nvoydia-2/`:**
@@ -128,7 +128,7 @@ nvoydia/
 - **Data Fields**: Company info, funding, NCP status, AI classification, outreach tracking
 
 ### Legacy Data (nvoydia-1/ - OLD SCOPE)
-**⚠️ Legacy data from old scope - not used by current dashboard:**
+**Legacy data from old scope - not used by current dashboard:**
 - API integration test data
 - Scraped PitchBook data
 - Legacy biotech dashboard data
@@ -155,7 +155,7 @@ nvoydia/
 - Industry trend analysis
 - Market intelligence insights
 
-## 🛠 Technology Stack
+## Technology Stack
 
 ### Frontend
 - **HTML5/CSS3/JavaScript** - Modern web standards
@@ -173,13 +173,13 @@ nvoydia/
 - **Vercel** - Frontend hosting and deployment
 - **Python HTTP Server** - Local development server
 
-## 📚 Documentation
+## Documentation
 
 - **[Dashboard Documentation](nvoydia-2/README.md)** - Comprehensive dashboard guide
 - **[API Documentation](dashboard/backend/README.md)** - Backend API reference
 - **[Legacy Components](nvoydia-1/README.md)** - Archived components documentation
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -187,7 +187,7 @@ nvoydia/
 4. Test thoroughly
 5. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
